@@ -52,10 +52,11 @@ typedef struct {
 #endif
 
 
+/* named OSDI_ALIGN: plain ALIGN collides with the macOS SDK <sys/param.h> */
 #ifndef _MSC_VER
-#define ALIGN(pow) __attribute__((aligned(pow)))
+#define OSDI_ALIGN(pow) __attribute__((aligned(pow)))
 #else
-#define ALIGN(pow) __declspec(align(pow))
+#define OSDI_ALIGN(pow) __declspec(align(pow))
 #endif
 
 typedef struct OsdiExtraInstData {
@@ -65,7 +66,7 @@ typedef struct OsdiExtraInstData {
   bool dt_given;
   uint32_t eval_flags;
 
-} ALIGN(MAX_ALIGN) OsdiExtraInstData;
+} OSDI_ALIGN(MAX_ALIGN) OsdiExtraInstData;
 
 typedef struct OsdiModelData {
   GENmodel gen;
