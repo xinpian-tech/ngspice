@@ -136,6 +136,7 @@ enum {
     OPT_LTEABSTOL,
     OPT_LTETRTOL,
     OPT_NEWTRUNC,
+    OPT_LINESEARCH,     /* Enhancement-111: adaptive damped-Newton line search */
 };
 
 #ifdef XSPICE
