@@ -270,6 +270,8 @@ struct CKTcircuit {
     unsigned int CKTkeepOpInfo:1; /* flag for small signal analyses */
     unsigned int CKTcopyNodesets:1; /* NodesetFIX */
     unsigned int CKTnodeDamping:1; /* flag for node damping fix */
+    unsigned int CKTcheckpoint:1;  /* Enhancement-131: DCtran should continue from a restored
+                                      checkpoint (keep loaded state, build a fresh output plot) */
     double CKTabsDv;            /* abs limit for iter-iter voltage change */
     double CKTrelDv;            /* rel limit for iter-iter voltage change */
     int CKTtroubleNode;         /* Non-convergent node number */
