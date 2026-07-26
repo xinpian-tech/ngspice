@@ -154,7 +154,11 @@ outp_progress_frac(runDesc *run, double refval)
 static void
 outp_print_reference(runDesc *run, double refval)
 {
-    double frac = outp_progress_frac(run, refval);
+    double frac;
+
+    if (ft_optimizing)          /* Enhancement-130: quiet during optimizer iterations */
+        return;
+    frac = outp_progress_frac(run, refval);
 
     if (frac >= 0.0) {
         char bar[OUTP_BARLEN + 1];
@@ -1202,7 +1206,8 @@ fileEnd(runDesc *run)
         long place = ftell(run->fp);
         fseek(run->fp, run->pointPos, SEEK_SET);
         fprintf(run->fp, "%d", run->pointCount);
-        fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
+        if (!ft_optimizing)     /* Enhancement-130 */
+            fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
         fseek(run->fp, place, SEEK_SET);
     } else {
         /* Yet another hack-around */
@@ -1364,7 +1369,8 @@ plotAddComplexValue(dataDesc *desc, IFcomplex value)
 static void
 plotEnd(runDesc *run)
 {
-    fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
+    if (!ft_optimizing)         /* Enhancement-130 */
+        fprintf(stdout, "\nNo. of Data Rows : %d\n", run->pointCount);
 }
 
 
