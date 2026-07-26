@@ -1852,6 +1852,10 @@ SMPfindElt (SMPmatrix *eMatrix, int Row, int Col, int CreateIfMissing)
         assert (IS_SPARSE (Matrix)) ;
         Row = Matrix->ExtToIntRowMap [Row] ;
         Col = Matrix->ExtToIntColMap [Col] ;
+        if (Row < 0 || Col < 0) {
+            fprintf(stderr, "Warning: element not found, as internal Row/Col map is not avaialable!\n");
+            return NULL;
+        }
         Element = Matrix->FirstInCol [Col] ;
         Element = spcFindElementInCol (Matrix, &Element, Row, Col, CreateIfMissing) ;
         return (SMPelement *)Element ;
