@@ -27,12 +27,12 @@ copy xspice\verilog\shim.vpi %dst%\lib\ngspice\ivlng.vpi
 if "%2" == "fftw" goto copy2
 if "%3" == "fftw" goto copy2
 
-copy %1\ngspice.exe %dst%\bin\
+copy %1\ngspice_opus.exe %dst%\bin\
 copy .\spinitd .\spinit
 goto end
 
 :copy2
-copy %1\ngspice.exe %dst%\bin\
+copy %1\ngspice_opus.exe %dst%\bin\
 copy ..\..\fftw-3.3-dll32\libfftw3-3.dll %dst%\bin\
 goto end
 
@@ -61,12 +61,12 @@ copy ..\..\libsamplerate\bin\samplerate.dll  %dst%\bin\
 if "%2" == "fftw" goto copy2-64
 if "%3" == "fftw" goto copy2-64
 
-copy %1\ngspice.exe %dst%\bin\
+copy %1\ngspice_opus.exe %dst%\bin\
 copy .\spinitd64 .\spinit
 goto end
 
 :copy2-64
-copy %1\ngspice.exe %dst%\bin\
+copy %1\ngspice_opus.exe %dst%\bin\
 copy ..\..\fftw-3.3-dll64\libfftw3-3.dll %dst%\bin\
 
 :end
