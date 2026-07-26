@@ -889,6 +889,7 @@
     <ClInclude Include="..\src\frontend\com_history.h" />
     <ClInclude Include="..\src\frontend\com_let.h" />
     <ClInclude Include="..\src\frontend\com_measure2.h" />
+    <ClInclude Include="..\src\frontend\com_optimize.h" />
     <ClInclude Include="..\src\frontend\com_option.h" />
     <ClInclude Include="..\src\frontend\com_plot.h" />
     <ClInclude Include="..\src\frontend\com_pyplot.h" />
@@ -1504,6 +1505,7 @@
     <ClCompile Include="..\src\frontend\com_history.c" />
     <ClCompile Include="..\src\frontend\com_let.c" />
     <ClCompile Include="..\src\frontend\com_measure2.c" />
+    <ClCompile Include="..\src\frontend\com_optimize.c" />
     <ClCompile Include="..\src\frontend\com_option.c" />
     <ClCompile Include="..\src\frontend\com_plot.c" />
     <ClCompile Include="..\src\frontend\com_pyplot.c" />
