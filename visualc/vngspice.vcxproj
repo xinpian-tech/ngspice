@@ -873,6 +873,7 @@
     <ClInclude Include="..\src\frontend\com_asciiplot.h" />
     <ClInclude Include="..\src\frontend\com_cdump.h" />
     <ClInclude Include="..\src\frontend\com_chdir.h" />
+    <ClInclude Include="..\src\frontend\com_checkpoint.h" />
     <ClInclude Include="..\src\frontend\com_commands.h" />
     <ClInclude Include="..\src\frontend\com_compose.h" />
     <ClInclude Include="..\src\frontend\com_display.h" />
@@ -1490,6 +1491,7 @@
     <ClCompile Include="..\src\frontend\com_asciiplot.c" />
     <ClCompile Include="..\src\frontend\com_cdump.c" />
     <ClCompile Include="..\src\frontend\com_chdir.c" />
+    <ClCompile Include="..\src\frontend\com_checkpoint.c" />
     <ClCompile Include="..\src\frontend\com_compose.c" />
     <ClCompile Include="..\src\frontend\com_display.c" />
     <ClCompile Include="..\src\frontend\com_dl.c" />
