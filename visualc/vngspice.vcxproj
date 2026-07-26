@@ -886,6 +886,7 @@
     <ClInclude Include="..\src\frontend\com_ghelp.h" />
     <ClInclude Include="..\src\frontend\com_gnuplot.h" />
     <ClInclude Include="..\src\frontend\com_hardcopy.h" />
+    <ClInclude Include="..\src\frontend\com_hb.h" />
     <ClInclude Include="..\src\frontend\com_help.h" />
     <ClInclude Include="..\src\frontend\com_history.h" />
     <ClInclude Include="..\src\frontend\com_let.h" />
@@ -1504,6 +1505,7 @@
     <ClCompile Include="..\src\frontend\com_ghelp.c" />
     <ClCompile Include="..\src\frontend\com_gnuplot.c" />
     <ClCompile Include="..\src\frontend\com_hardcopy.c" />
+    <ClCompile Include="..\src\frontend\com_hb.c" />
     <ClCompile Include="..\src\frontend\com_help.c" />
     <ClCompile Include="..\src\frontend\com_history.c" />
     <ClCompile Include="..\src\frontend\com_let.c" />
