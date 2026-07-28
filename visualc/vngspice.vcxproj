@@ -899,6 +899,7 @@
     <ClInclude Include="..\src\frontend\com_qpac.h" />
     <ClInclude Include="..\src\frontend\com_qpnoise.h" />
     <ClInclude Include="..\src\frontend\com_qpss.h" />
+    <ClInclude Include="..\src\frontend\com_qpxf.h" />
     <ClInclude Include="..\src\frontend\com_rehash.h" />
     <ClInclude Include="..\src\frontend\com_set.h" />
     <ClInclude Include="..\src\frontend\com_setscale.h" />
@@ -1520,6 +1521,7 @@
     <ClCompile Include="..\src\frontend\com_qpac.c" />
     <ClCompile Include="..\src\frontend\com_qpnoise.c" />
     <ClCompile Include="..\src\frontend\com_qpss.c" />
+    <ClCompile Include="..\src\frontend\com_qpxf.c" />
     <ClCompile Include="..\src\frontend\com_rehash.c" />
     <ClCompile Include="..\src\frontend\com_set.c" />
     <ClCompile Include="..\src\frontend\com_setscale.c" />
