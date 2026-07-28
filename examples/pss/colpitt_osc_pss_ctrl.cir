@@ -15,7 +15,7 @@ c1 	2 3 	500p
 c2 	4 3 	4500p
 l1 	4 2 	5uH
 re 	3 6 	4.65k
-vee 	6 0 	dc -10 pwl 0 0 1e-9 -10 
+vee 	6 0 	dc -10
 
 .control
 ** transient sim
