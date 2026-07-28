@@ -476,6 +476,7 @@ struct hbspectrum {
     double *Vr, *Vi;    /* [(2K+1)*N] two-sided Fourier coefficients, index (k+K)*N+i */
 };
 extern int HBanalyze(CKTcircuit *, double f0, int K, int P, int maxiter, double tol, int verbose, struct hbspectrum *out); /* E-134; E-209 out */
+extern int QPSShb(CKTcircuit *, double f1, double f2, int K1, int K2, int P1, int P2, int maxiter, double tol, int verbose); /* E-136 */
 
 #endif
 
