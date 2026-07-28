@@ -35,7 +35,7 @@ cp	v_plus	v_minus	3.4p
 tran 0.05n 1u uic
 plot i1
 reset
-pss 400e6 2u 1 1024 10 10 5e-3 uic
+pss 400e6 100n 1 1024 10 10 5e-3 uic
 set xbrushwidth=3
 plot i1
 .endc
