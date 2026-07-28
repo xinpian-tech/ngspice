@@ -1828,6 +1828,8 @@ SMPfindElt (SMPmatrix *eMatrix, int Row, int Col, int CreateIfMissing)
 {
     MatrixPtr Matrix = eMatrix->SPmatrix ;
 
+    static bool nomsg = TRUE;
+
     if (eMatrix->CKTkluMODE)
     {
         int i ;
@@ -1859,7 +1861,10 @@ SMPfindElt (SMPmatrix *eMatrix, int Row, int Col, int CreateIfMissing)
         Row = Matrix->ExtToIntRowMap [Row] ;
         Col = Matrix->ExtToIntColMap [Col] ;
         if (Row < 0 || Col < 0) {
-            fprintf(stderr, "Warning: element not found, as internal Row/Col map is not avaialable!\n");
+            if (nomsg) {
+                fprintf(stderr, "Warning: element not found, as internal Row/Col map is not avaialable!\n");
+                nomsg = FALSE;
+            }
             return NULL;
         }
         Element = Matrix->FirstInCol [Col] ;
