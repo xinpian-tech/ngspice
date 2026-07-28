@@ -895,6 +895,7 @@
     <ClInclude Include="..\src\frontend\com_option.h" />
     <ClInclude Include="..\src\frontend\com_plot.h" />
     <ClInclude Include="..\src\frontend\com_pyplot.h" />
+    <ClInclude Include="..\src\frontend\com_qpac.h" />
     <ClInclude Include="..\src\frontend\com_qpss.h" />
     <ClInclude Include="..\src\frontend\com_rehash.h" />
     <ClInclude Include="..\src\frontend\com_set.h" />
@@ -1514,6 +1515,7 @@
     <ClCompile Include="..\src\frontend\com_option.c" />
     <ClCompile Include="..\src\frontend\com_plot.c" />
     <ClCompile Include="..\src\frontend\com_pyplot.c" />
+    <ClCompile Include="..\src\frontend\com_qpac.c" />
     <ClCompile Include="..\src\frontend\com_qpss.c" />
     <ClCompile Include="..\src\frontend\com_rehash.c" />
     <ClCompile Include="..\src\frontend\com_set.c" />
