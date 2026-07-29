@@ -1,0 +1,6 @@
+This branch is based on the master branch as of Juli 19th, 2026
+Selected patches from https://github.com/javaNoviceProgrammer/Ngspice_OpenVAF_Enhancements/tree/main have been added,
+some have been slightly modified, compatibility with VS 2022 is achieved.
+
+PSS and HB have been tested on a few examples. Documentaion and further testing are due, as well as finally adding
+suitable commit messages.
