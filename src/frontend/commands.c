@@ -432,6 +432,10 @@ struct comm spcp_coms[] = {
       { 040, 040, 040, 040 }, E_DEFHMASK, 1, LOTS,
       NULL,
       "-param name init lo hi ... -analysis <cmd> -minimize <expr> [-maxiter N] [-tol T] [-verbose] : Nelder-Mead parameter optimizer." },
+    { "loadpull", com_loadpull, TRUE, FALSE,     /* Enhancement-234 */
+      { 040, 040, 040, 040 }, E_DEFHMASK, 1, LOTS,
+      NULL,
+      "-load <R> <L> <C> -out <node> -drive <Vsrc> -f <freq> [-supply <Vsrc>] [-z0 50] [-n 15] [-gmax 0.85] [-nper 20] [-source] : load-pull (or source-pull) analysis for PAs. Sweeps the load impedance Gamma over the Smith chart, runs a large-signal .tran at each point, and stores gamma_re,gamma_im,pout_dbm,gain_db[,pae,eff] in a 'loadpull' plot (contour with `pyplot -contour`)." },
     { "qpss", com_qpss, TRUE, FALSE,             /* Enhancement-133 / -136 */
       { 040, 040, 040, 040 }, E_DEFHMASK, 3, LOTS,
       NULL,
