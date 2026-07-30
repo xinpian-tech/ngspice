@@ -902,6 +902,7 @@
     <ClInclude Include="..\src\frontend\com_qpss.h" />
     <ClInclude Include="..\src\frontend\com_qpxf.h" />
     <ClInclude Include="..\src\frontend\com_rehash.h" />
+    <ClInclude Include="..\src\frontend\com_rfstab.h" />
     <ClInclude Include="..\src\frontend\com_set.h" />
     <ClInclude Include="..\src\frontend\com_setscale.h" />
     <ClInclude Include="..\src\frontend\com_shell.h" />
@@ -1533,6 +1534,7 @@
     <ClCompile Include="..\src\frontend\com_qpss.c" />
     <ClCompile Include="..\src\frontend\com_qpxf.c" />
     <ClCompile Include="..\src\frontend\com_rehash.c" />
+    <ClCompile Include="..\src\frontend\com_rfstab.c" />
     <ClCompile Include="..\src\frontend\com_set.c" />
     <ClCompile Include="..\src\frontend\com_setscale.c" />
     <ClCompile Include="..\src\frontend\com_shell.c" />
