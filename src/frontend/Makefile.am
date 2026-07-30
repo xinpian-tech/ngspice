@@ -51,6 +51,8 @@ libfte_la_SOURCES = \
     com_history.h   \
     com_let.c   \
     com_let.h   \
+    com_rfstab.c  \
+    com_rfstab.h  \
     com_loadpull.c  \
     com_loadpull.h  \
     com_optimize.c  \
