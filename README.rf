@@ -51,7 +51,8 @@ Cyclo stationary QPNOISE
 qnoise <output node> <f_in> cyclo
 
 Oscillator phase noise (autonomous HB plus phase noise)
-hbosc <oscnob> <k> 
+hbosc <oscnode> <K> [fguess] [tstab]
+phasenoise <fstart> <fstop> [points]
 
 Two-tone small-signal quasi-periodic transfer function QPXF
 qpss <expr> <f1> <f2> hb <k1> <k2>
@@ -60,3 +61,13 @@ qpxf <output node> <f_in>
 QPAC, QPnoise, and QPXF may be swept over frequency instead of fixed f_in, e.g.
 replace 'qpxf <output node> <f_in>' by 'qpxf <output node> <dec/oct/lin> <Npo> <fstart> <fstop>'
 
+Read S parameters and convert to instance with ports p1 to pN, referenced to ref.
+N1 p1 p2 ... pN ref mymodel
+.model mymodel nport(file="...")
+
+RF two-port stability
+sp ... (generate the S parameters)
+stab
+
+load pull
+loadpull -load <R> <L> <C> -out <node> -drive <Vsrc> -f <f0> [-supply <Vsrc>]
