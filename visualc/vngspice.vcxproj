@@ -972,6 +972,7 @@
     <ClInclude Include="..\src\frontend\shyu.h" />
     <ClInclude Include="..\src\frontend\signal_handler.h" />
     <ClInclude Include="..\src\frontend\sndprint.h" />
+    <ClInclude Include="..\src\frontend\snp2va.h" />
     <ClInclude Include="..\src\frontend\spec.h" />
     <ClInclude Include="..\src\frontend\spiceif.h" />
     <ClInclude Include="..\src\frontend\streams.h" />
@@ -1519,6 +1520,7 @@
     <ClCompile Include="..\src\frontend\com_optimize.c" />
     <ClCompile Include="..\src\frontend\com_option.c" />
     <ClCompile Include="..\src\frontend\com_plot.c" />
+    <ClCompile Include="..\src\frontend\com_presnp.c" />
     <ClCompile Include="..\src\frontend\com_pyplot.c" />
     <ClCompile Include="..\src\frontend\com_qpac.c" />
     <ClCompile Include="..\src\frontend\com_qpnoise.c" />
@@ -1615,6 +1617,7 @@
     <ClCompile Include="..\src\frontend\shyu.c" />
     <ClCompile Include="..\src\frontend\signal_handler.c" />
     <ClCompile Include="..\src\frontend\sndprint.c" />
+    <ClCompile Include="..\src\frontend\snp2va.cpp" />
     <ClCompile Include="..\src\frontend\spec.c" />
     <ClCompile Include="..\src\frontend\spiceif.c" />
     <ClCompile Include="..\src\frontend\streams.c" />
