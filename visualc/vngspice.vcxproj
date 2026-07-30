@@ -1338,6 +1338,10 @@
     <ClInclude Include="..\src\spicelib\devices\nbjt\nbjtext.h" />
     <ClInclude Include="..\src\spicelib\devices\nbjt\nbjtinit.h" />
     <ClInclude Include="..\src\spicelib\devices\nbjt\nbjtitf.h" />
+    <ClInclude Include="..\src\spicelib\devices\nport\nportdefs.h" />
+    <ClInclude Include="..\src\spicelib\devices\nport\nportext.h" />
+    <ClInclude Include="..\src\spicelib\devices\nport\nportinit.h" />
+    <ClInclude Include="..\src\spicelib\devices\nport\nportitf.h" />
     <ClInclude Include="..\src\spicelib\devices\numd2\numd2def.h" />
     <ClInclude Include="..\src\spicelib\devices\numd2\numd2ext.h" />
     <ClInclude Include="..\src\spicelib\devices\numd2\numd2init.h" />
@@ -1412,6 +1416,7 @@
     <ClInclude Include="..\src\include\cppduals\duals\dual">
       <FileType>Document</FileType>
     </ClInclude>
+    <None Include="..\src\spicelib\devices\nport\Makefile.am" />
     <None Include="..\src\xspice\icm\objects.inc" />
   </ItemGroup>
   <ItemGroup>
@@ -2610,6 +2615,19 @@
     <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtset.c" />
     <ClCompile Include="..\src\spicelib\devices\nbjt\nbjttemp.c" />
     <ClCompile Include="..\src\spicelib\devices\nbjt\nbjttrun.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nport.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportacload.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportask.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportdel.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportinit.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportload.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportmask.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportmpar.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportparam.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportread.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportsetup.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nporttemp.c" />
     <ClCompile Include="..\src\spicelib\devices\numd2\nud2.c" />
     <ClCompile Include="..\src\spicelib\devices\numd2\nud2acld.c" />
     <ClCompile Include="..\src\spicelib\devices\numd2\nud2ask.c" />
