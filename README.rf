@@ -5,8 +5,9 @@ some have been slightly modified, compatibility with VS 2022 is achieved.
 PSS and HB have been tested on a few examples. Documentaion and further testing are due, as well as finally adding
 suitable commit messages.
 
-Commands available:
+The following commands have been taken from the docs at https://github.com/javaNoviceProgrammer/Ngspice_OpenVAF_Enhancements/blob/main/docs/Ngspice-OpenVAF-Handbook.pdf
 
+Commands available in https://sourceforge.net/p/ngspice/ngspice/ci/hv_rf_preliminary/tree/:
 
 Writing two-port or multi(N)-port S parameters
 spar_write() (2-port) or spar_write_np() (N-port)
