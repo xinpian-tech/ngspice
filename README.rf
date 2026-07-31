@@ -63,8 +63,11 @@ QPAC, QPnoise, and QPXF may be swept over frequency instead of fixed f_in, e.g.
 replace 'qpxf <output node> <f_in>' by 'qpxf <output node> <dec/oct/lin> <Npo> <fstart> <fstop>'
 
 Read S parameters and convert to instance with ports p1 to pN, referenced to ref.
+Command in the .control section:
+pre_snp -native my_touchstone.s2p ; reads a Touchstone file, vector fits and issues a *.nport file
+Instance in the netlist
 N1 p1 p2 ... pN ref mymodel
-.model mymodel nport(file="...")
+.model mymodel nport(file=my_touchstone.nport)
 
 RF two-port stability
 sp ... (generate the S parameters)
