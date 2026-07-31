@@ -298,6 +298,7 @@ lib /machine:x86 /def:..\..\fftw-3.3-dll32\libfftw3-3.def /out:$(IntDir)libfftw3
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
+cp -f $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
 lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
@@ -350,6 +351,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
+cp -f $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
 lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
@@ -509,6 +511,7 @@ lib /machine:x86 /def:..\..\fftw-3.3-dll32\libfftw3-3.def /out:$(IntDir)libfftw3
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
+cp -f $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
 lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
@@ -561,6 +564,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
+cp -f $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
 lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
@@ -670,6 +674,7 @@ lib /machine:x86 /def:..\..\fftw-3.3-dll32\libfftw3-3.def /out:$(IntDir)libfftw3
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
+cp -f $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
 lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
@@ -784,6 +789,7 @@ lib /machine:x86 /def:..\..\fftw-3.3-dll32\libfftw3-3.def /out:$(IntDir)libfftw3
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
+cp -f $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
 lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <Midl>
@@ -858,6 +864,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClInclude Include="..\src\frontend\com_asciiplot.h" />
     <ClInclude Include="..\src\frontend\com_cdump.h" />
     <ClInclude Include="..\src\frontend\com_chdir.h" />
+    <ClInclude Include="..\src\frontend\com_checkpoint.h" />
     <ClInclude Include="..\src\frontend\com_commands.h" />
     <ClInclude Include="..\src\frontend\com_compose.h" />
     <ClInclude Include="..\src\frontend\com_display.h" />
@@ -869,14 +876,23 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClInclude Include="..\src\frontend\com_ghelp.h" />
     <ClInclude Include="..\src\frontend\com_gnuplot.h" />
     <ClInclude Include="..\src\frontend\com_hardcopy.h" />
+    <ClInclude Include="..\src\frontend\com_hb.h" />
+    <ClInclude Include="..\src\frontend\com_hbosc.h" />
     <ClInclude Include="..\src\frontend\com_help.h" />
     <ClInclude Include="..\src\frontend\com_history.h" />
     <ClInclude Include="..\src\frontend\com_let.h" />
+    <ClInclude Include="..\src\frontend\com_loadpull.h" />
     <ClInclude Include="..\src\frontend\com_measure2.h" />
+    <ClInclude Include="..\src\frontend\com_optimize.h" />
     <ClInclude Include="..\src\frontend\com_option.h" />
     <ClInclude Include="..\src\frontend\com_plot.h" />
     <ClInclude Include="..\src\frontend\com_pyplot.h" />
+    <ClInclude Include="..\src\frontend\com_qpac.h" />
+    <ClInclude Include="..\src\frontend\com_qpnoise.h" />
+    <ClInclude Include="..\src\frontend\com_qpss.h" />
+    <ClInclude Include="..\src\frontend\com_qpxf.h" />
     <ClInclude Include="..\src\frontend\com_rehash.h" />
+    <ClInclude Include="..\src\frontend\com_rfstab.h" />
     <ClInclude Include="..\src\frontend\com_set.h" />
     <ClInclude Include="..\src\frontend\com_setscale.h" />
     <ClInclude Include="..\src\frontend\com_shell.h" />
@@ -948,6 +964,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClInclude Include="..\src\frontend\shyu.h" />
     <ClInclude Include="..\src\frontend\signal_handler.h" />
     <ClInclude Include="..\src\frontend\sndprint.h" />
+    <ClInclude Include="..\src\frontend\snp2va.h" />
     <ClInclude Include="..\src\frontend\spec.h" />
     <ClInclude Include="..\src\frontend\spiceif.h" />
     <ClInclude Include="..\src\frontend\streams.h" />
@@ -1313,6 +1330,10 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClInclude Include="..\src\spicelib\devices\nbjt\nbjtext.h" />
     <ClInclude Include="..\src\spicelib\devices\nbjt\nbjtinit.h" />
     <ClInclude Include="..\src\spicelib\devices\nbjt\nbjtitf.h" />
+    <ClInclude Include="..\src\spicelib\devices\nport\nportdefs.h" />
+    <ClInclude Include="..\src\spicelib\devices\nport\nportext.h" />
+    <ClInclude Include="..\src\spicelib\devices\nport\nportinit.h" />
+    <ClInclude Include="..\src\spicelib\devices\nport\nportitf.h" />
     <ClInclude Include="..\src\spicelib\devices\numd2\numd2def.h" />
     <ClInclude Include="..\src\spicelib\devices\numd2\numd2ext.h" />
     <ClInclude Include="..\src\spicelib\devices\numd2\numd2init.h" />
@@ -1387,6 +1408,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClInclude Include="..\src\include\cppduals\duals\dual">
       <FileType>Document</FileType>
     </ClInclude>
+    <None Include="..\src\spicelib\devices\nport\Makefile.am" />
     <None Include="..\src\xspice\icm\objects.inc" />
   </ItemGroup>
   <ItemGroup>
@@ -1474,6 +1496,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClCompile Include="..\src\frontend\com_asciiplot.c" />
     <ClCompile Include="..\src\frontend\com_cdump.c" />
     <ClCompile Include="..\src\frontend\com_chdir.c" />
+    <ClCompile Include="..\src\frontend\com_checkpoint.c" />
     <ClCompile Include="..\src\frontend\com_compose.c" />
     <ClCompile Include="..\src\frontend\com_display.c" />
     <ClCompile Include="..\src\frontend\com_dl.c" />
@@ -1484,14 +1507,24 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClCompile Include="..\src\frontend\com_ghelp.c" />
     <ClCompile Include="..\src\frontend\com_gnuplot.c" />
     <ClCompile Include="..\src\frontend\com_hardcopy.c" />
+    <ClCompile Include="..\src\frontend\com_hb.c" />
+    <ClCompile Include="..\src\frontend\com_hbosc.c" />
     <ClCompile Include="..\src\frontend\com_help.c" />
     <ClCompile Include="..\src\frontend\com_history.c" />
     <ClCompile Include="..\src\frontend\com_let.c" />
+    <ClCompile Include="..\src\frontend\com_loadpull.c" />
     <ClCompile Include="..\src\frontend\com_measure2.c" />
+    <ClCompile Include="..\src\frontend\com_optimize.c" />
     <ClCompile Include="..\src\frontend\com_option.c" />
     <ClCompile Include="..\src\frontend\com_plot.c" />
+    <ClCompile Include="..\src\frontend\com_presnp.c" />
     <ClCompile Include="..\src\frontend\com_pyplot.c" />
+    <ClCompile Include="..\src\frontend\com_qpac.c" />
+    <ClCompile Include="..\src\frontend\com_qpnoise.c" />
+    <ClCompile Include="..\src\frontend\com_qpss.c" />
+    <ClCompile Include="..\src\frontend\com_qpxf.c" />
     <ClCompile Include="..\src\frontend\com_rehash.c" />
+    <ClCompile Include="..\src\frontend\com_rfstab.c" />
     <ClCompile Include="..\src\frontend\com_set.c" />
     <ClCompile Include="..\src\frontend\com_setscale.c" />
     <ClCompile Include="..\src\frontend\com_shell.c" />
@@ -1582,6 +1615,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClCompile Include="..\src\frontend\shyu.c" />
     <ClCompile Include="..\src\frontend\signal_handler.c" />
     <ClCompile Include="..\src\frontend\sndprint.c" />
+    <ClCompile Include="..\src\frontend\snp2va.cpp" />
     <ClCompile Include="..\src\frontend\spec.c" />
     <ClCompile Include="..\src\frontend\spiceif.c" />
     <ClCompile Include="..\src\frontend\streams.c" />
@@ -2574,6 +2608,19 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClCompile Include="..\src\spicelib\devices\nbjt\nbjtset.c" />
     <ClCompile Include="..\src\spicelib\devices\nbjt\nbjttemp.c" />
     <ClCompile Include="..\src\spicelib\devices\nbjt\nbjttrun.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nport.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportacload.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportask.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportbindCSC.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportdel.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportinit.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportload.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportmask.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportmpar.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportparam.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportread.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nportsetup.c" />
+    <ClCompile Include="..\src\spicelib\devices\nport\nporttemp.c" />
     <ClCompile Include="..\src\spicelib\devices\numd2\nud2.c" />
     <ClCompile Include="..\src\spicelib\devices\numd2\nud2acld.c" />
     <ClCompile Include="..\src\spicelib\devices\numd2\nud2ask.c" />
