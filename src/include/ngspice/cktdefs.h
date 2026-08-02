@@ -151,6 +151,14 @@ struct CKTcircuit {
     /* `.option nostaterestore` opt-out of the dctran failed-attempt
      * device-state restore (CKTstate0 <- CKTstate1 on timepoint retry). */
     int CKTstateRestoreOff;
+    /* `.option noorderguard` opt-out of the dctran non-uniform-history
+     * predictor guard (forced CKTorder=1 on >10x dt-history ratio). */
+    int CKTorderGuardOff;
+    /* `.option currentsettle` opt-IN to honoring device convTest
+     * CKTnoncon reports in NIconvTest (upstream trunk 0638aaa16
+     * current-settling enforcement).  Default 0 = ngspice-46
+     * solution-only convergence semantics. */
+    int CKTcurrentSettle;
     /* Per-iteration count of huge-finite Jacobian entries clipped by
      * sanitize_jacobian during CKTload.  When > 0, the model evaluation
      * is in a numerical regime (e.g. BSIM-BULK near a singular operating
