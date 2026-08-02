@@ -144,6 +144,21 @@ if NDEV_WANTED
 ngspice_LDADD += spicelib/devices/ndev/libndev.la
 endif
 
+if NGPARSE_WANTED
+# The ngparse Rust staticlib. Must come after libfte.la, which references it.
+ngspice_LDADD += @NGPARSE_LIBS@
+# Build (or refresh) libngparse.a as part of `make`, from the ngspice top
+# directory -- there is no separate cargo step.  It is a BUILT_SOURCES entry so
+# it is made before anything links against it; the phony prerequisite makes
+# cargo run on every build (cargo is incremental, so it is a fast no-op when
+# nothing changed), which also stops a stale .a from being silently linked.
+BUILT_SOURCES = @NGPARSE_LIB@
+@NGPARSE_LIB@: ngparse-cargo-build
+ngparse-cargo-build:
+	cd @NGPARSE_DIR@ && @CARGO@ build --release
+.PHONY: ngparse-cargo-build
+endif
+
 if NUMDEV_WANTED
 ngspice_LDADD += \
 	spicelib/devices/nbjt/libnbjt.la   \
@@ -513,6 +528,11 @@ libngspice_la_LIBADD = \
 
 libngspice_la_LIBADD += \
 	frontend/plotting/libplotting.la
+
+if NGPARSE_WANTED
+# The shared library pulls in libfte.la too, so it needs ngparse as well.
+libngspice_la_LIBADD += @NGPARSE_LIBS@
+endif
 
 if XSPICE_WANTED
 libngspice_la_LIBADD += \

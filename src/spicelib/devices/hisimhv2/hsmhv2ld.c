@@ -651,7 +651,7 @@ int HSMHV2load(
 
         /* NaN-recovery (sanity damping).
          *
-         * Symptom: on big PDKs (Samsung 14LPU 3.3 V LDMOS as `ld3nfet`)
+         * Symptom: on big PDKs (foundry_b 14LPU 3.3 V LDMOS as `ld3nfet`)
          * the initial DC operating-point Newton iteration occasionally
          * lands on bias values that make the HiSIM_HV physics produce
          * NaN currents/conductances.  Those NaN entries are written
@@ -2320,6 +2320,18 @@ line755: /* standard entry if HSMHV2evaluate is bypassed */
       /* Preset vectors and matrix for dynamic part */
 
       cq_d = cq_dP = cq_g = cq_gP = cq_s = cq_sP = cq_bP = cq_b = cq_db = cq_sb = cq_t = cq_qi = cq_qb = 0.0 ;
+      /* The external-charge displacement currents must be reset per instance
+       * as well: they are function-scope locals that are only ever added to
+       * below, so without this reset each instance inherits the accumulated
+       * cq_gE/cq_bE/cq_sE of all previously processed instances of the same
+       * model -- a leaked gate/bulk current with no matrix counterpart that
+       * grows with the instance count and (at the huge ag0 of the small
+       * opening transient timesteps) walks parallel power devices away from
+       * the operating point until the model's internal solvers blow up.
+       * (cq_dE is re-read from the state vector further below, but is
+       * included here for symmetry and for the !ChargeComputationNeeded
+       * path.) */
+      cq_dE = cq_gE = cq_sE = cq_bE = 0.0 ;
       for (i = 0; i < XDIM ; i++) {
         ydyn_d[i] = ydyn_dP[i] = ydyn_g[i] = ydyn_gP[i] = ydyn_s[i] = ydyn_sP[i] = ydyn_bP[i] = ydyn_b[i]
         = ydyn_db[i] = ydyn_sb[i] = ydyn_t[i] = 0.0;

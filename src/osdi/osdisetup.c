@@ -338,12 +338,12 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
      * ranges and would otherwise reject the `0` placeholders that
      * osdi_defer_preprocess_line writes onto deferred-param slots.
      *
-     * Per-model default L: BSIM-CMG/Samsung 14LPU expressions look like
+     * Per-model default L: BSIM-CMG/foundry_b 14LPU expressions look like
      *   vsat1 = '((l==0.014e-6)*X + (l==0.016e-6)*Y) * ...'
      * For these to evaluate to a NON-ZERO valid value at pre-eval time
      * (so setup_model accepts), the chosen L must satisfy at least one
      * of the `(l==...)` checks.  Read the model's lmin/lmax (already
-     * populated by the .model parse) and pick the midpoint.  Samsung's
+     * populated by the .model parse) and pick the midpoint.  foundry_b's
      * 14LPU nfet.0 has lmin=10nm, lmax=18nm → midpoint=14nm, exactly
      * the L the expression looks for.  For models without lmin/lmax,
      * fall back to 30nm (the original constant default). */
@@ -528,7 +528,7 @@ extern int OSDItemp(GENmodel *inModel, CKTcircuit *ckt) {
        * setup_instance so the model sees the actual computed values.
        * Skipped entirely (no map lookup, no syscalls) when this
        * model has no deferred entries — the common case for non-
-       * HSPICE-style OSDI PDKs like TSMC22 BSIM-BULK. */
+       * HSPICE-style OSDI PDKs like foundry_a BSIM-BULK. */
       if (has_deferred) {
         defer_apply_ctx ctx = {
           .descr = descr,

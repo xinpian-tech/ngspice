@@ -441,9 +441,9 @@ RCROSS2 B0 A24 0.001
 **
 **INCLUDING FILE: ./proj1/process.models....
 *
-* Typical N Typical P    - from process corners  (taken from tsmc025_corners.bsim3 fron NCSU)  
+* Typical N Typical P    - from process corners  (taken from foundry_a.bsim3 fron NCSU)  
 *
-* TSMC 0.25u 5M 1P process.  2.5V transistor models
+* foundry_a 0.25u 5M 1P process.  2.5V transistor models
 
 
 .MODEL Nmod          NMOS   			LEVEL=8       

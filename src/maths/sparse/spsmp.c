@@ -625,3 +625,15 @@ SMPmultiply(SMPmatrix *Matrix, double *RHS, double *Solution, double *iRHS, doub
 {
     spMultiply(Matrix->SPmatrix, RHS, Solution, iRHS, iSolution);
 }
+
+/*
+ * SMPmultiplyAbs()
+ * Real-only: RHS_n = sum_j G_nj*x_j, AbsRHS_n = sum_j |G_nj*x_j|,
+ * AbsRow_n = sum_j |G_nj|.
+ */
+void
+SMPmultiplyAbs(SMPmatrix *Matrix, double *RHS, double *AbsRHS, double *AbsRow,
+               double *Solution)
+{
+    spMultiplyAbs(Matrix->SPmatrix, RHS, AbsRHS, AbsRow, Solution);
+}

@@ -136,6 +136,7 @@ libfte_la_SOURCES = \
     inpcompat.c \
     inpcompat.h \
     inpc_probe.c    \
+    ngparse_glue.c  \
     interp.c    \
     interp.h    \
     inventory.c     \
@@ -208,7 +209,7 @@ libfte_la_SOURCES = \
 # testcommands_LDADD = libfte.a plotting/libplotting.a ../misc/libmisc.a
 
 
-AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include @X_CFLAGS@
+AM_CPPFLAGS = @AM_CPPFLAGS@ -I$(top_srcdir)/src/include @X_CFLAGS@ @NGPARSE_CFLAGS@
 AM_CFLAGS = $(STATIC)
 AM_YFLAGS = -d
 

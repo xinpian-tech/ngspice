@@ -292,6 +292,7 @@ extern  void     spConstMult(MatrixPtr, double);
 extern  void     spDeterminant ( MatrixPtr, int*, spREAL*, spREAL* );
 extern  int      spFileVector( MatrixPtr, char * , spREAL*, spREAL*);
 extern  void     spMultiply( MatrixPtr, spREAL*, spREAL*, spREAL*, spREAL* );
+extern  void     spMultiplyAbs( MatrixPtr, spREAL*, spREAL*, spREAL*, spREAL* );
 extern  void     spMultTransposed(MatrixPtr,spREAL*,spREAL*,spREAL*,spREAL*);
 extern  void     spSolve( MatrixPtr, spREAL*, spREAL*, spREAL*, spREAL* );
 extern  void     spSolveTransposed(MatrixPtr,spREAL*,spREAL*,spREAL*,spREAL*);

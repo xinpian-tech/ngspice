@@ -1,0 +1,35 @@
+ngparse -- ngspice changes
+==========================
+
+ngparse replaces the slow part of ngspice's frontend (.lib/.inc extraction,
+numparam substitution, .subckt expansion). It links in as a static library
+(libngparse.a) driven by a thin glue layer; ngspice's own parser is untouched.
+It is the default in an --enable-ngparse build; --no-ngparse falls back to the
+old frontend for a run. Without --enable-ngparse the glue is a no-op.
+
+All changes live on branch jfisher/ng_parse. Seven files -- 2 new, 5 modified.
+
+NEW
+  src/frontend/ngparse_glue.c
+      The glue. Decides whether ngparse should handle a source, reads ngspice's
+      ngbehavior (to pass PSpice mode through), calls the ngparse ABI, and
+      writes the expanded deck to a temp netlist. A no-op without USE_NGPARSE.
+  src/include/ngspice/ngparse_glue.h
+      Glue interface.
+
+MODIFIED
+  src/frontend/inp.c
+      The seam: in inp_spsource(), just before inp_readall(), divert it to read
+      ngparse's expanded deck instead of the original file. Kept shallow so the
+      rest of inp_readall (compat passes, numparam, renumbering) still runs.
+  src/main.c
+      Adds --no-ngparse (and a redundant --ngparse) plus the --help line.
+  configure.ac
+      Adds --enable-ngparse and --with-ngparse-dir; checks for libngparse.a and
+      ngparse.h; defines USE_NGPARSE.
+  src/frontend/Makefile.am
+      Builds ngparse_glue.c; adds the ngparse include path.
+  src/Makefile.am
+      Links libngparse.a into ngspice and libngspice.
+
+Enabling, PSpice mode, and measured results: see install.txt and comparison.txt.

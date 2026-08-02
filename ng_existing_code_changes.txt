@@ -192,7 +192,7 @@ WHY:
   rule is kept outside HS mode. (8) The single-to-brace quote conversion now
   skips `.del`, `.include`, and `.inc ` lines (which take literal file paths),
   matching the existing `.lib` skip, to avoid handing paths to numparam as
-  expressions (STEP 24, observed on GF55 bcd55 .alter decks).
+  expressions (STEP 24, observed on foundry_c bcd55 .alter decks).
 
 CHANGE:
 @@ -1072,9 +1080,22 @@
@@ -582,10 +582,10 @@ WHY:
   midpoint 1.3999999999999999e-08), while integer comparisons remain unambiguous
   (STEP 12). (4) When an identifier matches a function keyword, it is now
   treated as a function call ONLY if followed by `(`; otherwise it is treated as
-  a parameter name, so GF55 decks that use `var` as a subckt parameter aren't
+  a parameter name, so foundry_c decks that use `var` as a subckt parameter aren't
   shadowed by the built-in `var` function (STEP 17). (5) A unary `+` following a
   binary operator (e.g. `0.67*+2e-8`) is now accepted as a no-op sign, symmetric
-  with the existing unary-minus handling, fixing GF55 "Misplaced operator"
+  with the existing unary-minus handling, fixing foundry_c "Misplaced operator"
   failures. (6) Added the `nupa_eval_with_scope()` implementation: pushes a
   fresh symbol-table scope, populates it via attrib(), runs formula(), then
   frees the scope with del_attrib WITHOUT promoting locals to globals, used by
@@ -662,7 +662,7 @@ CHANGE:
 +                 * `vec`, `min`, `max`, `pow`, `table_param`).  Only treat
 +                 * it as a function call if it's followed by `(` (after
 +                 * optional whitespace).  Otherwise fall back to treating
-+                 * it as a parameter name — foundry decks (GF55 bcd55
++                 * it as a parameter name — foundry decks (foundry_c bcd55
 +                 * diode_rr.inc) use `var` as a subckt parameter, and
 +                 * shadowing it with the built-in function broke
 +                 * `vrb='var'` and similar chains. */

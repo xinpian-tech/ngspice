@@ -215,7 +215,7 @@ static int is_ident_cont(int c) {
  *
  * Reserved set:
  *   l, w, nf, m, xnf — standard HSPICE instance params
- *   l_calc           — Samsung/foundry "computed length" (= l + p_la
+ *   l_calc           — foundry_b/foundry "computed length" (= l + p_la
  *                       in the foundry subckt; defaults to l alone) */
 static bool expr_refs_instance_geom(const char *expr) {
     static const char *const RES[] = {

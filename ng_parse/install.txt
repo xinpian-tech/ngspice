@@ -1,0 +1,65 @@
+
+The parser in NGSPICE as it is today is not particularly suitable for modern semiconductor processes.
+
+When doing process evaluation using 40nm, 28nm, 22nm (all planar) and 14nm FF, the parse time for the foundry libraries got slower as the node size reduces. I have a 14nm FinFet with thousands of interconnected parameters and the parse time was in the ballpark of 20 minutes, just to read the library. This is unacceptable when all I need it for is to look at a few inverters and logic gates with a simulation time of a few seconds.
+
+It became necessary to create a quicker parser.
+
+The work here parses my library deck in just under 2 seconds, so for my requirements, it works.
+
+The intended audience for this is frankly just me. If it works for you, great. If you don't want to use it because you didn't invent it - also fine with me.
+
+Now - if your work is primarily of the behavioral variety, or system stuff using Verilog-A or XSpice, where the parser is not a bottleneck, then this is probably not for you.
+
+I did use the paranoia tests for regression (not all of which work with the old parser anyway) and I do get like for like results. That said, my focus is for Hspice compatibility, not Pspice or any other flavor. 
+
+When this work started, the old parser being so extremely slow, I made the assumption that a new parser would have to be multi-core. It turned out that this wasn't true - but I added the hooks, so I left it there. And anyway, who knows how crazy future processes will get? Perhaps one day a multi-core parser will be needed.
+
+I assume that if you DO install this parser, then you DO intend to use it. In that case, you just use ngspice as normal
+
+ngspice circuit.net
+
+If you have installed this parser and you DON'T want to use it, then
+
+ngspice --no-ngparse circuit.net
+
+If you want more cores:
+
+ngparse_cores=4 ngspice circuit.net
+
+PREREQUISITES
+-------------
+A Rust toolchain -- rustc and cargo, 1.70 or newer.  Built and tested with 1.85.0
+If you do not have Rust, either install your distribution's rust/cargo package or use rustup (https://rustup.rs).  Rust is needed only to BUILD; the result is a static library that is linked into ngspice
+
+BUILD AND INSTALL NGSPICE
+-------------------------
+Much like before only with "--enable-ngparse" see below:
+
+    cd ngspice
+    ./autogen.sh
+    mkdir -p release && cd release
+    ../configure --enable-ngparse \
+                 --with-x ....... and so on
+                 
+                 
+CHECK IT WORKS
+--------------
+
+For a real check, run a deck both ways and compare. 
+
+    ngspice -b --no-ngparse circuit.net  > old.log 2>&1
+    ngspice -b circuit.net               > new.log 2>&1
+    diff old.log new.log
+    
+The results should be identical
+
+
+ngparse reports any parameter it could not resolve, rather than falling back to a default:
+
+ngparse: WARNING: n parameter(s) could not be resolved and were dropped; the affected device/model falls back to its DEFAULT value:
+
+A dropped parameter does not stop the simulation -- it converges to a wrong answer instead.  None of the PDK decks this was developed against produce any.
+
+
+

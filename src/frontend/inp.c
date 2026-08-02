@@ -13,6 +13,7 @@ Author: 1985 Wayne A. Christopher
 #include "ngspice/cktdefs.h"
 #include "ngspice/cpdefs.h"
 #include "ngspice/inpdefs.h"
+#include "ngspice/ngparse_glue.h"
 #include "ngspice/ftedefs.h"
 #include "ngspice/dvec.h"
 #include "ngspice/fteinp.h"
@@ -529,7 +530,55 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
        inp_source() called with fp: load circuit netlist from file, */
     /* called with *fp == NULL and intfile: we want to load circuit from circarray */
     if (fp || intfile) {
-        deck = inp_readall(fp, dir_name, filename, comfile, intfile, &expr_w_temper);
+        /* ngparse (opt-in, NGSPICE_NGPARSE=1): expand .lib/.inc, the parameters
+         * and the subcircuits up front, then read the RESULT below.  Everything
+         * inp_readall() does besides section extraction still runs over it --
+         * the compatibility passes, and inp_subcktexpand()'s numparam over the
+         * expressions ngparse deliberately leaves symbolic (temper, v(), ...).
+         * .lib/.inc expansion simply finds nothing left to expand.
+         * See ngspice/ngparse_glue.h. */
+        char *ngp_deck = NULL;
+        FILE *ngp_fp = NULL;
+        /* Feed ngparse the file ngspice actually opened (resolved via sourcepath/
+         * inputdir), not the possibly-relative `filename`: a *ng_script deck that
+         * `source`s a netlist from a `set sourcepath` directory hands us a bare
+         * name that does not exist in the cwd. */
+        char *ngp_path = ngparse_glue_realpath(fp, filename);
+        if (ngparse_glue_enabled(comfile, intfile, ngp_path)) {
+            ngp_deck = ngparse_glue_expand(ngp_path);
+            if (!ngp_deck) {
+                tfree(ngp_path);
+                /* ngparse already said why. Close fp as the !deck path below
+                 * does -- inp_spsource owns it -- and report failure. */
+                if (!intfile && fp)
+                    fclose(fp);
+                return 1;
+            }
+            ngp_fp = fopen(ngp_deck, "r");
+            if (!ngp_fp) {
+                fprintf(cp_err, "Error: ngparse: cannot reopen %s\n", ngp_deck);
+                remove(ngp_deck);
+                tfree(ngp_deck);
+                tfree(ngp_path);
+                if (!intfile && fp)
+                    fclose(fp);
+                return 1;
+            }
+            /* `fp` is deliberately left open and untouched: the code below still
+             * uses it to set `inputdir` (relative paths resolve against it) and
+             * closes it on the normal path.  We only divert what inp_readall
+             * READS, to the expanded deck. */
+        }
+        tfree(ngp_path);
+
+        deck = inp_readall(ngp_fp ? ngp_fp : fp, dir_name, filename,
+                           comfile, ngp_fp ? FALSE : intfile, &expr_w_temper);
+
+        if (ngp_fp) {
+            fclose(ngp_fp);
+            remove(ngp_deck);
+            tfree(ngp_deck);
+        }
 
         /* files starting with *ng_script are user supplied command files.
          * Walk past any leading blank cards (see same logic in
@@ -731,9 +780,21 @@ inp_spsource(FILE *fp, bool comfile, char *filename, bool intfile)
             if (!ciprefix(".control", dd->line) && !ciprefix(".endc", dd->line)) {
                 if (dd->line[0] == '*')
                     cp_evloop(dd->line + 2);
-                /* option line stored but not processed */
-                else if (ciprefix("option", dd->line))
+                /* option line stored for the next circuit load ... */
+                else if (ciprefix("option", dd->line)) {
                     com_options = inp_getoptsc(dd->line, com_options);
+                    /* ... and ALSO applied immediately when a circuit is
+                     * already loaded.  Without this, option lines placed
+                     * AFTER the `source` command in a script are silently
+                     * dropped: the com_options list is only merged into a
+                     * circuit at load time (see the line_nconc merge in
+                     * inp_dodeck), so post-source options never reached
+                     * the task.  com_option handles name/value parsing
+                     * and routes through if_option to the default task,
+                     * which analysis commands inherit from. */
+                    if (ft_curckt && ft_curckt->ci_ckt)
+                        cp_evloop(dd->line);
+                }
                 else
                     cp_evloop(dd->line);
             }

@@ -147,6 +147,18 @@ AC_ARG_ENABLE([xspice],
 AC_ARG_ENABLE([osdi],
     [AS_HELP_STRING([--disable-osdi], [Disable OSDI integration])])
 
+# --enable-ngparse: use the ngparse Rust deck expander (opt-in at runtime with
+# the --ngparse flag).  Needs libngparse.a and ngparse.h from the ng_parse repo.
+AC_ARG_ENABLE([ngparse],
+    [AS_HELP_STRING([--enable-ngparse], [Enable the ngparse deck expander])])
+# Default: ng_parse ships inside the ngspice tree, so a plain --enable-ngparse
+# needs no second flag.  A relative DIR resolves against the source tree, an
+# absolute one is used as given -- see the resolution below.
+AC_ARG_WITH([ngparse-dir],
+    [AS_HELP_STRING([--with-ngparse-dir=DIR],
+        [path to the ng_parse tree (default: ng_parse, inside this tree)])],
+    [NGPARSE_DIR="$withval"], [NGPARSE_DIR="ng_parse"])
+
 # --enable-cider: define CIDER in the code. This is for CIDER support
 AC_ARG_ENABLE([cider],
     [AS_HELP_STRING([--enable-cider], [Enable CIDER enhancements])])
@@ -1211,6 +1223,50 @@ else
 fi
 
 AM_CONDITIONAL([OSDI_WANTED], [test "x$enable_osdi" != xno])
+
+# ngparse: link the Rust staticlib and switch on the glue.
+if test "x$enable_ngparse" = xyes; then
+    # Resolve --with-ngparse-dir to an absolute path.  It may be given absolute
+    # OR relative to the source tree, and the build may be out-of-tree, so
+    # neither $(top_srcdir) nor the build dir is safe to prefix blindly.
+    case "$NGPARSE_DIR" in
+        /*) ;;                                      # already absolute
+        *)  ngparse_abs=`cd "$srcdir/$NGPARSE_DIR" 2>/dev/null && pwd`
+            if test -z "$ngparse_abs"; then
+                AC_MSG_ERROR([--with-ngparse-dir: $srcdir/$NGPARSE_DIR does not exist])
+            fi
+            NGPARSE_DIR="$ngparse_abs"
+            ;;
+    esac
+
+    NGPARSE_LIB="$NGPARSE_DIR/target/release/libngparse.a"
+    # The staticlib is built by `make` (see src/Makefile.am), so it need NOT
+    # exist yet -- only the ngparse SOURCE and a Rust toolchain do.  This is what
+    # lets the whole thing build from the ngspice top directory with a plain
+    # `make`, no separate cargo step.
+    AC_CHECK_FILE([$NGPARSE_DIR/Cargo.toml], [],
+        [AC_MSG_ERROR([$NGPARSE_DIR/Cargo.toml not found.
+  --with-ngparse-dir should name the ng_parse checkout itself.])])
+    AC_CHECK_FILE([$NGPARSE_DIR/include/ngparse.h], [],
+        [AC_MSG_ERROR([$NGPARSE_DIR/include/ngparse.h not found.
+  --with-ngparse-dir should name the ng_parse checkout itself.])])
+    AC_CHECK_PROG([CARGO], [cargo], [cargo])
+    if test "x$CARGO" = x; then
+        AC_MSG_ERROR([cargo (the Rust toolchain) is required to build ngparse.
+  Install rustc/cargo (>= 1.70; e.g. your distro package or https://rustup.rs),
+  or configure without --enable-ngparse.])
+    fi
+    AC_MSG_RESULT([ngparse deck expander included (built by make via cargo)])
+    AC_DEFINE([USE_NGPARSE], [1], [Use the ngparse deck expander])
+    NGPARSE_CFLAGS="-I$NGPARSE_DIR/include"
+    NGPARSE_LIBS="$NGPARSE_LIB -lpthread -ldl -lm"
+    AC_SUBST([NGPARSE_CFLAGS])
+    AC_SUBST([NGPARSE_LIBS])
+    AC_SUBST([NGPARSE_DIR])
+    AC_SUBST([NGPARSE_LIB])
+fi
+
+AM_CONDITIONAL([NGPARSE_WANTED], [test "x$enable_ngparse" = xyes])
 
 # Add CIDER enhancements to ngspice.
 if test "x$enable_cider" = xyes; then

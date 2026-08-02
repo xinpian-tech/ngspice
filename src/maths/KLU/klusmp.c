@@ -2030,3 +2030,25 @@ SMPmultiply (SMPmatrix *Matrix, double *RHS, double *Solution, double *iRHS, dou
     }
 }
 
+/*
+ * SMPmultiplyAbs()
+ * Real-only: RHS_n = sum_j G_nj*x_j, AbsRHS_n = sum_j |G_nj*x_j|,
+ * AbsRow_n = sum_j |G_nj|.
+ * Sparse-mode only — the axis-4 residual check in NIiter skips KLU mode,
+ * so the KLU branch just zeroes the outputs.
+ */
+void
+SMPmultiplyAbs (SMPmatrix *Matrix, double *RHS, double *AbsRHS, double *AbsRow,
+                double *Solution)
+{
+    if (Matrix->CKTkluMODE)
+    {
+        size_t i, n = (size_t) Matrix->SMPkluMatrix->KLUmatrixN ;
+        for (i = 0 ; i <= n ; i++)
+            RHS [i] = AbsRHS [i] = AbsRow [i] = 0.0 ;
+        NG_IGNORE (Solution) ;
+    } else {
+        spMultiplyAbs (Matrix->SPmatrix, RHS, AbsRHS, AbsRow, Solution) ;
+    }
+}
+

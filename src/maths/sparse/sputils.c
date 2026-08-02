@@ -611,6 +611,70 @@ spMultiply(MatrixPtr Matrix, RealVector RHS, RealVector Solution,
     }
     return;
 }
+
+
+
+
+/*
+ *  MATRIX MULTIPLICATION WITH ROW MAGNITUDES
+ *
+ *  Real-only companion to spMultiply: computes, in a single traversal,
+ *  the product RHS_n = sum_j G_nj * x_j, the row magnitude
+ *  AbsRHS_n = sum_j |G_nj * x_j|, and the row 1-norm
+ *  AbsRow_n = sum_j |G_nj|.  The magnitudes give each row's natural
+ *  current scale and its attainable precision (row norm times the
+ *  per-unknown solution tolerance), so a caller can form a
+ *  dimensionless residual test — the basis of the axis-4 KCL residual
+ *  convergence check.  Assumes the matrix is real and not factored.
+ */
+
+void
+spMultiplyAbs(MatrixPtr Matrix, RealVector RHS, RealVector AbsRHS,
+              RealVector AbsRow, RealVector Solution)
+{
+    ElementPtr  pElement;
+    RealVector  Vector;
+    RealNumber  Sum, AbsSum, RowSum, Term;
+    int  I, *pExtOrder;
+
+    /* Begin `spMultiplyAbs'. */
+    /* Note: Matrix->Complex may still carry its creation-time value before
+     * the first factor calls spSetReal; each element's Real field is the
+     * stamped real value either way, so only Factored matters here. */
+    assert( IS_SPARSE( Matrix ) && !Matrix->Factored );
+    if (!Matrix->RowsLinked)
+	spcLinkRows(Matrix);
+    if (!Matrix->InternalVectorsAllocated)
+	spcCreateInternalVectors( Matrix );
+
+    /* Initialize Intermediate vector with reordered Solution vector. */
+    Vector = Matrix->Intermediate;
+    pExtOrder = &Matrix->IntToExtColMap[Matrix->Size];
+    for (I = Matrix->Size; I > 0; I--)
+        Vector[I] = Solution[*(pExtOrder--)];
+
+    pExtOrder = &Matrix->IntToExtRowMap[Matrix->Size];
+    for (I = Matrix->Size; I > 0; I--)
+    {
+	pElement = Matrix->FirstInRow[I];
+        Sum = 0.0;
+        AbsSum = 0.0;
+        RowSum = 0.0;
+
+        while (pElement != NULL)
+        {
+	    Term = pElement->Real * Vector[pElement->Col];
+	    Sum += Term;
+	    AbsSum += ABS(Term);
+	    RowSum += ABS(pElement->Real);
+            pElement = pElement->NextInRow;
+        }
+        RHS[*pExtOrder] = Sum;
+        AbsRHS[*pExtOrder] = AbsSum;
+        AbsRow[*pExtOrder--] = RowSum;
+    }
+    return;
+}
 #endif /* MULTIPLICATION */
 
 

@@ -90,6 +90,7 @@ int SMPcAddCol(SMPmatrix *Matrix, int Accum_Col, int Addend_Col);
 int SMPzeroRow(SMPmatrix *Matrix, int Row);
 void SMPconstMult(SMPmatrix *, double);
 void SMPmultiply(SMPmatrix *, double *, double *, double *, double *);
+void SMPmultiplyAbs(SMPmatrix *, double *, double *, double *, double *);
 
 #ifdef CIDER
 void SMPcSolveForCIDER (SMPmatrix *, double [], double [], double [], double []) ;

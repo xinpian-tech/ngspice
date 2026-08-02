@@ -749,7 +749,7 @@ nupa_eval(struct card *card)
     } else if (c == 'B') {              /* substitute braces line */
         /* nupa_substitute() may reallocate line buffer. */
 
-        /* HSPICE-style OSDI model cards (Samsung 14LPU et al.) embed
+        /* HSPICE-style OSDI model cards (foundry_b 14LPU et al.) embed
          * `{...}` expressions on the right-hand side of `.model`
          * params that reference per-instance geometry symbols (`l`,
          * `w`, `nf`, `m`, `xnf`).  These cannot be evaluated at

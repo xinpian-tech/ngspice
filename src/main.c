@@ -8,6 +8,7 @@
 */
 
 #include "ngspice/ngspice.h"
+#include "ngspice/ngparse_glue.h"
 #include "ngspice/const.h"
 #include "ngspice/dstring.h"
 
@@ -751,6 +752,11 @@ show_help(void)
            "  -p, --pipe                run in I/O pipe mode\n"
            "  -r, --rawfile=FILE        set the rawfile output\n"
            "      --soa-log=FILE        set the outputfile for SOA warnings\n"
+#ifdef USE_NGPARSE
+           /* This build has the ngparse expander, and uses it by default. */
+           "      --no-ngparse          parse decks with ngspice's own parser\n"
+           "                            instead of ngparse\n"
+#endif
            "  -s, --server              run spice as a server process\n"
            "  -t, --term=TERM           set the terminal type\n"
            "  -h, --help                display this help and exit\n"
@@ -948,7 +954,7 @@ int main(int argc, char **argv)
 
     /* --- Process command line options --- */
     for (;;) {
-        enum { soa_log = 1001, };
+        enum { soa_log = 1001, ngparse_opt = 1002, no_ngparse_opt = 1003, };
 
         static struct option long_options[] = {
             {"define",       required_argument, NULL, 'D'},
@@ -968,6 +974,8 @@ int main(int argc, char **argv)
             {"server",       no_argument,       NULL, 's'},
             {"terminal",     required_argument, NULL, 't'},
             {"soa-log",      required_argument, NULL, soa_log},
+            {"ngparse",      no_argument,       NULL, ngparse_opt},
+            {"no-ngparse",   no_argument,       NULL, no_ngparse_opt},
             {NULL,           0,                 NULL, 0}
         };
 
@@ -1103,6 +1111,19 @@ int main(int argc, char **argv)
                 sprintf(soa_log_file, "%s", optarg);
                 srflag = TRUE;
             }
+            break;
+
+        case ngparse_opt:
+            /* Accepted and redundant in an --enable-ngparse build, where the
+             * expander is already on; kept so it can be written explicitly, and
+             * so it can say something useful in a build without ngparse. */
+            ngparse_glue_request(TRUE);
+            break;
+
+        case no_ngparse_opt:
+            /* Fall back to ngspice's own parser for this run -- the escape
+             * hatch if a deck ever trips ngparse up, no rebuild needed. */
+            ngparse_glue_request(FALSE);
             break;
 
         case '?':

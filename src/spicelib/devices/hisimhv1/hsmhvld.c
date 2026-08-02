@@ -1991,6 +1991,12 @@ line755: /* standard entry if HSMHVevaluate is bypassed */
       /* Preset vectors and matrix for dynamic part */
 
       cq_d = cq_dP = cq_g = cq_gP = cq_s = cq_sP = cq_bP = cq_b = cq_db = cq_sb = cq_t = cq_qi = cq_qb = 0.0 ;
+      /* Reset the external-charge displacement currents per instance too:
+       * they are function-scope locals only ever added to below, so without
+       * this each instance inherits the accumulated cq_gE/cq_bE/cq_sE of
+       * all previously processed instances of the same model (same defect
+       * as in hisimhv2/hsmhv2ld.c). */
+      cq_dE = cq_gE = cq_sE = cq_bE = 0.0 ;
       for (i = 0; i < XDIM ; i++) {
         ydyn_d[i] = ydyn_dP[i] = ydyn_g[i] = ydyn_gP[i] = ydyn_s[i] = ydyn_sP[i] = ydyn_bP[i] = ydyn_b[i]
 	 = ydyn_db[i] = ydyn_sb[i] = ydyn_t[i] = 0.0;

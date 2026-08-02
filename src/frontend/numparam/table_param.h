@@ -1,9 +1,9 @@
 /*
  * HSPICE table_param() implementation.
  *
- * Foundry PDKs (Samsung 14LPU, TSMC, GF) use HSPICE's table_param()
+ * Foundry PDKs (foundry_b 14LPU, foundry_a, GF) use HSPICE's table_param()
  * extensively for table-file-based parameter lookup — self-heating
- * thermal resistance, RF parasitics, etc.  Samsung's TT corner alone
+ * thermal resistance, RF parasitics, etc.  foundry_b's TT corner alone
  * references it ~1300 times.
  *
  * Syntax:

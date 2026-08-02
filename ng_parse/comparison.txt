@@ -1,0 +1,99 @@
+===============================================================================
+ ng_parse — old frontend vs ngparse: measured comparison
+===============================================================================
+Date:   2026-07-18
+Binary: ngspice built --enable-ngparse (same binary runs both arms; the only
+        difference is the --no-ngparse flag, which selects the old text frontend)
+Host:   12-core Linux; all runs SERIAL (concurrent ngspice runs each grab ~4.5
+        OpenMP cores and skew both timing and, via convergence, results)
+
+ng_parse replaces ngspice's text-expansion front end — .lib/.inc extraction,
+numparam substitution, and .subckt expansion — with a Rust parser that hands
+ngspice the same flat, fully-resolved card stream its own frontend would have
+produced, just far faster. It changes NOTHING downstream (device model setup,
+INPpas1/2/3, the solver), so it changes NOTHING about simulation results.
+
+
+-------------------------------------------------------------------------------
+ 1. THE STORY: foundry model-load time (what ng_parse actually replaces)
+-------------------------------------------------------------------------------
+Parse + model-load ONLY — each deck is sourced, a marker is echoed, and ngspice
+quits before any analysis. This is exactly the work ng_parse replaces; it is NOT
+total run time (which is dominated by simulation and is untouched). Both arms are
+measured warm (an untimed run warms the file cache first), so this is not a
+disk-speed contest.
+
+    deck            old (s)     ngparse (s)     speedup
+    ----            -------     -----------     -------
+    foundry_b         1149.31          2.18         527x      <-- 14LPU PDK
+    foundry_a            32.84          0.58          57x
+    foundry_a             4.85          0.28          17x
+    bandgap            2.74          0.88           3x       (SMIC 90nm)
+    foundry_a            37.18         15.87           2x
+
+The foundry_b 14LPU deck is the headline: ~19 minutes of model-load collapses to
+~2 seconds — a 527x reduction — with bit-identical downstream behavior. The
+smaller nodes gain less in absolute terms because their load was already short;
+the win scales with how much .lib/.inc/.subckt text the deck drags in.
+
+Why the speedup varies: it tracks the size and shape of the resolved deck, not
+the transistor count. foundry_a's load is dominated by ngspice's own OSDI/BSIM-CMG
+model setup (which runs AFTER ng_parse and is not replaced), so its ratio is
+smaller even though the deck is large.
+
+
+-------------------------------------------------------------------------------
+ 2. CORRECTNESS: functional regression, ngparse vs the old parser
+-------------------------------------------------------------------------------
+Every corpus below was run on the hs install. Mode is selected per deck by a
+directory-local .spiceinit (e.g. examples/pton and examples/optran carry
+"set ngbehavior=ps"), which ngspice sources and the ngparse glue honors — so one
+hs run exercises each deck in its intended dialect (hs / ps).
+
+    corpus                          decks     result
+    ------                          -----     ------
+    paranoia (ngspice examples)      209      206 same / 2 diff (see note A)
+    foundry_c sample netlists              26       26/26 expand clean, 0 dropped params
+    ngspice regression suite          56      56/56 pass (11 categories: lib-
+                                              processing, parser, subckt-
+                                              processing, temper, osdi, func,
+                                              misc, model, pz, sens, pipe)
+    OSDI / Verilog-A (in the above)   14      14/14 identical printed values
+    OpenVA spec/va                     2       2/2 identical
+    foundry load (foundry_b/foundry_a/       6       identical downstream; validated by
+       bandgap)                              expansion match + Monte-Carlo
+                                              distribution match (see note B)
+
+Note A — the 2 paranoia diffs are NOT ngparse regressions:
+    optran/F5TurboV2thermal-ic-in.cir  and  optran/HiPass3opamps_optran.cir
+    both hardcode Windows include paths (c:\Spice64\bin\...). The OLD parser
+    fails them too; the difference is only in how each parser reports the missing
+    file. No deck the old parser handles is mishandled by ngparse.
+
+Note B — foundry decks simulate for minutes to hours, so functional equivalence
+    is established by (1) byte-comparing the resolved card stream against the old
+    frontend's output, and (2) confirming Monte-Carlo runs reproduce the SAME
+    distribution (agauss/gauss/limit stay symbolic so ngspice draws per run with
+    its own PRNG — seeded runs are bit-identical, batches match mean and sigma).
+
+
+-------------------------------------------------------------------------------
+ 3. KNOWN LIMITATIONS
+-------------------------------------------------------------------------------
+  * PSpice compatibility (ngbehavior=ps): ngparse replicates the pspice_compat
+    conversions the corpus exercises — if()->ternary_fcn, VSWITCH->sw/pswitch,
+    VALUE={TABLE()}->pwl, pwr/pwrs/stp/int. It does NOT implement LTspice- or
+    KiCad-specific (ngbehavior=lt/ki) conversions; no deck in the corpus needs
+    them.
+  * examples/pton/relax_osc_st.cir: fails in BOTH parsers (it redefines the
+    VCCAP_PSPICE subckt many times); ngparse's failure mode differs from the
+    reference's but neither produces a usable result.
+
+
+-------------------------------------------------------------------------------
+ 4. HOW TO REPRODUCE
+-------------------------------------------------------------------------------
+  Timing (foundry):   harness/reg/bench_parser.sh
+  Paranoia functional: harness/paranoia_compare.sh
+  ngspice regression:  harness/conformance.sh <categories>
+  All are serial by construction; see each script's header for details.
