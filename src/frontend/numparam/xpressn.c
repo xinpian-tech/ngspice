@@ -1210,7 +1210,7 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
                  * `vec`, `min`, `max`, `pow`, `table_param`).  Only treat
                  * it as a function call if it's followed by `(` (after
                  * optional whitespace).  Otherwise fall back to treating
-                 * it as a parameter name — foundry decks (GF55 bcd55
+                 * it as a parameter name — foundry decks (foundry_c bcd55
                  * diode_rr.inc) use `var` as a subckt parameter, and
                  * shadowing it with the built-in function broke
                  * `vrb='var'` and similar chains. */
@@ -1260,7 +1260,7 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
         /* Symmetric to the `c == '-'` case above: a unary `+` directly
          * following a binary operator (e.g. `0.67*+2e-8`) is a no-op
          * sign — drop it and re-read the next token.  Foundry decks
-         * (GF55 bcd55 fixed_corner_bcdlite.inc) use this idiom for
+         * (foundry_c bcd55 fixed_corner_bcdlite.inc) use this idiom for
          * explicit-sign literals: `(sw5)*(0.67*+2e-8)`.  Without this,
          * the unary-plus form failed with "Misplaced operator" while
          * the unary-minus form parsed fine. */

@@ -202,7 +202,7 @@ INPdevParse(char **line, CKTcircuit *ckt, int dev, GENinstance *fast,
                 goto quit;
             }
             /* OSDI models may receive extra instance parameters from PDK
-             * subcircuits (e.g. 'total' from TSMC nch_mac) that the model
+             * subcircuits (e.g. 'total' from foundry_a nch_mac) that the model
              * does not define.  Skip the parameter and its value rather than
              * aborting; this matches HSPICE/Spectre behaviour. */
             if (device->registry_entry != NULL) {

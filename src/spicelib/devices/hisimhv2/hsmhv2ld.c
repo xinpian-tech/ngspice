@@ -651,7 +651,7 @@ int HSMHV2load(
 
         /* NaN-recovery (sanity damping).
          *
-         * Symptom: on big PDKs (Samsung 14LPU 3.3 V LDMOS as `ld3nfet`)
+         * Symptom: on big PDKs (foundry_b 14LPU 3.3 V LDMOS as `ld3nfet`)
          * the initial DC operating-point Newton iteration occasionally
          * lands on bias values that make the HiSIM_HV physics produce
          * NaN currents/conductances.  Those NaN entries are written

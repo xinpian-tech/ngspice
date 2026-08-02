@@ -100,6 +100,7 @@ CKTdoJob(CKTcircuit* ckt, int reset, TSKtask* task)
     ckt->CKTresidCheckDisabled = task->TSKnoResidCheck;
     ckt->CKTosdiStepRejectOff = task->TSKnoOsdiStepReject;
     ckt->CKTdtClearOff = task->TSKnoDtClear;
+    ckt->CKTstateRestoreOff = task->TSKnoStateRestore;
     ckt->CKTosdiVlim = task->TSKosdiVlim;
     ckt->CKTosdiVlimVds = task->TSKosdiVlimVds;
     ckt->CKTosdiVlimVgs = task->TSKosdiVlimVgs;

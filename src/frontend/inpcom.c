@@ -100,7 +100,7 @@ struct function_env
         const char *accept;
     } *functions;
     /* Hash on `name` for O(1) lookup in find_function.  Foundry PDKs
-     * register hundreds-to-thousands of .funcs (Samsung 14LPU's TT
+     * register hundreds-to-thousands of .funcs (foundry_b 14LPU's TT
      * corner has ~1300), and find_function is called once per `(` in
      * every line during macro expansion — the linear scan was billions
      * of strcmp on real decks. */
@@ -3725,8 +3725,8 @@ static void inp_stripcomments_line(char *s, bool cs, bool inc)
         /* outside of .control section, and not in PS mode */
         else if (!cs && (c == '$') && !newcompat.ps) {
             /* HSPICE treats '$' as an end-of-line comment regardless of
-             * the preceding character — foundry decks (Samsung 14LPU,
-             * TSMC, GF) routinely write `...)'$ comment` or `...=10u$ ...`
+             * the preceding character — foundry decks (foundry_b 14LPU,
+             * foundry_a, GF) routinely write `...)'$ comment` or `...=10u$ ...`
              * with no separator.  In ngbehavior=hs / hsa, accept that.
              *
              * Outside HS mode keep the original conservative rule (only
@@ -4000,7 +4000,7 @@ static void inp_fix_for_numparam(
          * conversion that would otherwise hand the path to
          * numparam as an expression and trigger
          *   Number format error: "../path...} <section>"
-         * Observed on GF55 bcd55 sample_netlist/isoednfet_5p0_lr.sp
+         * Observed on foundry_c bcd55 sample_netlist/isoednfet_5p0_lr.sp
          * which uses `.del lib '../models/design_wrapper.lib'` in
          * .alter blocks.  Matches the existing `.lib` skip above. */
         if (ciprefix(".del", c->line) ||
@@ -5644,7 +5644,7 @@ static void inp_sort_params(struct card *param_cards,
      *     scanning every other param's expression for occurrences of each
      *     param's name
      * Both passes are now O(N) + O(total expression chars), enabling real
-     * PDK use (Samsung 14LPU's TT corner had N~2700 per subckt, called
+     * PDK use (foundry_b 14LPU's TT corner had N~2700 per subckt, called
      * ~500 times, totalling many billions of ops in the old code).
      *
      * Encoding: hash stores `(void *)(intptr_t)(i + 1)` so that the NULL

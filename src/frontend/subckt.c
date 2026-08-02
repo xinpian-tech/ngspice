@@ -442,7 +442,7 @@ inp_subcktexpand(struct card *deck) {
      * name (typically the 5th token, after the 4 node terminals) names
      * the type.  ngspice's subckt expander only handles the .subckt
      * case; if no .subckt matches, we'd error here.  But foundry PDKs
-     * (Samsung 14LPU, TSMC, GF) routinely embed VA-module diagnostic
+     * (foundry_b 14LPU, foundry_a, GF) routinely embed VA-module diagnostic
      * instances like `xesd_monitor d g s b esd_nfet_monitor ...`
      * inside their FET subckts, expecting HSPICE-style dispatch.
      *
@@ -605,7 +605,7 @@ get_model_bins(char *curr_line, float *fwmin, float *fwmax,
    parameter.  HSPICE applies a subcircuit's `scale` parameter as the
    element scale factor for the MOSFETs inside it, multiplying their
    W/L before the model bins and simulates.  Foundry MOS macro subckts
-   rely on this (e.g. TSMC `nch_mac ... scale='scale_mos'`).  Detected
+   rely on this (e.g. foundry_a `nch_mac ... scale='scale_mos'`).  Detected
    by a word-boundary "scale" immediately followed (after optional
    whitespace) by '=', so names like `l_scale=` / `noscale=` don't
    match. */

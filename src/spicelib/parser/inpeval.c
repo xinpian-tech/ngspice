@@ -30,6 +30,10 @@ INPevaluate(char **line, int *error, int gobble)
     char *tmpline;
 
     /* setup */
+    /* Clear the bare-.param side channel on every entry, as its
+     * consumers (INPdevParse, com_meas) assume — a non-NULL value must
+     * only ever mean THIS call resolved a bare identifier. */
+    inpeval_last_param_name = NULL;
     tmpline = *line;
 
     if (gobble) {

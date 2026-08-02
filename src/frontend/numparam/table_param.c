@@ -205,7 +205,7 @@ static Table *load_table_file(const char *path) {
  * a malloc'd absolute path the caller must free, or a copy of the
  * input if no search is needed.
  *
- * Foundry PDKs (Samsung 14LPU) reference tables by paths relative to
+ * Foundry PDKs (foundry_b 14LPU) reference tables by paths relative to
  * the .lib file that uses them — `./RF_COMPONENTS/foo.table` is
  * relative to the directory of fets_rf.lib (or wherever the call
  * originated), NOT to the user's cwd or ngspice's sourcepath.

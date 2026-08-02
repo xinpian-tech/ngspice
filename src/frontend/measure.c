@@ -27,6 +27,10 @@ extern bool ft_batchmode;
 extern bool rflag;
 
 
+/* Set by INPevaluate's HSPICE-compat bare-.param resolution path
+   (inpeval.c); see the substitution pre-pass below. */
+extern char *inpeval_last_param_name;
+
 /* measure in interactive mode:
    meas command inside .control ... .endc loop or manually entered.
    meas has to be followed by the standard tokens (see measure_extract_variables()).
@@ -44,6 +48,7 @@ com_meas(wordlist *wl)
     wordlist *wl_index;
     struct dvec *d;
     int err = 0;
+    double subst_val;
 
     int fail;
     double result = 0;
@@ -76,7 +81,8 @@ com_meas(wordlist *wl)
             vec_found = wl_index->wl_word;
             /* token may be already a value, maybe 'LAST', which we have to keep, or maybe a vector */
             if (!cieq(vec_found, "LAST")) {
-                INPevaluate(&vec_found, &err, 1);
+                char *orig_word = wl_index->wl_word;
+                subst_val = INPevaluate(&vec_found, &err, 1);
                 /* if not a valid number */
                 if (err) {
                     /* check if vec_found is a valid vector */
@@ -86,8 +92,18 @@ com_meas(wordlist *wl)
                     if (d && (d->v_length == 1) && (d->v_numdims == 1)) {
                         /* get its value */
                         wl_index->wl_word = tprintf("%e", d->v_realdata[0]);
-                        tfree(vec_found);
+                        tfree(orig_word);
                     }
+                } else if (inpeval_last_param_name) {
+                    /* INPevaluate resolved a bare .param identifier (e.g.
+                       a prior .measure result registered via
+                       nupa_add_param).  Write the value back so the
+                       measure parser sees a number — otherwise the
+                       identifier survives as text and com_measure2
+                       treats it as a full vector, which mis-measures
+                       (and over-reads a length-1 result vector). */
+                    wl_index->wl_word = tprintf("%e", subst_val);
+                    tfree(orig_word);
                 }
             }
         }
@@ -95,7 +111,7 @@ com_meas(wordlist *wl)
         else if ((equal_ptr = strchr(token, '=')) != NULL) {
             vec_found = equal_ptr + 1;
             if (!cieq(vec_found, "LAST")) {
-                INPevaluate(&vec_found, &err, 1);
+                subst_val = INPevaluate(&vec_found, &err, 1);
                 if (err) {
                     d = vec_get(vec_found);
                     /* Only if we have a single valued vector, replacing
@@ -106,6 +122,13 @@ com_meas(wordlist *wl)
                             tprintf("%.*s=%e", lhs_len, token, d->v_realdata[0]);
                         tfree(token);
                     }
+                } else if (inpeval_last_param_name) {
+                    /* bare .param identifier resolved — write the value
+                       back (see whole-token case above) */
+                    int lhs_len = (int)(equal_ptr - token);
+                    wl_index->wl_word =
+                        tprintf("%.*s=%e", lhs_len, token, subst_val);
+                    tfree(token);
                 }
             }
         } else {

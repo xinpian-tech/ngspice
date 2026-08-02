@@ -305,7 +305,7 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
 
     *model = NULL;
 
-    /* Read L (required) and W (optional).  FinFET PDKs (Samsung 14LPU
+    /* Read L (required) and W (optional).  FinFET PDKs (foundry_b 14LPU
      * et al.) have no W on the instance line — only `l=` and
      * `nfin=` — and their `.model` cards bin on `lmin/lmax/nfinmin/
      * nfinmax`, not on W.  Previously this function bailed out as
@@ -348,8 +348,8 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
     /* OSDI bin selection: compare per-finger W (w / nf, already applied
      * above) against the bin's wmin/wmax.  Do NOT divide by m — `m` is a
      * parallel-instance multiplier (the whole device is replicated m
-     * times), so the per-finger geometry is unchanged by it.  TSMC and
-     * GlobalFoundries BSIM-BULK decks author their wmin/wmax tables
+     * times), so the per-finger geometry is unchanged by it.  foundry_a and
+     * foundry_c BSIM-BULK decks author their wmin/wmax tables
      * against the HSPICE/Spectre convention of per-finger W only, so an
      * additional /m here would push the effective W below every bin's
      * lower bound for any moderately-large multi-instance device. */
@@ -399,9 +399,9 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
         }
 
         /* Compare the per-finger W (already w/nf above) and L against
-         * the bin's wmin/wmax and lmin/lmax.  Foundry .lib files (TSMC,
-         * GlobalFoundries, Samsung) author bin boundaries in POST-SHRINK
-         * (EFFECTIVE) dimensions: e.g. TSMC 22nm ULP nch.1 wmax=2.5651µm
+         * the bin's wmin/wmax and lmin/lmax.  Foundry .lib files (foundry_a,
+         * foundry_c, foundry_b) author bin boundaries in POST-SHRINK
+         * (EFFECTIVE) dimensions: e.g. foundry_a 22nm ULP nch.1 wmax=2.5651µm
          * = drawn 3µm × shrink 0.855.  The shrink is applied upstream in
          * subckt expansion (the subcircuit's `scale` parameter multiplies
          * the device W/L) or by the model's own dimension expressions, so
@@ -425,7 +425,7 @@ INPgetModBin(CKTcircuit *ckt, char *name, INPmodel **model, INPtables *tab, char
             *model = modtmp;
             /* Stash the bin's (lmin, lmax) for OSDIsetup's deferred-eval
              * pre-pass, which needs a representative L within the bin's
-             * range to make Samsung-PDK expressions like
+             * range to make foundry_b-PDK expressions like
              * `(l==14n)*X + (l==16n)*Y` evaluate to non-zero. */
             if (is_osdi)
                 osdi_defer_record_bin_range(modtmp->INPmodName, lmin, lmax);

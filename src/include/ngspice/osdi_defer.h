@@ -1,7 +1,7 @@
 /*
  * OSDI deferred-evaluation side table.
  *
- * HSPICE-style PDK model cards (Samsung 14LPU et al.) embed expressions
+ * HSPICE-style PDK model cards (foundry_b 14LPU et al.) embed expressions
  * like
  *     cgbn={((l<=1e-07)*(1e-012)+(l>1e-07)*(...))}
  * directly on the right-hand side of `.model` parameters.  The expression
@@ -44,7 +44,7 @@
  * `snap_*` capture the subckt-instance scope visible at register time.
  * HSPICE-style PDKs put `.model` cards INSIDE a `.subckt` body and let
  * the model's expressions reference subckt-scope `.params` (e.g.
- * Samsung 14LPU's `vsat1=...*(1+vsat_nfet/...)*velsat_mult` where
+ * foundry_b 14LPU's `vsat1=...*(1+vsat_nfet/...)*velsat_mult` where
  * `vsat_nfet`/`velsat_mult`/`xl_nfet` are passed to the subckt via
  * its `params:` list).  By register time the subckt scope has been
  * resolved per-instance (subckt expansion produced model names like
@@ -90,7 +90,7 @@ void osdi_defer_clear(void);
  * INPgetModBin once the model line's lmin/lmax tokens have been
  * parsed, so that OSDIsetup's pre-eval pass can pick a default
  * L within the bin's range (midpoint).  Without this, default
- * L=30nm makes Samsung-PDK expressions like
+ * L=30nm makes foundry_b-PDK expressions like
  * `vsat1='(l==14n)*X + (l==16n)*Y'` evaluate to 0 and BSIM-CMG
  * rejects "vsat1 = 0".  Matched against the runtime model name
  * (after subckt-path prefix is stripped). */

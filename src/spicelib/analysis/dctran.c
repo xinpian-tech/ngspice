@@ -695,7 +695,7 @@ resume:
          * non-uniform x-spacings produces a nonsensical slope at
          * the extrapolation end of the fit window, and Newton then
          * has to undo a 0.5-1 V starting offset on the affected
-         * nodes within itl4 iterations.  Observed on TSMC22 ULP
+         * nodes within itl4 iterations.  Observed on foundry_a ULP
          * driver_lv_2v5_tb: VSN (an L1-coupled supply driving
          * 500-finger BSIM-BULK drivers) catches a ~-0.7 V predictor
          * over-shoot and Newton can't undo it inside Stage A's
@@ -761,6 +761,28 @@ resume:
 
         /* If no convergence in Central solver step */
         if(converged != 0) {
+
+            /* A nonconverged attempt returns with CKTstate0 still holding
+             * the last failed Newton iterate's device states (limiter
+             * voltage history, charge states, OSDI LimitState slots) —
+             * NIiter does not restore them.  The retry then evaluates
+             * devices against that garbage reference, lands further from
+             * the solution, and fails worse; the contamination compounds
+             * geometrically across retries at a single timepoint
+             * (observed: v6#branch −32 A → −58 → −310 → 3e10 A over ~25
+             * retries) until the state explodes and dt collapses to
+             * delmin.  Re-prime the working state from the last ACCEPTED
+             * point so every retry starts from physical values, exactly
+             * like a first attempt does.
+             *
+             * Opt-out via `.option nostaterestore` (suspected of
+             * regressing non-OSDI example decks on raw-transient-start
+             * paths — uic / optran / mid-run retries — where CKTstate1
+             * may not hold a meaningfully accepted point). */
+            if (!ckt->CKTstateRestoreOff &&
+                ckt->CKTstate0 && ckt->CKTstate1)
+                memcpy(ckt->CKTstate0, ckt->CKTstate1,
+                       (size_t) ckt->CKTnumStates * sizeof(double));
 
 #ifndef SHARED_MODULE
             ckt->CKTtime = ckt->CKTtime -ckt->CKTdelta;

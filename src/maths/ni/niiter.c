@@ -160,6 +160,71 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 return (E_ITERLIM);
             }
 
+            /* Axis 4 — row-relative KCL residual convergence check.
+             * f = G*x - b is computed here, in the load->factor window
+             * where the matrix still holds the device Jacobian, and each
+             * row is compared against its own current scale
+             * s_n = sum_j |G_nj*x_j| + |b_n| (plus the gmin-stepping
+             * diagonal term for rows that receive it, so continuation
+             * systems are measured against what is actually solved):
+             *
+             *     |f_n| <= 10*reltol * s_n + abstol
+             *
+             * The row-relative form is what makes this enforceable where
+             * the earlier absolute-norm attempt was not: lenient SPICE3
+             * |dx|-only accepts that real PDK operating points depend on
+             * carry roundoff-scale RELATIVE residuals and pass untouched,
+             * while a false solution (e.g. a multi-million-fin OSDI
+             * device whose hundreds-of-siemens row satisfies |dx|<vntol
+             * long before KCL holds — dynamic gmin stepping was observed
+             * "completing" 1.6 V off the rail at high temperature) shows
+             * an O(1) relative residual and is sent back for further
+             * Newton iterations instead of being accepted.  Threshold
+             * 10*reltol: KCL must close to within an order of magnitude
+             * of the voltage-convergence precision — dimensionless, no
+             * voltage-range or technology assumptions.  NIconvTest gates
+             * on CKTresidConverged (niconv.c).  Sparse-matrix path only;
+             * `.option noresidcheck` opts out. */
+            ckt->CKTresidConverged = 1;
+#ifdef KLU
+            if (!ckt->CKTresidCheckDisabled && !ckt->CKTmatrix->CKTkluMODE)
+#else
+            if (!ckt->CKTresidCheckDisabled)
+#endif
+            {
+                int rn, rsize = SMPmatSize(ckt->CKTmatrix);
+                double *rf = TMALLOC(double, (size_t) rsize + 1);
+                double *rs = TMALLOC(double, (size_t) rsize + 1);
+                double *rg = TMALLOC(double, (size_t) rsize + 1);
+                double rtol = 10.0 * ckt->CKTreltol;
+                double rvtol = 10.0 * ckt->CKTvoltTol;
+                char *rskip = ckt->CKTmatrix->gmin_skip;
+                SMPmultiplyAbs(ckt->CKTmatrix, rf, rs, rg, ckt->CKTrhsOld);
+                for (rn = 1; rn <= rsize; rn++) {
+                    double gterm = (rskip && rskip[rn]) ? 0.0 :
+                        ckt->CKTdiagGmin * ckt->CKTrhsOld[rn];
+                    double fr = rf[rn] + gterm - ckt->CKTrhs[rn];
+                    /* Tolerance = what a solution within per-unknown
+                     * tolerance could produce on this row: the relative
+                     * part scales with the row's own current magnitude,
+                     * the row-norm part (|G|_1 * vntol) is the attainable
+                     * precision of a stiff row — an LU solve cannot push
+                     * a row residual below rownorm * solution-roundoff,
+                     * and demanding it burns iterations at breakpoint
+                     * corners where row values pass through zero. */
+                    double tol_ = rtol * (rs[rn] + fabs(gterm) +
+                                          fabs(ckt->CKTrhs[rn]))
+                                + rvtol * rg[rn] + ckt->CKTabstol;
+                    if (fabs(fr) > tol_) {
+                        ckt->CKTresidConverged = 0;
+                        break;
+                    }
+                }
+                FREE(rf);
+                FREE(rs);
+                FREE(rg);
+            }
+
             /* printf("after loading, before solving\n"); */
             /* CKTdump(ckt); */
 
@@ -322,18 +387,9 @@ NIiter(CKTcircuit *ckt, int maxIter)
                 memcpy(OldCKTstate0, ckt->CKTstate0,
                        (size_t) ckt->CKTnumStates * sizeof(double));
 
-            /* Axis 4 placeholder — the |f|-magnitude (residual-norm) half
-             * of dual-norm convergence stays disabled.  A correct true-KCL
-             * residual check (f = G*x - b via SMPmultiply in the pre-factor
-             * window) was implemented and verified CORRECT, but enforcing it
-             * by default over-rejects real PDK operating points that rely on
-             * ngspice's lenient SPICE3 |dx|-only convergence (TSMC22 OP
-             * diverged, Samsung slowed badly) while a clean circuit (0.9V
-             * inverter) was byte-identical.  So treat residual as always-
-             * passed; NIconvTest gates on |dx| only.  The CKTresidConverged
-             * / CKTresidCheckDisabled fields + niconv.c gate + `.option
-             * noresidcheck` plumbing remain for a future opt-in form. */
-            ckt->CKTresidConverged = 1;
+            /* Axis 4: CKTresidConverged was computed in the load->factor
+             * window above (row-relative KCL residual); by this point the
+             * matrix is factored and no longer holds the Jacobian. */
 
             startTime = SPfrontEnd->IFseconds();
             SMPsolve(ckt->CKTmatrix, ckt->CKTrhs, ckt->CKTrhsSpare);
@@ -355,13 +411,24 @@ NIiter(CKTcircuit *ckt, int maxIter)
             ckt->CKTrhsOld[0] = 0;
 
             /* Newton-step limiter (simulator-side $limit substitute).
-             * Always-on during transient (and DC OP) to clamp per-node
+             * Active during transient (and DC OP) to clamp per-node
              * |Δv| to ±CKTabsDv between Newton iterations.  Matches
              * the default behaviour of Spectre/HSPICE DEVlimvds-style
              * limiters which fire on every iteration as a model-
              * supplied analog of this.  Threshold is CKTabsDv (default
              * 0.5 V) — a model-parameter-agnostic tolerance, not a
              * voltage rail.
+             *
+             * OSDI circuits only (CKTosdiPresent): the limiter exists
+             * as a substitute for model-supplied $limit calls that
+             * OSDI/Verilog-A models may lack.  Applying it to every
+             * circuit regressed non-OSDI decks whose behavioral
+             * macromodels legitimately need multi-kV Newton steps
+             * (PSpice opamp libs: TABLE sources swing to ±3.5 kV) —
+             * the clamp forced a crawl whose small |Δx| the axis-4
+             * residual check then correctly refused, so OP, gmin and
+             * source stepping all failed.  Native SPICE devices carry
+             * their own pnjlim/limvds limiting and never needed this.
              *
              * Skipped on iteration 1 (no previous iterate to compare).
              * Skipped when CKTnodes is NULL (matrix not yet built).
@@ -370,7 +437,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
              * $limit synthesis pass, the model's own limiters apply
              * inside descr->eval() — this simulator-side limiter then
              * sees already-limited Δv and does nothing additional. */
-            if (iterno > 1 && ckt->CKTnodes != NULL) {
+            if (ckt->CKTosdiPresent && iterno > 1 && ckt->CKTnodes != NULL) {
                 double dv_max = (ckt->CKTabsDv > 0) ? ckt->CKTabsDv : 0.5;
                 /* Compute current iteration's max|Δv|.  Needed both
                  * for the Stage A scalar scaling and for the Stage B
@@ -403,7 +470,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
                  *   Stagnation = current max|Δv| not dropping by at
                  *   least 30% from prev iteration.  Unconditional
                  *   halving past iter 3 was preventing convergence
-                 *   on the TSMC22 ULP driver_lv_2v5_tb VSN node: the
+                 *   on the foundry_a ULP driver_lv_2v5_tb VSN node: the
                  *   inductor-coupled supply (L1 = 2.7 nH) naturally
                  *   needs ~100 mV swings to track each switching
                  *   transition, but dv_max would collapse to 8 mV by

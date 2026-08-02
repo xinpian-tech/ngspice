@@ -672,7 +672,7 @@ DCtrCurv(CKTcircuit *ckt, int restart)
              * On the LAST accepted iteration (the one whose NEXT
              * would trigger the stop check), snap cur_val to stop
              * exactly so the saved row's X-value is bit-exact.
-             * GF55 bcd55 isoednfet's `.measure when v(n2)=3.3`
+             * foundry_c bcd55 isoednfet's `.measure when v(n2)=3.3`
              * relies on this. */
             job->TRCVstepCount[i]++;
             double cur_val = job->TRCVvStart[i] +
