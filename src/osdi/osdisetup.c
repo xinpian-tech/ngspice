@@ -319,6 +319,11 @@ int OSDIsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
   OsdiSimParas sim_params_ = get_simparams(ckt);
   OsdiSimParas *sim_params = &sim_params_;
 
+  /* Mark the circuit as containing OSDI devices — gates OSDI-motivated
+   * Newton machinery (per-node Δv limiter in NIiter) so purely native
+   * circuits keep stock iteration behaviour. */
+  ckt->CKTosdiPresent = 1;
+
   /* setup a temporary buffer */
   uint32_t *node_ids = TMALLOC(uint32_t, descr->num_nodes);
 

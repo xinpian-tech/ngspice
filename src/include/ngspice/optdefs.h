@@ -95,6 +95,8 @@ enum {
     OPT_NORESIDCHECK,    /* `.option noresidcheck` opts out of axis-4 dual-norm
                           * convergence (residual-vector check); revert to
                           * SPICE3 solution-only behaviour. */
+    OPT_NOSTATERESTORE,  /* `.option nostaterestore` opts out of the dctran
+                          * failed-attempt device-state restore. */
     OPT_EQNS,
     OPT_REORDTIME,
     OPT_METHOD,

@@ -497,18 +497,24 @@ com_measure_when(
         }
 
         if (has_d2) {
+            /* The loop index runs over d's length; d2 may be shorter
+             * (e.g. a length-1 measure-result vector on the right hand
+             * side of WHEN v(x)=NAME).  Clamp to d2's last element so
+             * a short vector reads as a held constant instead of
+             * running past its allocation. */
+            int i2 = (i < d2->v_length) ? i : d2->v_length - 1;
             if (ac_check) {
                 if (d2->v_compdata)
-                    value2 = get_value(meas, d2, i); //d->v_compdata[i].cx_real;
+                    value2 = get_value(meas, d2, i2); //d->v_compdata[i].cx_real;
                 else
-                    value2 = d2->v_realdata[i];
+                    value2 = d2->v_realdata[i2];
             } else if (sp_check) {
                 if (d2->v_compdata)
-                    value2 = get_value(meas, d2, i); //d->v_compdata[i].cx_real;
+                    value2 = get_value(meas, d2, i2); //d->v_compdata[i].cx_real;
                 else
-                    value2 = d2->v_realdata[i];
+                    value2 = d2->v_realdata[i2];
             } else {
-                value2 = d2->v_realdata[i];
+                value2 = d2->v_realdata[i2];
             }
         } else {
             value2 = NAN;

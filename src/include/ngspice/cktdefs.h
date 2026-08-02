@@ -143,6 +143,14 @@ struct CKTcircuit {
      * opt-out. */
     int CKTosdiStepReject;
     int CKTosdiStepRejectOff;
+    /* Set by OSDIsetup when the circuit contains at least one OSDI
+     * (Verilog-A) device.  Gates OSDI-motivated Newton machinery — the
+     * per-node Δv limiter in NIiter — so that circuits built purely
+     * from native SPICE devices keep stock SPICE3 iteration behaviour. */
+    int CKTosdiPresent;
+    /* `.option nostaterestore` opt-out of the dctran failed-attempt
+     * device-state restore (CKTstate0 <- CKTstate1 on timepoint retry). */
+    int CKTstateRestoreOff;
     /* Per-iteration count of huge-finite Jacobian entries clipped by
      * sanitize_jacobian during CKTload.  When > 0, the model evaluation
      * is in a numerical regime (e.g. BSIM-BULK near a singular operating

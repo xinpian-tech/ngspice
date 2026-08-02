@@ -411,13 +411,24 @@ NIiter(CKTcircuit *ckt, int maxIter)
             ckt->CKTrhsOld[0] = 0;
 
             /* Newton-step limiter (simulator-side $limit substitute).
-             * Always-on during transient (and DC OP) to clamp per-node
+             * Active during transient (and DC OP) to clamp per-node
              * |Δv| to ±CKTabsDv between Newton iterations.  Matches
              * the default behaviour of Spectre/HSPICE DEVlimvds-style
              * limiters which fire on every iteration as a model-
              * supplied analog of this.  Threshold is CKTabsDv (default
              * 0.5 V) — a model-parameter-agnostic tolerance, not a
              * voltage rail.
+             *
+             * OSDI circuits only (CKTosdiPresent): the limiter exists
+             * as a substitute for model-supplied $limit calls that
+             * OSDI/Verilog-A models may lack.  Applying it to every
+             * circuit regressed non-OSDI decks whose behavioral
+             * macromodels legitimately need multi-kV Newton steps
+             * (PSpice opamp libs: TABLE sources swing to ±3.5 kV) —
+             * the clamp forced a crawl whose small |Δx| the axis-4
+             * residual check then correctly refused, so OP, gmin and
+             * source stepping all failed.  Native SPICE devices carry
+             * their own pnjlim/limvds limiting and never needed this.
              *
              * Skipped on iteration 1 (no previous iterate to compare).
              * Skipped when CKTnodes is NULL (matrix not yet built).
@@ -426,7 +437,7 @@ NIiter(CKTcircuit *ckt, int maxIter)
              * $limit synthesis pass, the model's own limiters apply
              * inside descr->eval() — this simulator-side limiter then
              * sees already-limited Δv and does nothing additional. */
-            if (iterno > 1 && ckt->CKTnodes != NULL) {
+            if (ckt->CKTosdiPresent && iterno > 1 && ckt->CKTnodes != NULL) {
                 double dv_max = (ckt->CKTabsDv > 0) ? ckt->CKTabsDv : 0.5;
                 /* Compute current iteration's max|Δv|.  Needed both
                  * for the Stage A scalar scaling and for the Stage B

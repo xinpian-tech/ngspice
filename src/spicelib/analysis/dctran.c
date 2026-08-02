@@ -773,8 +773,14 @@ resume:
              * retries) until the state explodes and dt collapses to
              * delmin.  Re-prime the working state from the last ACCEPTED
              * point so every retry starts from physical values, exactly
-             * like a first attempt does. */
-            if (ckt->CKTstate0 && ckt->CKTstate1)
+             * like a first attempt does.
+             *
+             * Opt-out via `.option nostaterestore` (suspected of
+             * regressing non-OSDI example decks on raw-transient-start
+             * paths — uic / optran / mid-run retries — where CKTstate1
+             * may not hold a meaningfully accepted point). */
+            if (!ckt->CKTstateRestoreOff &&
+                ckt->CKTstate0 && ckt->CKTstate1)
                 memcpy(ckt->CKTstate0, ckt->CKTstate1,
                        (size_t) ckt->CKTnumStates * sizeof(double));
 

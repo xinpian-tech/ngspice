@@ -72,6 +72,9 @@ struct TSKtask {
     unsigned int TSKnoDtClear:1;        /* `.option nodtclear` disables the
                                          * small-dt CKTnoncon clear in
                                          * niiter.c */
+    unsigned int TSKnoStateRestore:1;   /* `.option nostaterestore` disables
+                                         * the dctran failed-attempt state
+                                         * restore (CKTstate0 <- CKTstate1) */
     unsigned int TSKtryToCompact:1; /* flag for LTRA lines */
     unsigned int TSKbadMos3:1; /* flag for MOS3 models */
     unsigned int TSKkeepOpInfo:1; /* flag for small signal analyses */
