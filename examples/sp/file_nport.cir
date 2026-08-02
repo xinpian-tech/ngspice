@@ -25,7 +25,7 @@ L1 0 _net2  66N
 VP4 net2 0 dc 0 ac 0.316228 ; Same as VP1 but that must not be loaded.
 ri2 net2 sin2 50
 N1 sin2 np_model_out 0 mymodel
-.model mymodel nport(file="new_137MHz_BPF.nport")
+.model mymodel nport(file="137mhz_bpf.nport")
 ro2 np_model_out 0 50
 
 * Control section, run simulations.
@@ -34,10 +34,10 @@ ro2 np_model_out 0 50
 * Run an SP analysis, derive group delay, write a Touchstone file
 * Use this Touchstone file for vector fitting by pre_snp, thus get a file 
 * new_137MHz_BPF.nport
-SP LIN 71 107MEG 167MEG
-let Group_Delay = -1*deriv(cph(S_2_1))/(2*pi)
-wrs2p  new_137MHz_BPF.s2p
-pre_snp -native new_137MHz_BPF.s2p
+*SP LIN 71 107MEG 167MEG
+*let Group_Delay = -1*deriv(cph(S_2_1))/(2*pi)
+*wrs2p  $inputdir/new_137mhz_bpf.s2p
+pre_snp -native $inputdir/137mhz_bpf.s2p
 
 * Now run AC analysis
 

@@ -30,14 +30,6 @@ ri net1 sin 50
 X1 sin sp_model_out 0 s2p_generic touchstone="137MHz_BPF.s2p"
 ro sp_model_out 0 50
 
-* A version derived from extracted s-parameters using the nport
-
-VP4 net2 0 dc 0 ac 0.316228 ; Same as VP1 but that must not be loaded.
-ri2 net2 sin2 50
-N1 sin2 np_model_out 0 mymodel
-.model mymodel nport(file="new_137MHz_BPF.nport")
-ro2 np_model_out 0 50
-
 * Control section, run simulations.
 
 .control
@@ -55,8 +47,8 @@ alter vp2 ac = 0
 AC LIN 71 107MEG 167MEG
 set xbrushwidth=2
 display
-plot group_delay(filter_out) sp1.Group_Delay group_delay(sp_model_out) group_delay(np_model_out)
-plot db(filter_out) cph(filter_out) db(sp_model_out) cph(sp_model_out) db(np_model_out) cph(np_model_out)
+plot group_delay(filter_out) sp1.Group_Delay group_delay(sp_model_out)
+plot db(filter_out) cph(filter_out) db(sp_model_out) cph(sp_model_out)
 .endc
 
 * Subcircuit for SP behavioral device
