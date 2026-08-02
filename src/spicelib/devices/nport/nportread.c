@@ -32,6 +32,8 @@ keyword.  All numeric fields are plain doubles.
 #include <stdlib.h>
 #include <string.h>
 
+#include "ngspice/fteext.h"
+
 /* token reader: skips '#'-to-EOL comments; returns 1 on a token, 0 on EOF */
 static int
 nport_tok(FILE *f, char *buf, int cap)
@@ -79,7 +81,7 @@ snp_nport_read(const char *path,
                double **presRe, double **presIm,
                char *err, int errlen)
 {
-    FILE *f = fopen(path, "r");
+    FILE *f = inp_pathopen(path, "r");
     int N = 0, Np = -1, ver = 0, i, got_hdr = 0;
     double *poleRe = NULL, *poleIm = NULL, *d = NULL, *e = NULL;
     double *resRe = NULL, *resIm = NULL;
