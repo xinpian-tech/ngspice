@@ -97,6 +97,8 @@ enum {
                           * SPICE3 solution-only behaviour. */
     OPT_NOSTATERESTORE,  /* `.option nostaterestore` opts out of the dctran
                           * failed-attempt device-state restore. */
+    OPT_NOORDERGUARD,    /* `.option noorderguard` opts out of the dctran
+                          * non-uniform-history predictor order guard. */
     OPT_EQNS,
     OPT_REORDTIME,
     OPT_METHOD,
@@ -156,6 +158,14 @@ enum {
     OPT_NODTCLEAR,        /* `.option nodtclear` disables the small-dt
                            * CKTnoncon clear in niiter.c.  See CKTdtClearOff
                            * comment in cktdefs.h. */
+    OPT_CURRENTSETTLE,    /* `.option currentsettle` opts IN to NIconvTest
+                           * honoring device convTest CKTnoncon reports.
+                           * NOTE: appended at the enum TAIL deliberately —
+                           * the region between OPT_GMIN=1 and
+                           * OPT_SYNCTIME=58 is full; inserting there
+                           * collides auto-numbered members with the
+                           * OPT_SYNCTIME anchor (duplicate-case build
+                           * error in cktacct.c). */
 };
 
 #ifdef XSPICE

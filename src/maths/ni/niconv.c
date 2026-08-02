@@ -82,8 +82,17 @@ NIconvTest(CKTcircuit *ckt)
 #ifdef NEWCONV
     i = CKTconvTest(ckt);
     /* The individual testers, called by CKTconvTest, set
-     * ckt->CKTnoncon and ckt->CKTtroubleElt appropriately. */
-    if (ckt->CKTnoncon != 0) {
+     * ckt->CKTnoncon and ckt->CKTtroubleElt appropriately.
+     *
+     * Honoring those reports here (upstream trunk 0638aaa16,
+     * "Continue Newton iteration until currents settle") activates a
+     * device-current settling test that had been dead code since
+     * spice3f5.  It regresses legacy decks whose devices genuinely
+     * oscillate at tight tolerances yet simulated acceptably for
+     * decades under the solution-only test (e.g. the bundled
+     * 555-timer-2 example at its own RELTOL=1e-4).  Enforce only on
+     * `.option currentsettle`; the default matches ngspice-46. */
+    if (ckt->CKTcurrentSettle && ckt->CKTnoncon != 0) {
         ckt->CKTtroubleNode = 0;
         return(1);
     }

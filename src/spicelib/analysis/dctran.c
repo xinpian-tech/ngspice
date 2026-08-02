@@ -710,8 +710,21 @@ resume:
          *
          * Threshold of 10× chosen so smooth dt-growth sequences
          * (e.g. the 1.5× cap, factor 1.5 per step) never trigger
-         * — only genuine breakpoint-induced discontinuities. */
-        if (ckt->CKTorder > 1 &&
+         * — only genuine breakpoint-induced discontinuities.
+         *
+         * OSDI circuits only (CKTosdiPresent), like the NIiter Δv
+         * limiter: the failure mode this guards against was observed
+         * on OSDI/BSIM-BULK drivers, while for native-device decks
+         * the forced order-1 steps inflate LTE at breakpoint-dense
+         * switching (smaller dt), and combined with the axis-4
+         * residual check this walled the bundled 555-timer-2 example
+         * at t=3.27ms (RELTOL=1e-4).  Stock predictor behaviour is
+         * restored for non-OSDI circuits.
+         *
+         * Opt-out via `.option noorderguard` (diagnostic: lets a
+         * suspect deck run with the stock always-order-2 predictor). */
+        if (ckt->CKTosdiPresent &&
+            !ckt->CKTorderGuardOff && ckt->CKTorder > 1 &&
             ckt->CKTdeltaOld[1] > 0.0 && ckt->CKTdeltaOld[2] > 0.0) {
             double r = ckt->CKTdeltaOld[1] / ckt->CKTdeltaOld[2];
             if (r > 10.0 || r < 0.1) {

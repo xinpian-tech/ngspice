@@ -53,6 +53,12 @@ CKTsetOpt(CKTcircuit *ckt, JOB *anal, int opt, IFvalue *val)
     case OPT_NOSTATERESTORE:
         task->TSKnoStateRestore = (val->iValue != 0);
         break;
+    case OPT_NOORDERGUARD:
+        task->TSKnoOrderGuard = (val->iValue != 0);
+        break;
+    case OPT_CURRENTSETTLE:
+        task->TSKcurrentSettle = (val->iValue != 0);
+        break;
     case OPT_GMIN:
         task->TSKgmin = val->rValue;
         break;
@@ -304,6 +310,8 @@ static IFparm OPTtbl[] = {
  { "noosdistepreject", OPT_NOOSDISTEPREJECT, IF_SET|IF_FLAG, "Disable OSDI axis-3 step rejection (osdiload.c sanitize_jacobian + REJECT_STEP)" },
  { "nodtclear", OPT_NODTCLEAR, IF_SET|IF_FLAG, "Disable small-dt CKTnoncon clear (niiter.c); revert to abort-from-spurious-noncon at dt<1ps" },
  { "nostaterestore", OPT_NOSTATERESTORE, IF_SET|IF_FLAG, "Disable dctran failed-attempt device-state restore (CKTstate0 <- CKTstate1 on retry)" },
+ { "noorderguard", OPT_NOORDERGUARD, IF_SET|IF_FLAG, "Disable dctran non-uniform-history predictor order guard (forced order-1 on >10x dt ratio)" },
+ { "currentsettle", OPT_CURRENTSETTLE, IF_SET|IF_FLAG, "Enable device-current settling enforcement in NIconvTest (trunk 0638aaa16 behaviour; default is ngspice-46 solution-only)" },
  { "gmin", OPT_GMIN,IF_SET|IF_REAL,"Minimum conductance" },
  { "gshunt", OPT_GSHUNT,IF_SET|IF_REAL,"Shunt conductance" },
  { "reltol", OPT_RELTOL,IF_SET|IF_REAL ,"Relative error tolerence"},

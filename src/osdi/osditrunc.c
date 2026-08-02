@@ -68,8 +68,8 @@ int OSDItrunc(GENmodel *in_model, CKTcircuit *ckt, double *timestep) {
    * the most recently accepted step so that fast edges are resolved
    * gradually.
    *
-   * Was 2.0× originally, tightened to 1.5× for pinb/net_7 oscillation
-   * (commit 143a0805f) and now to 1.2× for foundry_a ULP driver_lv_2v5_tb
+   * Was 2.0× originally, tightened to 1.5× for pinb/net_7 oscillation,
+   * and now to 1.2× for foundry_a ULP driver_lv_2v5_tb
    * to address residual pinb failure at t ≈ 1.369 µs.  At 1.5×, dt
    * could grow from ~10 ps post-breakpoint to ~5 ns (the user's max
    * step) in ~15 accepted steps; once Newton had to land a 0.5 V swing
