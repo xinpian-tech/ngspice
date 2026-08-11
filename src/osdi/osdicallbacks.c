@@ -87,7 +87,7 @@ double osdi_limitlog(bool init, bool *check, double vnew, double vold,
   return res;
 }
 
-/* OSDI v0.5 (2C) — absdelay exact-transport reader.  Bound to
+/* OpenVA OSDI (2C) — absdelay exact-transport reader.  Bound to
  * SimInfo.delay_read; the model calls it mid-eval to obtain
  * x(abstime - td) by linear interpolation over the per-instance ring
  * (accepted (time,value) samples, oldest..newest).  SimInfo.delay_state
@@ -108,7 +108,7 @@ double osdi_delay_read(const OsdiSimInfo *info, uint32_t site, double td,
   if (max_td >= 0.0 && td > max_td)
     td = max_td;
 
-  /* OSDI v0.5 (2C AC delay) — stash the (clamped) td so OSDIacLoad can read
+  /* OpenVA OSDI (2C AC delay) — stash the (clamped) td so OSDIacLoad can read
    * td(OP) for this site's e^{-jw*td} delay jacobian. */
   if (extra->delay_td_arr)
     extra->delay_td_arr[site] = td;

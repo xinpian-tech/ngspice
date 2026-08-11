@@ -400,9 +400,8 @@ extern OsdiObjectFile load_object_file(const char *input) {
   } else {
     /* Original OpenVAF binaries don't publish OSDI_DESCRIPTOR_SIZE
      * and must be v0.3 exactly.  OSDI_VERSION_MAJOR_CURR /
-     * OSDI_VERSION_MINOR_CURR now track the current
-     * openvaf-reloaded/OpenVA version (0.5 as of S3a) so the
-     * v0.3 check is hard-coded here. */
+     * OSDI_VERSION_MINOR_CURR track the current OpenVA OSDI
+     * version, so the v0.3 check is hard-coded here. */
     if (OSDI_VERSION_MAJOR != 0 || OSDI_VERSION_MINOR != 3) {
       printf("NGSPICE only supports OSDI v0.3 (original OpenVAF) "
              "or v0.4+ (OpenVAF-reloaded / OpenVA) but \"%s\" uses "
@@ -411,7 +410,11 @@ extern OsdiObjectFile load_object_file(const char *input) {
       txfree(path);
       return INVALID_OBJECT;
     }
-    descriptor_size = sizeof(OsdiDescriptor);
+    /* The v0.3 descriptor ends right where the v0.4 fields begin: it is
+     * the prefix of the current struct up to given_flag_model.  Using
+     * sizeof(OsdiDescriptor) here would walk a multi-descriptor v0.3
+     * file with the wrong stride. */
+    descriptor_size = offsetof(OsdiDescriptor, given_flag_model);
   }
   
   GET_CONST(OSDI_NUM_DESCRIPTORS, uint32_t);
@@ -461,12 +464,31 @@ extern OsdiObjectFile load_object_file(const char *input) {
   }
 
   OsdiRegistryEntry *dst = TMALLOC(OsdiRegistryEntry, OSDI_NUM_DESCRIPTORS);
-  
-  char* desc_ptr = (char*)OSDI_DESCRIPTORS;
+
+  /* Normalize the file's descriptors to this build's layout.  The .osdi
+   * stores an array with stride descriptor_size, which for a v0.3/v0.4 file
+   * is smaller than the current struct (and for a future version may be
+   * larger).  Copy each descriptor into a zeroed full-size OsdiDescriptor so
+   * every field this build knows about reads as a true zero when the file
+   * predates it — downstream code (osdiload.c, osditrunc.c) reads tail
+   * fields like num_cross_exprs without per-field size checks.  The copies
+   * only hold counts/offsets and pointers back into the .so, which stays
+   * loaded for the lifetime of the process. */
+  OsdiDescriptor *descriptors = TMALLOC(OsdiDescriptor, OSDI_NUM_DESCRIPTORS);
+  memset(descriptors, 0, sizeof(OsdiDescriptor) * OSDI_NUM_DESCRIPTORS);
+  {
+    size_t copy_size = descriptor_size < sizeof(OsdiDescriptor)
+                           ? descriptor_size
+                           : sizeof(OsdiDescriptor);
+    for (uint32_t i = 0; i < OSDI_NUM_DESCRIPTORS; i++)
+      memcpy(&descriptors[i],
+             (const char *)OSDI_DESCRIPTORS + (size_t)i * descriptor_size,
+             copy_size);
+  }
+
   for (uint32_t i = 0; i < OSDI_NUM_DESCRIPTORS; i++) {
-    const OsdiDescriptor *descr = (OsdiDescriptor*)desc_ptr;
-    desc_ptr += descriptor_size;
-     
+    const OsdiDescriptor *descr = &descriptors[i];
+
     uint32_t dt = descr->num_params + descr->num_opvars;
     bool has_m = false;
     uint32_t temp = descr->num_params + descr->num_opvars + 1;
@@ -491,28 +513,11 @@ extern OsdiObjectFile load_object_file(const char *input) {
 
     size_t inst_off = calc_osdi_instance_data_off(descr);
     size_t noise_off = calc_osdi_noise_off(descr);
-    /* OSDI v0.5 (2C) — only trust num_delay_sites if the published
-     * descriptor size actually reaches that field; a pre-2C .osdi has a
-     * smaller descriptor and reading it would dereference past its slot. */
-    uint32_t num_delay_sites =
-        (descriptor_size >= offsetof(OsdiDescriptor, num_delay_sites) +
-                                sizeof(uint32_t))
-            ? descr->num_delay_sites
-            : 0u;
-
-    /* Persistent-state offset/count: only trust them if the published
-     * descriptor actually reaches these tail fields (a pre-0.5 .osdi has a
-     * smaller descriptor). */
-    uint32_t persistent_state_count =
-        (descriptor_size >= offsetof(OsdiDescriptor, persistent_state_count) +
-                                sizeof(uint32_t))
-            ? descr->persistent_state_count
-            : 0u;
-    uint32_t persistent_state_offset =
-        (descriptor_size >= offsetof(OsdiDescriptor, persistent_state_offset) +
-                                sizeof(uint32_t))
-            ? descr->persistent_state_offset
-            : 0u;
+    /* v0.5 tail fields: the normalized copy guarantees these read as zero
+     * when the .osdi predates them, so no per-field size checks needed. */
+    uint32_t num_delay_sites = descr->num_delay_sites;
+    uint32_t persistent_state_count = descr->persistent_state_count;
+    uint32_t persistent_state_offset = descr->persistent_state_offset;
 
     dst[i] = (OsdiRegistryEntry){
         .descriptor = descr,

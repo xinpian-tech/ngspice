@@ -20,7 +20,7 @@ int OSDItrunc(GENmodel *in_model, CKTcircuit *ckt, double *timestep) {
   bool has_boundstep = offset != UINT32_MAX;
   offset += entry->inst_offset;
 
-  /* OSDI v0.5 (S3b) — clamp the proposed timestep against any
+  /* OpenVA OSDI (S3b) — clamp the proposed timestep against any
    * pending scheduled events on instances of this model.  Each
    * instance has a sorted per-instance queue of scheduled events;
    * the earliest one bounds dt so the simulator lands exactly on

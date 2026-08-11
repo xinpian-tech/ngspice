@@ -40,7 +40,7 @@ int OSDIacLoad(GENmodel *inModel, CKTcircuit *ckt) {
       descr->load_jacobian_resist(inst, model);
       descr->load_jacobian_react(inst, model, ckt->CKTomega);
 
-      /* OSDI v0.5 (2C AC delay — 1B).  absdelay's exact AC phase: each delay
+      /* OpenVA OSDI (2C AC delay — 1B).  absdelay's exact AC phase: each delay
        * jacobian entry's value V (= ddx(-input), computed at the OP) is stamped
        * as V * e^{-jw*td(site)} into the complex matrix -- V*cos(w*td) into the
        * real part and V*(-sin(w*td)) into the imag part.  This is the

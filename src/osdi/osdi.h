@@ -37,7 +37,7 @@
 #define JACOBIAN_ENTRY_REACT_CONST 2
 #define JACOBIAN_ENTRY_RESIST 4
 #define JACOBIAN_ENTRY_REACT 8
-/* OSDI v0.5 (2C AC delay) — entry has a delay-coupling part loaded
+/* OpenVA OSDI — entry has a delay-coupling part loaded
  * x e^{-jw*td} during AC (touches both real and imag matrix parts). */
 #define JACOBIAN_ENTRY_DELAY 16
 
@@ -63,7 +63,7 @@
 #define EVAL_RET_FLAG_FATAL 2
 #define EVAL_RET_FLAG_FINISH 4
 #define EVAL_RET_FLAG_STOP 8
-/* OSDI v0.5 axis-3 step rejection.  Model raises this when it detects
+/* OpenVA OSDI step rejection.  Model raises this when it detects
  * an ill-conditioned regime (degenerate Jacobian, predicted-voltage
  * out of validity, internal-node blow-up).  ngspice cuts the transient
  * step and retries with smaller delta instead of iterating fruitlessly
@@ -72,8 +72,7 @@
  * step-rejection semantics when the model itself doesn't set the flag. */
 #define EVAL_RET_FLAG_REJECT_STEP 16
 
-/* OSDI v0.5 axis-4 event-driven analog operators.  See
- * OSDI_0_5_DESIGN.md in the OpenVA tree for the full design.
+/* OpenVA OSDI event-driven analog operators.
  *
  * EVENT  — the model wrote one or more entries into the
  *          pending_events array of OsdiSimInfo.  The simulator
@@ -84,14 +83,11 @@
  *          track them across consecutive accepted evals and
  *          bisect on sign-flip per the corresponding
  *          OsdiCrossExprMeta direction.
- *
- * S3a (this commit) defines the bits; S3b implements the runtime
- * loop logic that acts on them.
  */
 #define EVAL_RET_FLAG_EVENT 32
 #define EVAL_RET_FLAG_CROSS 64
 
-/* OSDI v0.5 OsdiEventKind discriminants (§2.6 of the design doc).
+/* OpenVA OSDI OsdiEventKind discriminants.
  * Stored in the `kind` field of OsdiEventRequest (filled by the
  * model) and OsdiEventSlotMeta (defined by OpenVA at compile time)
  * to tell the simulator which kind of analog-block event-control
@@ -128,13 +124,12 @@ typedef struct OsdiSimParas {
   char **vals_str;
 }OsdiSimParas;
 
-/* OSDI v0.5 — event request slot in OsdiSimInfo.pending_events.
+/* OpenVA OSDI — event request slot in OsdiSimInfo.pending_events.
  *
  * The model writes one of these per eval() per active timer/event
  * body that wants the simulator to advance to a specific future
  * time.  The simulator consumes the slots, schedules the requests,
  * and zeros at_time before the next eval to indicate "consumed".
- * See OSDI_0_5_DESIGN.md §2.5 for the layout and lifecycle.
  */
 typedef struct OsdiEventRequest {
   double at_time;     /* zero / NaN = no request from this slot */
@@ -142,7 +137,7 @@ typedef struct OsdiEventRequest {
   uint32_t kind;      /* OSDI_EVENT_KIND_* */
 }OsdiEventRequest;
 
-/* OSDI v0.5 — per-cross-expression metadata in OsdiDescriptor.
+/* OpenVA OSDI — per-cross-expression metadata in OsdiDescriptor.
  *
  * One entry per `@(cross(...))` body the model declares.  OpenVA
  * fills this at compile time from the body's explicit arguments
@@ -158,7 +153,7 @@ typedef struct OsdiCrossExprMeta {
                        * cross is bracketed */
 }OsdiCrossExprMeta;
 
-/* OSDI v0.5 — per-event-slot metadata in OsdiDescriptor.
+/* OpenVA OSDI — per-event-slot metadata in OsdiDescriptor.
  *
  * One entry per `@(cross)` / `@(timer)` / `@(initial_step)` /
  * `@(final_step)` body.  `kind` is the OSDI_EVENT_KIND_*
@@ -177,7 +172,7 @@ typedef struct OsdiSimInfo {
     double *prev_state;
     double *next_state;
     uint32_t flags;
-    /* OSDI v0.5 — see OSDI_0_5_DESIGN.md §2.3.
+    /* OpenVA OSDI event-driven state.
      * Allocated per-instance by setup_instance (sized from the
      * descriptor's num_cross_exprs / num_event_slots).  Zero-init
      * is safe and represents "no event-driven state for this
@@ -190,7 +185,7 @@ typedef struct OsdiSimInfo {
     uint32_t at_scheduled_event;  /* bool, widened to u32 for ABI
                                    * stability across compilers */
     uint32_t fired_event_id;
-    /* S3c — when at_scheduled_event != 0, this carries the true
+    /* When at_scheduled_event != 0, this carries the true
      * scheduled t_event the simulator originally computed (e.g.
      * the linear-interpolated cross-expr crossing time).  The
      * simulator can't always land EXACTLY on t_event, so it fires
@@ -199,19 +194,19 @@ typedef struct OsdiSimInfo {
      * last_crossing lowering reads THIS field instead of abstime
      * to latch the correct crossing time. */
     double scheduled_event_time;
-    /* OSDI v0.5 — set to 1 by the simulator on the eval(s) of the final
+    /* OpenVA OSDI — set to 1 by the simulator on the eval(s) of the final
      * transient timepoint (CKTtime == CKTfinalTime), 0 otherwise.  Lets a
      * model gate an `@(final_step)` body.  Appended at the struct tail so
      * older .osdi binaries (which never read it) stay ABI-compatible. */
     uint32_t at_final_step;
-    /* OSDI v0.5 (axis 2) — the current Newton iteration index (1-based,
+    /* OpenVA OSDI — the current Newton iteration index (1-based,
      * per-Newton-solve; resets each NIiter call), forwarded from
      * ckt->CKTosdiNewtonIter.  Lets a model / compiler-synthesised $limit
      * make its damping iteration-aware (tighten as the count climbs to
      * break oscillation).  Appended at the struct tail so older .osdi
      * binaries (which never read it) stay ABI-compatible. */
     uint32_t newton_iter;
-    /* OSDI v0.5 (2C — absdelay exact transport).  Tail-appended, ABI-safe.
+    /* OpenVA OSDI (absdelay exact transport).  Tail-appended, ABI-safe.
      *   delay_input : per-site scratch (sized num_delay_sites); the model
      *                 writes its current input x there each eval.  The
      *                 simulator pushes (abstime, delay_input[site]) into
@@ -335,12 +330,12 @@ typedef struct OsdiDescriptor {
   void (*load_jacobian_react)(void *inst, void* model, double alpha);
   void (*load_jacobian_tran)(void *inst, void* model, double alpha);
 
-  /* OSDI v0.4 fields — present in the descriptor produced by
-   * OpenVA / openvaf-reloaded for some time but not previously
-   * declared in this header (ngspice didn't need them).  Added
-   * now because the OSDI v0.5 fields below sit after them and
-   * the C struct must mirror the binary's layout to compute
-   * the right offsets. */
+  /* OpenVAF-Reloaded OSDI fields — present in the descriptor
+   * produced by OpenVAF-Reloaded and OpenVA but not previously
+   * declared in this header (ngspice didn't need them).  Declared
+   * because the OpenVA OSDI fields below sit after them and the
+   * C struct must mirror the binary's layout to compute the
+   * right offsets. */
   uint32_t (*given_flag_model)(void *model, uint32_t id);
   uint32_t (*given_flag_instance)(void *inst, uint32_t id);
   uint32_t num_resistive_jacobian_entries;
@@ -352,29 +347,30 @@ typedef struct OsdiDescriptor {
   void (*load_jacobian_with_offset_resist)(void *inst, void* model, size_t offset);
   void (*load_jacobian_with_offset_react)(void *inst, void* model, size_t offset);
 
-  /* OSDI v0.5 — event-driven analog operators (§2.4 of the design
-   * doc).  S3a (this commit) declares the field layout; S3b uses
-   * `num_cross_exprs` / `num_event_slots` to size the per-instance
-   * SimInfo arrays and walks the metadata arrays to drive the
-   * bisection state machine.  Models that don't use cross/timer
-   * features emit zero for the counts and NULL for the metadata
-   * pointers, so older non-0.5 binaries (where these fields don't
-   * exist) read as zero via the OSDI_DESCRIPTOR_SIZE bounds-check
-   * the loader already enforces. */
+  /* OpenVA OSDI — event-driven analog operators.  The simulator
+   * uses `num_cross_exprs` / `num_event_slots` to size the
+   * per-instance SimInfo arrays and walks the metadata arrays to
+   * drive the bisection state machine.  Models that don't use
+   * cross/timer features emit zero for the counts and NULL for the
+   * metadata pointers.  Older binaries (OpenVAF / OpenVAF-Reloaded,
+   * where these fields don't exist) also read as zero: the loader
+   * copies each descriptor into a zeroed full-size struct at load
+   * time (osdiregistry.c), so all tail fields beyond the file's
+   * real descriptor are guaranteed 0. */
   uint32_t num_cross_exprs;
   OsdiCrossExprMeta *cross_expr_metadata;
   uint32_t num_event_slots;
   OsdiEventSlotMeta *event_slot_metadata;
 
-  /* OSDI v0.5 (2C — absdelay exact transport).  Number of per-instance
+  /* OpenVA OSDI (absdelay exact transport).  Number of per-instance
    * transport-delay "sites" (one per absdelay call site in the model).
    * The simulator sizes and manages a (time, value) ring buffer per site
    * per instance; the model records its input each eval and reads delayed
    * values via SimInfo.delay_read.  Zero for models with no absdelay.
-   * Tail-appended — ABI-safe via the OSDI_DESCRIPTOR_SIZE bounds check. */
+   * Tail-appended — ABI-safe via the loader's zeroed-copy normalization. */
   uint32_t num_delay_sites;
 
-  /* OSDI v0.5 (2C AC delay — 1B).  The delay-coupling jacobian category:
+  /* OpenVA OSDI (AC delay).  The delay-coupling jacobian category:
    * absdelay's AC contribution.  num_delay_jacobian_entries jacobian entries
    * carry a delay part (flagged JACOBIAN_ENTRY_DELAY).  write_jacobian_array
    * _delay(inst, model, dst) writes their raw values (ddx(-input)) into dst[
@@ -387,13 +383,13 @@ typedef struct OsdiDescriptor {
   void (*write_jacobian_array_delay)(void *inst, void *model, double *dst);
   uint32_t *delay_jacobian_sites;
 
-  /* OSDI 0.5 — per-instance persistent state (transition()/slew()/event
+  /* OpenVA OSDI — per-instance persistent state (transition()/slew()/event
    * toolkit).  Byte offset and slot count of the persistent_state f64 array
    * inside the instance struct.  The simulator snapshots this array and DEFERS
    * its commit to accepted steps only, so predictor / Newton iterates can't
    * corrupt the previous-accepted value the model reads back.  Both zero for
    * models with no persistent state.  Tail-appended — ABI-safe via the
-   * OSDI_DESCRIPTOR_SIZE bounds check. */
+   * loader's zeroed-copy normalization. */
   uint32_t persistent_state_offset;
   uint32_t persistent_state_count;
 }OsdiDescriptor;

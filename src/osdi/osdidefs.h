@@ -65,7 +65,7 @@ typedef struct OsdiExtraInstData {
   bool dt_given;
   uint32_t eval_flags;
 
-  /* OSDI v0.5 — event-driven analog operators (S3b).
+  /* OpenVA OSDI — event-driven analog operators (S3b).
    *
    * Per-instance scratch buffers for the SimInfo.cross_expr and
    * .pending_events pointers.  Lazily allocated on first eval if
@@ -97,14 +97,14 @@ typedef struct OsdiExtraInstData {
   uint32_t scheduled_count;
   bool cross_init;
 
-  /* OSDI v0.5 (S3c) — abstime of the last accepted eval that
+  /* OpenVA OSDI (S3c) — abstime of the last accepted eval that
    * latched prev_cross_expr_arr.  Used as the lower bound for
    * interpolating the crossing time when the next eval detects a
    * sign flip.  Default -1.0 (no prior eval); the first latched
    * eval sets it to the eval's abstime. */
   double prev_eval_time;
 
-  /* OSDI v0.5 — the SECOND prior accepted (time, cross_expr) sample,
+  /* OpenVA OSDI — the SECOND prior accepted (time, cross_expr) sample,
    * kept so the crossing time can be QUADRATICALLY interpolated from
    * three points (t_prev2, t_prev, t_now) -> O(dt^3) error, instead of
    * the 2-point linear fit -> O(dt^2).  The cross_expr VALUE already
@@ -119,7 +119,7 @@ typedef struct OsdiExtraInstData {
   double *prev2_cross_expr_arr;
   double prev2_eval_time;
 
-  /* OSDI v0.5 (2C) — absdelay exact-transport delay rings.  Lazily
+  /* OpenVA OSDI (2C) — absdelay exact-transport delay rings.  Lazily
    * allocated on first eval when descr->num_delay_sites > 0.
    *   delay_input_arr[site] : current input written by the model each eval
    *       (exposed as SimInfo.delay_input); pushed into the ring at accept.
@@ -130,7 +130,7 @@ typedef struct OsdiExtraInstData {
    *       points back at THIS struct so SimInfo.delay_read can reach them. */
   double *delay_input_arr;
   double *delay_maxtd_arr;
-  /* OSDI v0.5 (2C AC delay) — last td the model passed to delay_read per site,
+  /* OpenVA OSDI (2C AC delay) — last td the model passed to delay_read per site,
    * stashed by osdi_delay_read.  At the AC operating point this holds td(OP),
    * which OSDIacLoad uses for e^{-jw*td} on that site's delay jacobian. */
   double *delay_td_arr;
@@ -139,7 +139,7 @@ typedef struct OsdiExtraInstData {
   uint32_t *delay_count;
   uint32_t *delay_cap;
 
-  /* OSDI 0.5 — DEFERRED-COMMIT snapshot of the model's persistent_state array
+  /* OpenVA OSDI — DEFERRED-COMMIT snapshot of the model's persistent_state array
    * (transition()/slew()/event toolkit).  Sized to
    * entry->persistent_state_count, lazily allocated on first eval.  Holds the
    * value as of the last ACCEPTED step.  Each eval restores the live
@@ -196,7 +196,7 @@ double osdi_limitlog(bool init, bool *icheck, double vnew, double vold,
 double osdi_fetlim(bool init, bool *icheck, double vnew, double vold,
                    double vto);
 
-/* OSDI v0.5 (2C) — absdelay exact-transport reader (bound to
+/* OpenVA OSDI (2C) — absdelay exact-transport reader (bound to
  * SimInfo.delay_read). */
 double osdi_delay_read(const OsdiSimInfo *info, uint32_t site, double td,
                        double max_td);
