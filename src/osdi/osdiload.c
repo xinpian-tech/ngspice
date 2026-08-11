@@ -73,7 +73,7 @@ OsdiSimParas get_simparams(const CKTcircuit *ckt) {
   return sim_params_;
 }
 
-/* OSDI v0.5 (S3b) — per-instance event-state preparation BEFORE
+/* OpenVA OSDI (S3b) — per-instance event-state preparation BEFORE
  * descr->eval is called.  Lazy-allocate cross_expr / pending_events
  * buffers (sized from the descriptor), wire them onto the per-eval
  * SimInfo, and decide whether this eval is at a previously
@@ -217,7 +217,7 @@ static double osdi_cross_time(double t0, double v0,
   return (denom > 0.0) ? t1 + span * (fabs(v1) / denom) : t2;
 }
 
-/* OSDI v0.5 — post-eval processing.
+/* OpenVA OSDI — post-eval processing.
  *
  * S3b: drain model-written pending_events into the sorted
  *      scheduled_events queue.
@@ -321,7 +321,7 @@ static void eval(const OsdiDescriptor *descr, const GENinstance *gen_inst,
   OsdiNgspiceHandle handle =
       (OsdiNgspiceHandle){.kind = 3, .name = gen_inst->GENname};
 
-  /* OSDI v0.5 — per-instance scratch SimInfo with event-state
+  /* OpenVA OSDI — per-instance scratch SimInfo with event-state
    * pointers wired up.  Originals stay shared/read-only across the
    * OMP parallel region. */
   OsdiSimInfo sim_info_local = *sim_info;
@@ -572,7 +572,7 @@ static void load(CKTcircuit *ckt, const GENinstance *gen_inst, void *model,
   }
 }
 
-/* OSDI v0.5 (2C) — push one accepted (time, value) sample into delay ring
+/* OpenVA OSDI (2C) — push one accepted (time, value) sample into delay ring
  * `s`, growing capacity geometrically, then prune leading samples that can
  * no longer bracket any delay <= maxtd (keeping >= 2 for interpolation).
  * maxtd < 0 means unbounded — capped at a defensive ceiling so a deck that
@@ -614,7 +614,7 @@ static void osdi_delay_push(OsdiExtraInstData *extra, uint32_t s, double t,
   }
 }
 
-/* OSDI 0.5 — DEFERRED-COMMIT persistent state.
+/* OpenVA OSDI — DEFERRED-COMMIT persistent state.
  *
  * The model's persistent_state array (transition()/slew()/event toolkit) is
  * read-modify-written in place during eval, so a predictor eval and every
@@ -662,7 +662,7 @@ static void osdi_persist_commit(const OsdiRegistryEntry *entry, void *inst,
   memcpy(extra->persist_snapshot, live, (size_t)n * sizeof(double));
 }
 
-/* OSDI v0.5 (2C) — DEVaccept hook.  Fires once per ACCEPTED transient step
+/* OpenVA OSDI (2C) — DEVaccept hook.  Fires once per ACCEPTED transient step
  * (from CKTaccept); records each instance's current delay input (written by
  * the model during the converged eval) into its per-site transport-delay
  * ring.  Only the accepted trajectory is recorded, which the model itself
@@ -777,7 +777,7 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
     sim_info.flags |= CALC_REACT_JACOBIAN | CALC_REACT_RESIDUAL |
                       CALC_REACT_LIM_RHS | ANALYSIS_TRAN;
 
-    /* OSDI 0.5 — flag the final transient timepoint so a model can fire
+    /* OpenVA OSDI — flag the final transient timepoint so a model can fire
      * an @(final_step) body.  dctran puts a hard breakpoint at
      * CKTfinalTime, so the last accepted step lands exactly on it. */
     if (AlmostEqualUlps(ckt->CKTtime, ckt->CKTfinalTime, 100)) {
@@ -908,7 +908,7 @@ extern int OSDIload(GENmodel *inModel, CKTcircuit *ckt) {
     ckt->CKTnoncon++;
   }
 
-  /* Axis-3 (OSDI v0.5): a model has raised REJECT_STEP, signalling that
+  /* Axis-3 (OpenVA OSDI): a model has raised REJECT_STEP, signalling that
    * its linearization is invalid at the current operating point (predicted
    * voltage outside model validity, internal-node blow-up, ...).  NIiter
    * will observe CKTosdiStepReject after CKTload returns and bail with
