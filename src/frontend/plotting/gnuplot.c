@@ -483,6 +483,9 @@ void ft_gnuplot(double *xlims, double *ylims,
             strcpy(plotstyle, "boxes");
         } else if (plottype == PLOT_COMB) {
             strcpy(plotstyle, "impulses");
+        } else if (plottype == PLOT_ARROWS) {
+            fprintf(file, "set style arrow 1 head nofilled size screen 0.03, 15 lw 2\n");
+            strcpy(plotstyle, "arrows");
         } else if (plottype == PLOT_POINT) {
             if (markers) {
                 // fprintf(file, "Markers: True\n");
@@ -520,8 +523,16 @@ void ft_gnuplot(double *xlims, double *ylims,
                 if (v->v_name) {
                     i = i + 2;
                     if (i > 2) fprintf(file, ",\\\n");
-                    fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
-                        filename_data, i - 1, i, plotstyle, linewidth);
+                    if (eq(plotstyle, "arrows"))
+                        if (ylims)
+                            fprintf(file, "\'%s\' using %d:(%e):(0):(%e+$%d) with vectors arrowstyle 1 title ",
+                                filename_data, i - 1, ylims[0], (-1) * ylims[0], i);
+                        else
+                            fprintf(file, "\'%s\' using %d:(-200):(0):(200+$%d) with vectors arrowstyle 1 title ",
+                                filename_data, i - 1, i);
+                    else
+                        fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
+                            filename_data, i - 1, i, plotstyle, linewidth);
                     quote_gnuplot_string(file, v->v_name);
                 }
             }
@@ -570,8 +581,16 @@ void ft_gnuplot(double *xlims, double *ylims,
                 if (v->v_name) {
                     i = i + 2;
                     if (i > 2) fprintf(file, ",\\\n");
-                    fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
-                        filename_data, i - 1, i, plotstyle, linewidth);
+                    if (eq(plotstyle, "arrows"))
+                        if (ylims)
+                            fprintf(file, "\'%s\' using %d:(%e):(0):(%e+$%d) with vectors arrowstyle 1 title ",
+                                filename_data, i - 1, ylims[0], (-1) * ylims[0], i);
+                        else
+                            fprintf(file, "\'%s\' using %d:(-200):(0):(200+$%d) with vectors arrowstyle 1 title ",
+                                filename_data, i - 1, i);
+                    else
+                        fprintf(file, "\'%s\' using %d:%d with %s lw %d title ",
+                            filename_data, i - 1, i, plotstyle, linewidth);
                     quote_gnuplot_string(file, v->v_name);
                 }
             }

@@ -23,9 +23,11 @@ Q1 out1 Net-_Q1-B_ Net-_Q1-E_ Q2n2222a
 hb $&freq 8
 display
 set xbrushwidth=3
-plot db(out2) combplot ylimit -200 0
+plot db(out2) arrowplot ylimit -200 0
 *pyplot db(out1) db(out2) combplot
-*gnuplot gout db(out1) db(out2) combplot
+gnuplot gout db(out2) arrowplot ylimit -250 0
+set gnuplot_terminal=png
+gnuplot gout db(out2) arrowplot ylimit -250 0
 print hbfrequency db(out1) db(out2)
 *quit
 .endc
