@@ -291,7 +291,7 @@
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-cp -f $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp</Command>
+copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
@@ -333,7 +333,7 @@ cp -f $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-cp -f $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
+copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
 lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <ClCompile>
@@ -376,7 +376,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-cp -f $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp</Command>
+copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Full</Optimization>
@@ -504,7 +504,7 @@ cp -f $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-cp -f $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp</Command>
+copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp</Command>
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Full</Optimization>
@@ -550,7 +550,7 @@ cp -f $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.
     <PreBuildEvent>
       <Message>force recompilation of conf.c with current date</Message>
       <Command>if exist $(IntDir)conf.obj del $(IntDir)conf.obj
-cp -f $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
+copy/Y $(ProjectDir)..\src\frontend\snp2va.c $(ProjectDir)..\src\frontend\snp2va.cpp
 lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3-3.lib</Command>
     </PreBuildEvent>
     <CustomBuildStep>
@@ -617,7 +617,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClInclude Include="..\src\frontend\com_asciiplot.h" />
     <ClInclude Include="..\src\frontend\com_cdump.h" />
     <ClInclude Include="..\src\frontend\com_chdir.h" />
-    <ClInclude Include="..\src\frontend\com_checkpoint.h" />  
+    <ClInclude Include="..\src\frontend\com_checkpoint.h" />
     <ClInclude Include="..\src\frontend\com_commands.h" />
     <ClInclude Include="..\src\frontend\com_compose.h" />
     <ClInclude Include="..\src\frontend\com_display.h" />
@@ -1159,7 +1159,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClInclude Include="..\src\include\cppduals\duals\dual">
       <FileType>Document</FileType>
     </ClInclude>
-    <None Include="..\src\spicelib\devices\nport\Makefile.am" /> 
+    <None Include="..\src\spicelib\devices\nport\Makefile.am" />
     <None Include="..\src\xspice\icm\objects.inc" />
   </ItemGroup>
   <ItemGroup>
@@ -1265,7 +1265,7 @@ lib /machine:x64 /def:..\..\fftw-3.3-dll64\libfftw3-3.def /out:$(IntDir)libfftw3
     <ClCompile Include="..\src\frontend\com_let.c" />
     <ClCompile Include="..\src\frontend\com_loadpull.c" />
     <ClCompile Include="..\src\frontend\com_measure2.c" />
-    <ClCompile Include="..\src\frontend\com_optimize.c" /> 
+    <ClCompile Include="..\src\frontend\com_optimize.c" />
     <ClCompile Include="..\src\frontend\com_option.c" />
     <ClCompile Include="..\src\frontend\com_plot.c" />
     <ClCompile Include="..\src\frontend\com_presnp.c" />
