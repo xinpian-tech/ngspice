@@ -21,6 +21,11 @@ runs it.
 
 #include "com_qpnoise.h"
 
+extern int qp_steptype(const char* w);
+extern int qp_sweep_maxpts(int stepType, int np, double fstart, double fstop);
+extern void qp_emit_plot(const char* plotname, const char* title, double* freqs, int npts,
+    char** vnames, int nvec, double* data);
+
 static double qpnnum(const char *w)
 {
     char *s = (char *) w;
@@ -70,10 +75,6 @@ com_qpnoise(wordlist *wl)
         return;
     }
     {   /* sweep form: qpnoise <out> <dec|oct|lin> <N> <fstart> <fstop> -> onoise/inoise plot */
-        extern int qp_steptype(const char *w);
-        extern int qp_sweep_maxpts(int stepType, int np, double fstart, double fstop);
-        extern void qp_emit_plot(const char *plotname, const char *title, double *freqs, int npts,
-                                 char **vnames, int nvec, double *data);
         int st = qp_steptype(wl->wl_next->wl_word);
         if (st >= 0) {
             double fstart, fstop, *freqs, *data; int np, npts, maxpts;

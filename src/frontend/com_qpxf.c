@@ -20,6 +20,11 @@ output node and runs it.
 
 #include "com_qpxf.h"
 
+extern int qp_steptype(const char* w);
+extern int qp_sweep_maxpts(int stepType, int np, double fstart, double fstop);
+extern void qp_emit_plot(const char* plotname, const char* title, double* freqs, int npts,
+    char** vnames, int nvec, double* data);
+
 static double qpxfnum(const char *w)
 {
     char *s = (char *) w;
@@ -60,10 +65,6 @@ com_qpxf(wordlist *wl)
     outNode = qpxf_node(ckt, wl->wl_word);
     if (outNode <= 0) { fprintf(cp_err, "Error: qpxf: unknown output node '%s'.\n", wl->wl_word); return; }
     {   /* sweep form: qpxf <out> <dec|oct|lin> <N> <fstart> <fstop> -> xf/xf_conv plot */
-        extern int qp_steptype(const char *w);
-        extern int qp_sweep_maxpts(int stepType, int np, double fstart, double fstop);
-        extern void qp_emit_plot(const char *plotname, const char *title, double *freqs, int npts,
-                                 char **vnames, int nvec, double *data);
         int st = qp_steptype(wl->wl_next->wl_word);
         if (st >= 0) {
             double fstart, fstop, *freqs, *data; int np, npts, maxpts;
