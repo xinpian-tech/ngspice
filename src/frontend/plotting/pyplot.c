@@ -47,7 +47,7 @@ void ft_pyplot(double *xlims, double *ylims,
     FILE *file, *file_data;
     struct dvec *v, *scale = NULL;
     int i, col, numVecs, err, nper, nrows, row;
-    bool xlog, ylog, nogrid, markers, boxes, impulses, have_style, have_figsize;
+    bool xlog, ylog, nogrid, markers, boxes, impulses, arrows, have_style, have_figsize;
     char pointstyle[BSIZE_SP], terminal[BSIZE_SP], python[BSIZE_SP], style[BSIZE_SP];
     char figsize[BSIZE_SP], fmt[16];
     char lwarg[32];         /* Enhancement-183: "linewidth=%g, " or "" */
@@ -147,6 +147,7 @@ void ft_pyplot(double *xlims, double *ylims,
 
     impulses = (plottype == PLOT_COMB);
     boxes = (plottype == PLOT_BOXES);
+    arrows = (plottype == PLOT_ARROWS);
     if (plottype == PLOT_POINT)
         markers = TRUE;
 
@@ -247,6 +248,8 @@ void ft_pyplot(double *xlims, double *ylims,
         if (boxes)
             fprintf(file, "step(d[:, %d], d[:, %d], where='mid', %s", col, col + 1, lwarg);
         else if (impulses)
+            fprintf(file, "stem(d[:, %d], d[:, %d], markerfmt=' ', %s", col, col + 1, lwarg);
+        else if (arrows)
             fprintf(file, "stem(d[:, %d], d[:, %d], markerfmt=' ', %s", col, col + 1, lwarg);
         else if (markers)
             fprintf(file, "plot(d[:, %d], d[:, %d], marker='.', linestyle='None', ",

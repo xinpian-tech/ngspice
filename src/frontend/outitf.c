@@ -980,6 +980,9 @@ OUTattributes(runDesc *plotPtr, IFuid varName, int param, IFvalue *value)
         } else if (param == PLOT_COMB) {
             for (d = run->runPlot->pl_dvecs; d; d = d->v_next)
                 d->v_plottype = PLOT_COMB;
+        } else if (param == PLOT_ARROWS) {
+            for (d = run->runPlot->pl_dvecs; d; d = d->v_next)
+                d->v_plottype = PLOT_ARROWS;
         } else {
             run->runPlot->pl_scale->v_gridtype = type;
         }
