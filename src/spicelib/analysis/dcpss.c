@@ -4371,7 +4371,7 @@ shootingexit:
                                                numNames, nameList, IF_COMPLEX,
                                                &(job->PSSplot_fd)) ;
             tfree (nameList) ;
-            SPfrontEnd->OUTattributes (job->PSSplot_fd, NULL, PLOT_COMB, NULL) ;
+            SPfrontEnd->OUTattributes (job->PSSplot_fd, NULL, PLOT_ARROWS, NULL) ;
 
             /* ******************** */
             /* Starting DFT on data */

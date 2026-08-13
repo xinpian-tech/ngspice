@@ -633,11 +633,22 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
             pfound = TRUE;
         }
     }
+    if (getflag(wl, "arrowplot")) {
+        if (pfound) {
+            fprintf(cp_err,
+                "Warning: too many plot types given. "
+                "\"arrowplot\" is ignored.\n");
+        }
+        else {
+            ptype = PLOT_ARROWS;
+            pfound = TRUE;
+        }
+    }
     if (getflag(wl, "boxesplot")) {
         if (pfound) {
             fprintf(cp_err,
                 "Warning: too many plot types given. "
-                "\"combplot\" is ignored.\n");
+                "\"boxesplot\" is ignored.\n");
         }
         else {
             ptype = PLOT_BOXES;
@@ -667,6 +678,9 @@ bool plotit(wordlist *wl, const char *hcopy, const char *devname)
             }
             else if (eq(buf, "combplot")) {
                 ptype = PLOT_COMB;
+            }
+            else if (eq(buf, "arrowplot")) {
+                ptype = PLOT_ARROWS;
             }
             else if (eq(buf, "pointplot")) {
                 ptype = PLOT_POINT;
