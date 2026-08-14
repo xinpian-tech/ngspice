@@ -22,9 +22,9 @@ Q1 out1 Net-_Q1-B_ Net-_Q1-E_ Q2n2222a
 *set hb_verbose
 hb $&freq 8
 display
-set xbrushwidth=3
+set xbrushwidth=2
 plot db(out2) arrowplot ylimit -200 0
-*pyplot db(out1) db(out2) combplot
+pyplot db(out1) db(out2) arrowplot ylimit -250 0
 gnuplot gout db(out2) arrowplot ylimit -250 0
 set gnuplot_terminal=png
 gnuplot gout db(out2) arrowplot ylimit -250 0
