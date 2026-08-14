@@ -484,7 +484,7 @@ void ft_gnuplot(double *xlims, double *ylims,
         } else if (plottype == PLOT_COMB) {
             strcpy(plotstyle, "impulses");
         } else if (plottype == PLOT_ARROWS) {
-            fprintf(file, "set style arrow 1 head nofilled size screen 0.03, 15 lw 2\n");
+            fprintf(file, "set style arrow 1 head nofilled size screen 0.03, 15 lw %d\n", linewidth);
             strcpy(plotstyle, "arrows");
         } else if (plottype == PLOT_POINT) {
             if (markers) {
