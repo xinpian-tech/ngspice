@@ -60,9 +60,9 @@ plot mag(out)  xlimit 300Meg 2300Meg
 meas sp fmax MAX_AT out from=1e8 to=1e9
 echo
 reset
-pss 500e6 8n out 1024 10 5 5e-3 uic
-setplot pss3
-plot out xlimit 300Meg 2300Meg
+* pss <Fguess> <StabTime> <OscNoB> <Points> <Harmonics> <Sc_iter> <Steady_Coeff>
+pss 500e6 1n out 512 6 5 5e-3 uic
+plot mag(out) arrowplot xlimit 300Meg 2300Meg
 setplot pss2
 plot out
 inventory
