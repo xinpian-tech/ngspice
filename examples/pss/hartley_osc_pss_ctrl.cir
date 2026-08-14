@@ -27,8 +27,9 @@ reset
 * gfreq tstab oscnob psspoints harms sciter steadycoeff
 pss 120 100e-3 n2 1024 11 10 5e-3
 rusage
-setplot pss1
-plot v(n2) xlimit 0 500 ylimit 0 1.5
+plot mag(v(n2)) arrowplot xlimit 0 500 ylimit 0 1.5
+gnuplot gpout mag(v(n2)) arrowplot xlimit 0 500 ylimit 0 1.5
+pyplot mag(v(n2)) arrowplot xlimit 0 500 ylimit 0 1.5
 setplot pss2
 plot v(n2)
 .endc

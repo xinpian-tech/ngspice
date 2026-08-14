@@ -31,7 +31,7 @@ meas sp fosc MAX_AT dbv3 from=1Meg to=5Meg
 ** periodic steady state sim
 pss 1e6 50e-6 3 256 10 50 5e-3
 set xbrushwidth=3
-plot v(3) ylimit 0 0.3 xlimit 1Meg 15Meg
+plot mag(v(3)) ylimit 0 0.3 arrowplot xlimit 1Meg 15Meg
 .endc
 
 .end

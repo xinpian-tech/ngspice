@@ -34,7 +34,7 @@ plot mag(bout) xlimit 0 35G
 
 reset
 pss 2G 10n bout 1024 10 5 5e-3 uic
-plot bout xlimit 0 35G
+plot mag(bout) arrowplot xlimit 0 35G
 .endc
 
 .end
