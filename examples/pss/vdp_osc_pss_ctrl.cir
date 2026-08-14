@@ -26,9 +26,10 @@ meas tran ptdiff TRIG v(gib) val=0 RISE=25 TARG v(gib) val=0 RISE=50
 let freq = 25.0/ptdiff
 echo frequency is $&freq
 reset
-pss 0.5e6 100e-6 1 50 10 50 5e-3 uic
+pss 1e6 100e-6 1 50 10 50 5e-3 uic
 rusage time
-plot gib
+set xbrushwidth=2
+plot mag(gib) arrowplot
 setplot pss1
 plot gib
 .endc
