@@ -249,8 +249,11 @@ void ft_pyplot(double *xlims, double *ylims,
             fprintf(file, "step(d[:, %d], d[:, %d], where='mid', %s", col, col + 1, lwarg);
         else if (impulses)
             fprintf(file, "stem(d[:, %d], d[:, %d], markerfmt=' ', %s", col, col + 1, lwarg);
-        else if (arrows)
-            fprintf(file, "stem(d[:, %d], d[:, %d], markerfmt=' ', %s", col, col + 1, lwarg);
+        else if (arrows) {
+            double extrange = (ylims[1] - ylims[0]) * 0.005;
+            fprintf(file, "vlines(x = d[:, %d], ymin = %e, ymax = d[:, %d], colors = \"blue\", %s ",
+                col, ylims[0] - extrange, col + 1, lwarg);
+        }
         else if (markers)
             fprintf(file, "plot(d[:, %d], d[:, %d], marker='.', linestyle='None', ",
                     col, col + 1);
