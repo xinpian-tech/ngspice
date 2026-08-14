@@ -139,6 +139,9 @@ void ft_pyplot(double *xlims, double *ylims,
     lwarg[0] = '\0';
     if (cp_getvar("pyplot_linewidth", CP_REAL, &linewidth, 0) && linewidth > 0.0)
         (void) snprintf(lwarg, sizeof lwarg, "linewidth=%g, ", linewidth);
+    /* use the old label as an alternative */
+    else if (cp_getvar("xbrushwidth", CP_REAL, &linewidth, 0) && linewidth > 0.0)
+        (void) snprintf(lwarg, sizeof lwarg, "linewidth=%g, ", linewidth);
 
     markers = FALSE;
     if (cp_getvar("pointstyle", CP_STRING, pointstyle, sizeof(pointstyle)))
