@@ -285,12 +285,14 @@ static int start(char *system_command, char * c_argv[], Process_t * process)
         filename_in = (char *) calloc(1, syscmd_len + 5);
         if (!filename_in) {
             cm_message_send("ERROR: No memory");
+            cm_cexit(1);
             return 1;
         }
         filename_out = (char *) calloc(1, syscmd_len + 5);
         if (!filename_out) {
             free(filename_in);
             cm_message_send("ERROR: No memory");
+            cm_cexit(1);
             return 1;
         }
         filename_in[0] = '\0';

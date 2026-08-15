@@ -1050,7 +1050,7 @@ bxx_printf(struct bxx_buffer *t, const char *fmt, ...)
         }
     }
 
-    va_end(ap);
+    // va_end(ap); /* already matched with va_start in for loop */
 }
 
 

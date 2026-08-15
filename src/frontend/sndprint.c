@@ -67,9 +67,10 @@ typedef struct {
 } SSFILE;
 
 static void* my_open_sf(char* fn, int nchannel) {
-    SSFILE* d = calloc(1, sizeof(SSFILE));
+    SSFILE* d;
     SF_INFO sfinfo;
 
+    XCALLOC(d, SSFILE, 1);
     sfinfo.samplerate = o_samplerate;
     sfinfo.channels = nchannel;
     sfinfo.frames = 0;
@@ -77,7 +78,7 @@ static void* my_open_sf(char* fn, int nchannel) {
 
     d->sf_channels = nchannel;
     d->sf_bptr = 0;
-    d->sf_buf = calloc(nchannel, sizeof(float));
+    XCALLOC(d->sf_buf, float, nchannel);
 
     if ((d->outfile = sf_open(fn, SFM_WRITE, &sfinfo)) == NULL) {
         fprintf(stderr, "Error: Not able to open output file '%s'\n", fn);
@@ -225,15 +226,15 @@ void snd_init(int nchannel) {
     if (!filename) snd_configure("spice.wav", 48000, o_sndfmt, o_mult, o_off, oversampling);
     outfile = p_open(filename, nchannel);
     sp_nchannel = nchannel;
-    sp_buf = calloc(SP_MAX, sizeof(SP_BUF));
+    XCALLOC(sp_buf, SP_BUF, SP_MAX);
     for (i = 0; i < SP_MAX; i++) {
         sp_buf[i].tme = 0.0;
-        sp_buf[i].val = calloc(nchannel, sizeof(double));
+        XCALLOC(sp_buf[i].val, double, nchannel);
     }
     sample = 0;
 #ifdef HAVE_SRC
-    interleaved = calloc(nchannel * OBUFSIZE * oversampling, sizeof(float));
-    resampled = calloc(nchannel * OBUFSIZE, sizeof(float));
+    XCALLOC(interleaved, float, nchannel * OBUFSIZE * oversampling);
+    XCALLOC(resampled, float, nchannel * OBUFSIZE);
     rabbit = src_new(SRC_SINC_BEST_QUALITY, nchannel, &rabbit_err);
     src_set_ratio(rabbit, 1.0 / OVERSAMPLING);
     src_reset(rabbit);

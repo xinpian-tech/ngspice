@@ -268,6 +268,10 @@ static char  *CNVgettok(char **s)
     /* allocate space big enough for the whole string */
 
     buf = (char *) malloc(strlen(*s) + 1);
+    if (!buf) {
+        cm_message_send("cannot allocate enough memory in file_source");
+        cm_cexit(1);
+    }
 
     /* skip over any white space */
 
@@ -311,6 +315,10 @@ static char  *CNVgettok(char **s)
 
 
     ret_str = (char *) malloc(strlen(buf) + 1);
+    if (!ret_str) {
+        cm_message_send("cannot allocate enough memory in file_source");
+        cm_cexit(1);
+    }
     ret_str = strcpy(ret_str,buf);
 
     if(buf) free(buf);
@@ -397,6 +405,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
                 sizeof(Local_Data_t)))) == (Local_Data_t *) NULL) {
             cm_message_send("Unable to allocate Local_Data_t "
                     "in cm_filesource()");
+            cm_cexit(1);
             return;
         }
 
@@ -408,6 +417,10 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
                 sizeof(struct filesource_state)); /* calloc to null fp */
         loc->indata = (struct infiledata *) malloc(
                 sizeof(struct infiledata));
+        if (!loc->indata) {
+            cm_message_send("cannot allocate enough memory in file_source");
+            cm_cexit(1);
+        }
         loc->indata->datavec = (double *) malloc(sizeof(double) *
                 (size_t) (stepsize * 1000));
 
@@ -415,10 +428,10 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         if (loc->timeinterval == (double *) NULL ||
                 loc->amplinterval == (double *) NULL ||
                 loc->state == (struct filesource_state *) NULL ||
-                loc->indata == (struct infiledata *) NULL ||
                 loc->indata->datavec == (double *) NULL) {
             cm_message_send("Unable to allocate Local_Data_t  fields "
                     "in cm_filesource()");
+            cm_cexit(1);
             cm_filesource_callback(mif_private, MIF_CB_DESTROY);
             return;
         }
@@ -443,6 +456,7 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
                         (char *) NULL) {
                     cm_message_send("Unable to allocate buffer "
                             "for building file name in cm_filesource()");
+                    cm_cexit(1);
                 }
                 else {
                     sprintf(p, "%s%s%s", lbuffer, DIR_PATHSEP, PARAM(file));
@@ -464,7 +478,6 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         while (!loc->state->atend) {
             char line[512];
             char *cp, *cpdel;
-            char *cp2;
             double t = 0, d = 0;
             int i;
             if (!fgets(line, sizeof(line), loc->state->fp)) {
@@ -513,7 +526,9 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
                 void * const p = realloc(loc->indata->datavec,
                         sizeof(double) * loc->indata->vecallocated);
                 if (p == NULL) {
-                    cm_message_printf("cannot allocate enough memory");
+                    cm_message_send("cannot allocate enough memory"
+                       " in file_source");
+                    cm_cexit(1);
                     break; // loc->state->atend = 1;
                 }
                 loc->indata->datavec = (double *) p;
@@ -524,10 +539,10 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
             for (i = 0; i < size; ++i) {
                 while (*cp && (isspace_c(*cp) || *cp == ','))
                     ++cp;
-                char *ncp = CNVgettok(&cp);
-                int ret = cnv_get_spice_value(ncp, &d);
-                free(ncp);
-                if (ret == FAIL) {
+                char *nncp = CNVgettok(&cp);
+                int rret = cnv_get_spice_value(nncp, &d);
+                free(nncp);
+                if (rret == FAIL) {
                     derr = MIF_TRUE;
                     break;
                 }
@@ -550,9 +565,9 @@ void cm_filesource(ARGS)   /* structure holding parms, inputs, outputs, etc.    
         loc->timeinterval[1] = loc->indata->datavec[loc->indata->actpointer + stepsize];
 
         if (terr)
-            cm_message_printf("WARNING: some error occurred during reading the time values");
+            cm_message_send("WARNING: some error occurred during reading the time values");
         if (derr)
-            cm_message_printf("WARNING: some error occurred during reading the data values");
+            cm_message_send("WARNING: some error occurred during reading the data values");
     }
 
     loc = STATIC_VAR (locdata);

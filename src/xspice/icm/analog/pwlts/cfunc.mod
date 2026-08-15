@@ -159,7 +159,7 @@ void cm_pwlts(ARGS)  /* structure holding parms,
 
     CALLBACK = cm_pwlts_callback;
 
-    char *allocation_error="\n***ERROR***\nPWL: Allocation calloc failed!\n";
+    char *allocation_error="\n***ERROR***\nPWL: Allocation malloc/calloc failed!\n";
     char *limit_error="\n***ERROR***\nPWL: Violation of 50% rule in breakpoints!\n";
 
     /* Retrieve frequently used parameters... */
@@ -180,18 +180,24 @@ void cm_pwlts(ARGS)  /* structure holding parms,
         /* Allocate storage for last_x_value */
         STATIC_VAR(last_x_value) = (double *) malloc(sizeof(double));
         last_x_value = (double *) STATIC_VAR(last_x_value);
+        if (!last_x_value) {
+            cm_message_send(allocation_error);
+            cm_cexit(1);
+        }
 
         /* Allocate storage for breakpoint domain & range values */
         STATIC_VAR(x) = (double *) calloc((size_t) size, sizeof(double));
         x = (double *) STATIC_VAR(x);
         if (!x) {
             cm_message_send(allocation_error);
+            cm_cexit(1);
         }
 
         STATIC_VAR(y) = (double *) calloc((size_t) size, sizeof(double));
         y = (double *) STATIC_VAR(y);
         if (!y) {
             cm_message_send(allocation_error);
+            cm_cexit(1);
         }
 
         /* Retrieve x and y values. */

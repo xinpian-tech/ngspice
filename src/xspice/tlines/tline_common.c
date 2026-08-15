@@ -20,13 +20,21 @@
 
 #include <stdlib.h>
 #include <string.h>
-
+#include "ngspice/cmproto.h"
 #include "tline_common.h"
+
+#define CHECK_ALLOC(p) { \
+if (!p) { \
+  cm_message_send("out of memory in tline_common"); \
+  cm_cexit(1); \
+} \
+}
 
 void append_state(tline_state_t **first, double time, double V1, double V2,
 		double I1, double I2, double tmax)
 {
     tline_state_t *pp = (tline_state_t *) malloc(sizeof(tline_state_t));
+    CHECK_ALLOC(pp);
 
     pp->next = NULL;
     pp->time =  time;
@@ -106,6 +114,7 @@ void delete_tline_states(tline_state_t **first)
 void append_cpline_state(cpline_state_t **first, double time, double *Vp, double *Ip, double tmax)
 {
     cpline_state_t *pp = (cpline_state_t *) malloc(sizeof(cpline_state_t));
+    CHECK_ALLOC(pp);
 
     pp->next = NULL;
     pp->time =  time;

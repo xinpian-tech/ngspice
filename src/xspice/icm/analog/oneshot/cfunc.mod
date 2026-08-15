@@ -270,17 +270,24 @@ void cm_oneshot(ARGS)  /* structure holding parms,
         /*** allocate static storage for *loc ***/
         STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
         loc = STATIC_VAR (locdata);
+        if (!loc) {
+            cm_message_send(oneshot_allocation_error);
+            cm_cexit(1);
+            return;
+        }
         CALLBACK = oneshot_callback;
 
         /* Allocate storage for breakpoint domain & pulse width values */
         x = loc->control = (double *) calloc((size_t) cntl_size, sizeof(double));
         if (!x) {
             cm_message_send(oneshot_allocation_error);
+            cm_cexit(1);
             return;
         }
         y = loc->pw = (double *) calloc((size_t) pw_size, sizeof(double));
         if (!y) {
             cm_message_send(oneshot_allocation_error);
+            cm_cexit(1);
             return;
         }
 

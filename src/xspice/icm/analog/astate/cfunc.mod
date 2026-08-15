@@ -102,6 +102,7 @@ void cm_astate(ARGS)
                     sizeof(stLocal_Data_t)))) == (stLocal_Data_t *) NULL) {
                 cm_message_send("Unable to allocate Local_Data_t "
                     "in cm_astate()");
+                cm_cexit(1);
                 return;
             }
             loc->state1 = 0;

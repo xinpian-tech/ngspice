@@ -102,8 +102,11 @@ void cm_d_pwm(ARGS)
 
         table = malloc(csize * sizeof (struct pwl));
         STATIC_VAR(locdata) = table;
-        if (!table)
+        if (!table) {
+            cm_message_send("out of memory in d_pwm");
+            cm_cexit(1);
             return;
+        }
 
         for (i = 0; i < csize; ++i) {
             table[i].ctl = PARAM(cntl_array[i]);

@@ -66,6 +66,12 @@ NON-STANDARD FEATURES
 #define FAIL 1                                        
 
 /*=== MACROS ===========================*/
+#define CHECK_ALLOC(p) { \
+if (!p) { \
+  cm_message_send("out of memory in d_state"); \
+  cm_cexit(1); \
+} \
+}
 
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
 
@@ -183,6 +189,7 @@ static char  *CNVgettok(char **s)
     /* allocate space big enough for the whole string */
 
     buf = (char *) malloc(strlen(*s) + 1);
+    CHECK_ALLOC(buf);
 
     /* skip over any white space */
 
@@ -226,6 +233,7 @@ static char  *CNVgettok(char **s)
 
 
     ret_str = (char *) malloc(strlen(buf) + 1);
+    CHECK_ALLOC(ret_str);
     ret_str = strcpy(ret_str,buf);
 
     if(buf) free(buf);
@@ -1707,6 +1715,7 @@ void cm_d_state(ARGS)
 
         /* Allocate storage for the state transition table. */
         table = calloc(1, sizeof (State_Table_t));
+        CHECK_ALLOC(table);
         STATIC_VAR(table) = table;
 
         /* increment counter if not a comment until EOF reached... */
@@ -1732,14 +1741,18 @@ void cm_d_state(ARGS)
         
         /* Assign storage for arrays to pointers in state table. */
         table->state = (int *)calloc((size_t) (table->depth + 1), sizeof(int));
+        CHECK_ALLOC(table->state);
         table->bits =(short *)calloc(
                          (size_t)(table->num_outputs * table->depth / 4 + 1),
                          sizeof (short));
+        CHECK_ALLOC(table->bits);
         table->inputs = (short *)calloc(
                             (size_t)(table->num_inputs * table->depth / 8 + 1),
                             sizeof (short));
+        CHECK_ALLOC(table->inputs);
         table->next_state = (int *)calloc((size_t)(table->depth + 1),
                                           sizeof (int));
+        CHECK_ALLOC(table->next_state);
         CALLBACK = callback;    // To free those allocations.
 
         /*** allocate storage for *states... ***/

@@ -94,8 +94,11 @@ void cm_d_osc(ARGS)
 
         table = malloc(csize * sizeof (struct pwl));
         STATIC_VAR(locdata) = table;
-        if (!table)
+        if (!table) {
+            cm_message_send("out of memory in d_osc");
+            cm_cexit(1);
             return;
+        }
 
         for (i = 0; i < csize; ++i) {
             table[i].ctl = PARAM(cntl_array[i]);

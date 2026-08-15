@@ -202,12 +202,14 @@ void cm_seegen(ARGS)  /* structure holding parms,
         CALLBACK = cm_seegen_callback;
 
         if (have_scaled) {
-            int j;
-            double del = 1e12;
 
             cm_message_send("Use the scaling option\n");
 
             allpulses = STATIC_VAR(pulses) = (pulse_info_t *) malloc(ports * sizeof(pulse_info_t));
+            if (!allpulses) {
+                cm_message_send("out of memory in seegenerator");
+                cm_cexit(1);
+            }
 
             /* parameter inull not specified, calculate it */
             if (inull == 0) {
@@ -237,6 +239,10 @@ void cm_seegen(ARGS)  /* structure holding parms,
             /* Allocate storage for last_t_value */
             STATIC_VAR(last_t_value) = (double *) malloc(sizeof(double));
             last_t_value = (double *) STATIC_VAR(last_t_value);
+            if (!last_t_value) {
+                cm_message_send("out of memory in seegenerator");
+                cm_cexit(1);
+            }
             /* no start if ctrl is set */
             if (PORT_NULL(ctrl))
                 *last_t_value = tdelay;
@@ -244,9 +250,17 @@ void cm_seegen(ARGS)  /* structure holding parms,
                 *last_t_value = 1e12;
             STATIC_VAR(last_ctrl) = (double *) malloc(sizeof(double));
             last_ctrl = (double *) STATIC_VAR(last_ctrl);
+            if (!last_ctrl) {
+                cm_message_send("out of memory in seegenerator");
+                cm_cexit(1);
+            }
             *last_ctrl = ctrl;
             STATIC_VAR(pulse_number) = (int *) malloc(sizeof(int));
             pulse_number = (int *) STATIC_VAR(pulse_number);
+            if (!pulse_number) {
+                cm_message_send("out of memory in seegenerator");
+                cm_cexit(1);
+            }
             *pulse_number = 1;
 
             /* set breakpoints at first pulse start and pulse maximum times */

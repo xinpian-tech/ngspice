@@ -184,6 +184,10 @@ void cm_d_genlut(ARGS)
         /* allocate storage for the lookup table */
         STATIC_VAR (locdata) = calloc((size_t) tablelen, sizeof(Digital_t));
         lookup_table = STATIC_VAR (locdata);
+        if (!lookup_table) {
+            cm_message_send("out of memory in d_genlut");
+            cm_cexit(1);
+        }
 	CALLBACK = genlut_callback;
 
         /* allocate storage for the outputs */

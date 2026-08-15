@@ -72,6 +72,13 @@ NON-STANDARD FEATURES
 #define DIR_PATHSEP    "/"
 #endif
 
+#define CHECK_ALLOC(p) { \
+if (!p) { \
+  cm_message_send("out of memory in d_source"); \
+  cm_cexit(1); \
+} \
+}
+
 
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/
 
@@ -171,6 +178,7 @@ static char  *CNVgettok(char **s)
     /* allocate space big enough for the whole string */
 
     buf = (char *) malloc(strlen(*s) + 1);
+    CHECK_ALLOC(buf);
 
     /* skip over any white space */
 
@@ -214,6 +222,7 @@ static char  *CNVgettok(char **s)
 
 
     ret_str = (char *) malloc(strlen(buf) + 1);
+    CHECK_ALLOC(ret_str);
     ret_str = strcpy(ret_str,buf);
 
     if(buf) free(buf);
@@ -758,6 +767,7 @@ static int cm_read_source(FILE *source, Local_Data_t *loc)
 
                 /* set storage space for bits in a row and set them to 0*/
                 loc->all_data[i] = (char*)malloc(sizeof(char) * (size_t) loc->width);
+                CHECK_ALLOC(loc->all_data[i]);
                 loc->imal = i;
                 for (n = 0; n < loc->width; n++)
                     loc->all_data[i][n] = 0;
@@ -956,6 +966,7 @@ void cm_d_source(ARGS)
             lbuffer = getenv("NGSPICE_INPUT_DIR");
             if (lbuffer && *lbuffer) {
                 p = (char*) malloc(strlen(lbuffer) + strlen(DIR_PATHSEP) + strlen(PARAM(input_file)) + 1);
+                CHECK_ALLOC(p);
                 sprintf(p, "%s%s%s", lbuffer, DIR_PATHSEP, PARAM(input_file));
                 source = fopen(p, "r");
                 free(p);
@@ -981,6 +992,7 @@ void cm_d_source(ARGS)
         /*** allocate static storage for *loc ***/
         STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
         loc = STATIC_VAR (locdata);
+        CHECK_ALLOC(loc);
         CALLBACK = cm_d_source_callback;
 
         /*** allocate storage for *index, *bits & *timepoint ***/
@@ -1005,7 +1017,9 @@ void cm_d_source(ARGS)
 
         /*** allocate storage for **all_data, & *all_timepoints ***/
         loc->all_timepoints = (double*)calloc((size_t) i, sizeof(double));
+        CHECK_ALLOC(loc->all_timepoints);
         loc->all_data = (char**)calloc((size_t) i, sizeof(char*));
+        CHECK_ALLOC(loc->all_data);
 
         /* Send file pointer and the two array storage pointers */
         /* to "cm_read_source()". This will return after        */

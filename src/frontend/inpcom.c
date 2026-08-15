@@ -1421,7 +1421,7 @@ static struct inp_read_t inp_read(FILE* fp, int call_depth, const char* dir_name
         }
         /* OK -- now we have loaded the next line into 'buffer'.  Process it.
          *
-        /* If input line is blank, ignore it & continue looping.  */
+         * If input line is blank, ignore it & continue looping.  */
         if ((strcmp(buffer, "\n") == 0) || (strcmp(buffer, "\r\n") == 0))
             if (call_depth != 0 || (call_depth == 0 && cc != NULL)) {
                 line_number_orig++;

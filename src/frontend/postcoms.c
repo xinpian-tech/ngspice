@@ -678,7 +678,7 @@ com_write(wordlist *wl)
                 }
             }
         }
-        end->v_next = NULL;
+        if (end) end->v_next = NULL;
 
         /* Maybe we shouldn't make sure that the default scale is
          * present if nobody uses it.
@@ -843,7 +843,7 @@ com_write_sparam(wordlist *wl)
                 }
             }
         }
-        end->v_next = NULL;
+        if (end) end->v_next = NULL;
 
         /* Maybe we shouldn't make sure that the default scale is
          * present if nobody uses it.

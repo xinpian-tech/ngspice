@@ -191,6 +191,10 @@ void cm_zener(ARGS)  /* structure holding parms,
         /* Allocate storage for frequencies */
         STATIC_VAR(previous_voltage) = (double *) malloc(sizeof(double));
         previous_voltage = (double *) STATIC_VAR(previous_voltage);
+        if (!previous_voltage) {
+            cm_message_send("out of memory in zener");
+            cm_cexit(1);
+        }
 
         /* Set previous_voltage value to zero... */
         *previous_voltage = 0.0;

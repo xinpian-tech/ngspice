@@ -14,6 +14,12 @@ is returned.  The original input string is undisturbed.
 
 #include "gettokens.h"
 
+#define CHECK_ALLOC(p) { \
+if (!p) { \
+  cm_message_send("out of memory in gettokens"); \
+  cm_cexit(1); \
+} \
+}
 
 
 char *CNVgettok(char **s)
@@ -27,6 +33,7 @@ char *CNVgettok(char **s)
     /* allocate space big enough for the whole string */
 
     buf = (char *) malloc(strlen(*s) + 1);
+    CHECK_ALLOC(buf);
 
     /* skip over any white space */
 
@@ -71,6 +78,7 @@ char *CNVgettok(char **s)
 
 
     ret_str = (char *) malloc(strlen(buf) + 1);
+    CHECK_ALLOC(ret_str);
     ret_str = strcpy(ret_str,buf);
 
     if (buf) free(buf);

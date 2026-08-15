@@ -98,20 +98,20 @@ enum ALL_TYPE_ENUM {
 static enum ALL_TYPE_ENUM get_all_type(const char *word)
 {
     /* Check for start of "all" */
-    if (tolower(word[0] != 'a')) {
+    if (word[0] == '\0' || tolower(word[0]) != 'a') {
         return ALL_TYPE_NONE;
     }
-    if (tolower(word[1] != 'l')) {
+    if (word[1] == '\0' || tolower(word[1]) != 'l') {
         return ALL_TYPE_NONE;
     }
-    if (tolower(word[2] != 'l')) {
+    if (word[2] == '\0' || tolower(word[2]) != 'l') {
         return ALL_TYPE_NONE;
     }
-
+    if (word[3] == '\0') {
+        return ALL_TYPE_ALL;
+    }
     /* It may be some type of all */
     switch (tolower(word[3])) {
-    case '\0':
-        return ALL_TYPE_ALL;
     case 'v':
         if (word[4] == '\0') {
             return ALL_TYPE_ALLV;
@@ -142,7 +142,7 @@ static enum ALL_TYPE_ENUM get_all_type(const char *word)
         }
     default:
         return ALL_TYPE_NONE;
-    } /* end of swith over char after "all" */
+    } /* end of switch over char after "all" */
 } /* end of function get_all_type */
 
 

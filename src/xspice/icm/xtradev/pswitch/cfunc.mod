@@ -192,6 +192,10 @@ void cm_pswitch(ARGS)  /* structure holding parms,
         /*** allocate static storage for *loc ***/
         STATIC_VAR (locdata) = calloc (1 , sizeof ( Local_Data_t ));
         loc = STATIC_VAR (locdata);
+        if (!loc) {
+            cm_message_send("out of memory in pswitch");
+            cm_cexit(1);
+        }
 
         loc->cntl_on = cntl_on;
         loc->cntl_off = cntl_off;

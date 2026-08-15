@@ -91,8 +91,11 @@ static double *read_file(const char *fn, int span, int offset,
 
     size = ALLOC;
     file_data = malloc(size * sizeof(double));
-    if (!file_data)
+    if (!file_data) {
+        cm_message_send("out of memory in xfer");
+        cm_cexit(1);
         goto bad;
+    }
     want = skip = i = 0;
 
     while (fgets(buff, sizeof buff, fp)) {
@@ -129,8 +132,11 @@ static double *read_file(const char *fn, int span, int offset,
         if (i + 9 > size) {
             size += ALLOC;
             file_data = realloc(file_data, size * sizeof(double));
-            if (!file_data)
+            if (!file_data) {
+                cm_message_send("out of memory in xfer");
+                cm_cexit(1);
                 goto bad;
+            }
         }
 
         while (j < count) {
@@ -251,18 +257,26 @@ void cm_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
         /* Allocate the internal table. */
 
         table = (struct data *)malloc(sizeof(struct data));
-        if (!table)
+        if (!table) {
+            cm_message_send("out of memory in xfer");
+            cm_cexit(1);
             return;
+        }
         table->size = size;
         table->f = (double*)malloc(size * sizeof (double));
+        /* no need for frees when out of memory */
         if (!table->f) {
-            free(table);
+            //free(table);
+            cm_message_send("out of memory in xfer");
+            cm_cexit(1);
             return;
         }
         table->s = ( Mif_Complex_t *)malloc(size * sizeof (Mif_Complex_t));
         if (!table->s) {
-            free(table->f);
-            free(table);
+            //free(table->f);
+            //free(table);
+            cm_message_send("out of memory in xfer");
+            cm_cexit(1);
             return;
         }
         STATIC_VAR(table) = table;

@@ -64,8 +64,12 @@ NON-STANDARD FEATURES
 
 
 /*=== MACROS ===========================*/
-
-
+#define CHECK_ALLOC(p) { \
+if (!p) { \
+  cm_message_send("out of memory in s_xfer"); \
+  cm_cexit(1); \
+} \
+}
 
   
 /*=== LOCAL VARIABLES & TYPEDEFS =======*/                         
@@ -281,15 +285,21 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 	are not functional */
 
         integrator     = (double **) calloc((size_t) den_size, sizeof(double *));
+        CHECK_ALLOC(integrator);
         old_integrator = (double **) calloc((size_t) den_size, sizeof(double *));
+        CHECK_ALLOC(old_integrator);
 
         /* Allocate storage for coefficient values */
 
         den_coefficient     = (double **) calloc((size_t) den_size, sizeof(double *));
+        CHECK_ALLOC(den_coefficient);
         old_den_coefficient = (double **) calloc((size_t) den_size, sizeof(double *));
+        CHECK_ALLOC(old_den_coefficient);
 
         num_coefficient     = (double **) calloc((size_t) num_size, sizeof(double *));
+        CHECK_ALLOC(num_coefficient);
         old_num_coefficient = (double **) calloc((size_t) num_size, sizeof(double *));
+        CHECK_ALLOC(old_num_coefficient);
 
         for (i=0; i < (2*den_size + num_size + 3); i++)
               cm_analog_alloc(i,sizeof(double));
@@ -297,6 +307,7 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
    /*     ITP_VAR_SIZE(den) = den_size;  */
 
      /*   gain = (double *) calloc(1,sizeof(double));
+        CHECK_ALLOC(gain);
         ITP_VAR(total_gain) = gain;
         ITP_VAR_SIZE(total_gain) = 1.0;  */
 
@@ -327,7 +338,9 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
         /* Set pointers to storage locations for in, out, and integrators...*/
  
         integrator = (double **) calloc((size_t) den_size, sizeof(double *));
+        CHECK_ALLOC(integrator);
         old_integrator = (double **) calloc((size_t) den_size, sizeof(double *));
+        CHECK_ALLOC(old_integrator);
 
         for (i=0; i<den_size; i++) {
             integrator[i] = (double *) cm_analog_get_ptr(i,0);
@@ -342,7 +355,9 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
         /* for denominator coefficients & gain...      */
 
         old_den_coefficient = (double **) calloc((size_t) den_size, sizeof(double *));
+        CHECK_ALLOC(old_den_coefficient);
         den_coefficient = (double **) calloc((size_t) den_size, sizeof(double *));
+        CHECK_ALLOC(den_coefficient);
 
 		for(i=den_size;i<2*den_size;i++){
             old_den_coefficient[i-den_size] = (double *) cm_analog_get_ptr(i,1);
@@ -351,7 +366,9 @@ void cm_s_xfer(ARGS)  /* structure holding parms, inputs, outputs, etc.     */
 		} 
 
         num_coefficient = (double **) calloc((size_t) num_size, sizeof(double *));
+        CHECK_ALLOC(num_coefficient);
 		old_num_coefficient = (double **) calloc((size_t) num_size, sizeof(double *));
+        CHECK_ALLOC(old_num_coefficient);
 
 		for(i=2*den_size;i<2*den_size+num_size;i++){
 		    old_num_coefficient[i-2*den_size] = (double *) cm_analog_get_ptr(i,1);

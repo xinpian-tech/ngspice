@@ -131,6 +131,7 @@ void cm_delay(ARGS)
                     sizeof(mLocal_Data_t)))) == (mLocal_Data_t *) NULL) {
                 cm_message_send("Unable to allocate Local_Data_t "
                     "in cm_delay()");
+                cm_cexit(1);
                 return;
             }
             /*** allocate static storage for the delay buffer ***/
@@ -138,6 +139,7 @@ void cm_delay(ARGS)
             if (loc->buffer == (double *) NULL) {
                 cm_message_send("Unable to allocate delay buffer "
                     "in cm_delay()");
+                cm_cexit(1);
                 return;
             }
             loc->buffer_size = buffer_size;

@@ -140,6 +140,10 @@ void cm_sidiode(ARGS)  /* structure holding parms,
         /* allocate static storage for *loc */
         STATIC_VAR(locdata) = calloc (1, sizeof(Local_Data_t));
         loc = STATIC_VAR(locdata);
+        if (!loc) {
+            cm_message_send("out of memory in sidiode");
+            cm_cexit(1);
+        }
 
         goff = 1./PARAM(roff);
         gon = 1./PARAM(ron);

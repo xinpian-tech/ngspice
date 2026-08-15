@@ -905,7 +905,7 @@ TWObindCSC (TWOdevice *pDevice)
   BindStruct = pDevice->matrix->SMPkluMatrix->KLUmatrixBindStructForCIDER ;
   nz = pDevice->matrix->SMPkluMatrix->KLUmatrixNZ ;
 
-  BindStructCSC = (BindElementKLUforCIDER *) malloc (nz * sizeof (BindElementKLUforCIDER)) ;
+  BindStructCSC = TMALLOC (BindElementKLUforCIDER, nz) ;
   for (index = 0 ; index < (int)nz ; index++) {
     BindStructCSC [index] = BindStruct [index] ;
   }

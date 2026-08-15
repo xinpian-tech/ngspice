@@ -118,6 +118,10 @@ void spice2poly (ARGS)
         Mif_Inst_Var_Data_t *p = STATIC_VAR_INST(acgains);
         p -> size    = num_inputs;
         p -> element = (Mif_Value_t *) malloc((size_t) num_inputs * sizeof(Mif_Value_t));
+        if (!p->element) {
+            cm_message_send("out of memory in spice2poly");
+            cm_cexit(1);
+        }
         for(i = 0; i < num_inputs; i++)
             STATIC_VAR(acgains[i]) = 0.0;
     }
@@ -136,18 +140,30 @@ void spice2poly (ARGS)
     /* Get input values and coefficients to local storage for faster access */
 
     in = (double *) malloc((size_t) num_inputs * sizeof(double));
+    if (!in) {
+        cm_message_send("out of memory in spice2poly");
+        cm_cexit(1);
+    }
     for(i = 0; i < num_inputs; i++)
         in[i] = INPUT(in[i]);
 
     num_coefs = PARAM_SIZE(coef);
 
     coef = (double *) malloc((size_t) num_coefs * sizeof(double));
+    if (!coef) {
+        cm_message_send("out of memory in spice2poly");
+        cm_cexit(1);
+    }
     for(i = 0; i < num_coefs; i++)
         coef[i] = PARAM(coef[i]);
 
 
     /* Allocate the array of exponents used in computing the poly terms */
     exp = (int *) malloc((size_t) num_inputs * sizeof(int));
+    if (!exp) {
+        cm_message_send("out of memory in spice2poly");
+        cm_cexit(1);
+    }
 
     /* Initialize the exponents to zeros */
     for(i = 0; i < num_inputs; i++)
