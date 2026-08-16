@@ -9,16 +9,6 @@
 #if defined(HAVE_LIBSNDFILE) && defined(HAVE_LIBSAMPLERATE)
 #include <sndfile.h>
 
-#ifndef XCALLOC
-#define XCALLOC(ptr, type, number)                                      \
-    do {                                                                \
-        if ((number) && (ptr = (type *)calloc((size_t)(number), sizeof(type))) == NULL) { \
-            fprintf(stderr, "Out of Memory\n");                         \
-            controlled_exit(1);                                         \
-        }                                                               \
-    } while(0)
-#endif
-
 static int o_samplerate = 48000;
 static int o_sndfmt = (SF_FORMAT_WAV | SF_FORMAT_PCM_24);
 static float o_mult = 1.0;

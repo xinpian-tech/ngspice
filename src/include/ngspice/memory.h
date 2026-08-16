@@ -49,6 +49,8 @@ extern void txfree(const void *ptr);
         }                                                               \
     } while(0)
 
+#endif /* CIDER */
+
 #define XCALLOC(ptr, type, number)                                      \
     do {                                                                \
         if ((number) && (ptr = (type *)calloc((size_t)(number), sizeof(type))) == NULL) { \
@@ -56,7 +58,5 @@ extern void txfree(const void *ptr);
             controlled_exit(1);                                         \
         }                                                               \
     } while(0)
-
-#endif /* CIDER */
 
 #endif
