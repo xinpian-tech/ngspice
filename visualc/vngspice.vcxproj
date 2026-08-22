@@ -155,7 +155,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <TargetName>ngspice_opus</TargetName>
+    <TargetName>ngspice_opus_con</TargetName>
     <OutDir>$(ProjectName)\$(Configuration).$(Platform)\</OutDir>
     <IntDir>$(ProjectName)\$(Configuration).$(Platform)\obj\</IntDir>
   </PropertyGroup>
