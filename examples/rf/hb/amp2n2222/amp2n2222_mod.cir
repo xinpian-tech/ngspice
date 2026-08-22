@@ -25,9 +25,8 @@ display
 set xbrushwidth=2
 plot db(out2) arrowplot ylimit -200 0
 pyplot db(out1) db(out2) arrowplot ylimit -250 0
-gnuplot gout db(out2) arrowplot ylimit -250 0
 set gnuplot_terminal=png
-gnuplot gout db(out2) arrowplot ylimit -250 0
+gnuplot $inputdir/gout db(out2) arrowplot ylimit -250 0
 print hbfrequency db(out1) db(out2)
 *quit
 .endc
