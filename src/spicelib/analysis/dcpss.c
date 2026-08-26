@@ -1696,6 +1696,10 @@ HBanalyze(CKTcircuit *ckt, double f0, int K, int Pin, int maxiter, double tol, i
         return E_PARMVAL;
     }
 
+#ifdef HAS_PROGREP
+    SetAnalyse("HB", 0);
+#endif
+
     Vr = TMALLOC(double, Ntot); Vi = TMALLOC(double, Ntot);
     IRr = TMALLOC(double, Ntot); IRi = TMALLOC(double, Ntot);
     Isr = TMALLOC(double, Ntot); Isi = TMALLOC(double, Ntot);
@@ -2158,6 +2162,10 @@ QPSShb(CKTcircuit *ckt, double f1, double f2, int K1, int K2, int P1, int P2,
     int Ntot = Nh * N, P, i, hi, rc = OK;
     double *Vr, *Vi, *vsamp, *IRr, *IRi, *Isr, *Isi, *Fr, *Fi, *Jr, *Ji, *Kr, *Ki;
     struct qp_harm hd;
+
+#ifdef HAS_PROGREP
+    SetAnalyse("Two-tone HB", 0);
+#endif
 
     if (N <= 0 || K1 < 1 || K2 < 1) { fprintf(stderr, "QPSS-HB: bad size.\n"); return E_PARMVAL; }
     if (P1 <= 0) P1 = 4*K1 + 2;
