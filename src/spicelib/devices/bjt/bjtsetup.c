@@ -133,6 +133,15 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         if(!model->BJTcapSubGiven) {
             model->BJTcapSub = 0;
         }
+        if(!model->BJTparasiticCapBCGiven) {
+            model->BJTparasiticCapBC = 0;
+        }
+        if(!model->BJTparasiticCapBEGiven) {
+            model->BJTparasiticCapBE = 0;
+        }
+        if(!model->BJTparasiticCapCSGiven) {
+            model->BJTparasiticCapCS = 0;
+        }
         if(!model->BJTpotentialSubstrateGiven) {
             model->BJTpotentialSubstrate = .75;
         }
@@ -144,6 +153,12 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
         if(!model->BJTenergyGapGiven) {
             model->BJTenergyGap = 1.11;
+        }
+        if(!model->BJTenergyGapAlphaGiven) {
+            model->BJTenergyGapAlpha = 7.02e-4;
+        }
+        if(!model->BJTenergyGapBetaGiven) {
+            model->BJTenergyGapBeta = 1108.0;
         }
         if(!model->BJTtempExpISGiven) {
             model->BJTtempExpIS = 3;
@@ -331,11 +346,6 @@ BJTsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
         }
         if(!model->BJTnkfGiven) {
             model->BJTnkf = 0.5;
-        } else {
-          if (model->BJTnkf > 1.0) {
-            printf("Warning: NKF has been set to its maximum value: 1.0\n");
-            model->BJTnkf = 1.0;
-          } 
         }
         if(!model->BJTtis1Given) {
             model->BJTtis1 = 0.0;
@@ -529,6 +539,14 @@ do { if((here->ptr = SMPmakeElt(matrix, here->first, here->second)) == NULL){\
             TSTALLOC(BJTsubstSubstConPtr,BJTsubstNode,BJTsubstConNode);
             TSTALLOC(BJTbaseColPrimePtr,BJTbaseNode,BJTcolPrimeNode);
             TSTALLOC(BJTcolPrimeBasePtr,BJTcolPrimeNode,BJTbaseNode);
+            TSTALLOC(BJTbaseColPtr,BJTbaseNode,BJTcolNode);
+            TSTALLOC(BJTcolBasePtr,BJTcolNode,BJTbaseNode);
+            TSTALLOC(BJTbaseEmitPtr,BJTbaseNode,BJTemitNode);
+            TSTALLOC(BJTemitBasePtr,BJTemitNode,BJTbaseNode);
+            TSTALLOC(BJTcolSubstPtr,BJTcolNode,BJTsubstNode);
+            TSTALLOC(BJTsubstColPtr,BJTsubstNode,BJTcolNode);
+            TSTALLOC(BJTbaseSubstPtr,BJTbaseNode,BJTsubstNode);
+            TSTALLOC(BJTsubstBasePtr,BJTsubstNode,BJTbaseNode);
 
             TSTALLOC(BJTcollCXcollCXPtr,BJTcollCXNode,BJTcollCXNode);
 

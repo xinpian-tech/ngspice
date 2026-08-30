@@ -178,6 +178,18 @@ BJTmParam(int param, IFvalue *value, GENmodel *inModel)
             mods->BJTcapSub = value->rValue;
             mods->BJTcapSubGiven = TRUE;
             break;
+        case BJT_MOD_CBCP:
+            mods->BJTparasiticCapBC = value->rValue;
+            mods->BJTparasiticCapBCGiven = TRUE;
+            break;
+        case BJT_MOD_CBEP:
+            mods->BJTparasiticCapBE = value->rValue;
+            mods->BJTparasiticCapBEGiven = TRUE;
+            break;
+        case BJT_MOD_CCSP:
+            mods->BJTparasiticCapCS = value->rValue;
+            mods->BJTparasiticCapCSGiven = TRUE;
+            break;
         case BJT_MOD_VJS:
             mods->BJTpotentialSubstrate = value->rValue;
             mods->BJTpotentialSubstrateGiven = TRUE;
@@ -193,6 +205,14 @@ BJTmParam(int param, IFvalue *value, GENmodel *inModel)
         case BJT_MOD_EG:
             mods->BJTenergyGap = value->rValue;
             mods->BJTenergyGapGiven = TRUE;
+            break;
+        case BJT_MOD_GAP1:
+            mods->BJTenergyGapAlpha = value->rValue;
+            mods->BJTenergyGapAlphaGiven = TRUE;
+            break;
+        case BJT_MOD_GAP2:
+            mods->BJTenergyGapBeta = value->rValue;
+            mods->BJTenergyGapBetaGiven = TRUE;
             break;
         case BJT_MOD_XTI:
             mods->BJTtempExpIS = value->rValue;

@@ -159,6 +159,15 @@ typedef struct sBJTinstance {
     double *BJTcolPrimeBasePtr; /* pointer to sparse matrix at
                              * (collector prime,base) */
 
+    double *BJTbaseColPtr;      /* external base-collector capacitance */
+    double *BJTcolBasePtr;
+    double *BJTbaseEmitPtr;     /* external base-emitter capacitance */
+    double *BJTemitBasePtr;
+    double *BJTcolSubstPtr;     /* vertical external collector-substrate capacitance */
+    double *BJTsubstColPtr;
+    double *BJTbaseSubstPtr;    /* lateral external base-substrate capacitance */
+    double *BJTsubstBasePtr;
+
     double *BJTcollCXcollCXPtr; /* pointer to sparse matrix at
                              * (collector cx,collector cx) */
     double *BJTcollCXBasePrimePtr; /* pointer to sparse matrix at
@@ -334,6 +343,14 @@ typedef struct sBJTinstance {
     BindElement *BJTsubstSubstConBinding ;
     BindElement *BJTbaseColPrimeBinding ;
     BindElement *BJTcolPrimeBaseBinding ;
+    BindElement *BJTbaseColBinding ;
+    BindElement *BJTcolBaseBinding ;
+    BindElement *BJTbaseEmitBinding ;
+    BindElement *BJTemitBaseBinding ;
+    BindElement *BJTcolSubstBinding ;
+    BindElement *BJTsubstColBinding ;
+    BindElement *BJTbaseSubstBinding ;
+    BindElement *BJTsubstBaseBinding ;
     BindElement *BJTcollCXcollCXBinding ;
     BindElement *BJTcollCXBasePrimeBinding ;
     BindElement *BJTbasePrimeCollCXBinding ;
@@ -377,15 +394,21 @@ typedef struct sBJTinstance {
 #define BJTqbcx BJTstate+30
 #define BJTcqbcx BJTstate+31
 #define BJTgbcx BJTstate+32
+#define BJTqcbcp BJTstate+33
+#define BJTcqcbcp BJTstate+34
+#define BJTqcbep BJTstate+35
+#define BJTcqcbep BJTstate+36
+#define BJTqccsp BJTstate+37
+#define BJTcqccsp BJTstate+38
 
-#define BJTnumStates 33
+#define BJTnumStates 39
 
-#define BJTsensxpbe BJTstate+33 /* charge sensitivities and their
-                   derivatives. +34 for the derivatives -
+#define BJTsensxpbe BJTstate+39 /* charge sensitivities and their
+                   derivatives. +40 for the derivatives -
                    pointer to the beginning of the array */
-#define BJTsensxpbc BJTstate+35
-#define BJTsensxpsub BJTstate+37
-#define BJTsensxpbx BJTstate+39
+#define BJTsensxpbc BJTstate+41
+#define BJTsensxpsub BJTstate+43
+#define BJTsensxpbx BJTstate+45
 
 #define BJTnumSenStates 8
 
@@ -437,10 +460,15 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     double BJTbaseFractionBCcap;
     double BJTtransitTimeR;
     double BJTcapSub;
+    double BJTparasiticCapBC;
+    double BJTparasiticCapBE;
+    double BJTparasiticCapCS;
     double BJTpotentialSubstrate;
     double BJTexponentialSubstrate;
     double BJTbetaExp;
     double BJTenergyGap;
+    double BJTenergyGapAlpha;
+    double BJTenergyGapBeta;
     double BJTtempExpIS;
     double BJTdepletionCapCoeff;
     double BJTfNcoef;
@@ -573,10 +601,15 @@ typedef struct sBJTmodel {          /* model structure for a bjt */
     unsigned BJTbaseFractionBCcapGiven : 1;
     unsigned BJTtransitTimeRGiven : 1;
     unsigned BJTcapSubGiven : 1;
+    unsigned BJTparasiticCapBCGiven : 1;
+    unsigned BJTparasiticCapBEGiven : 1;
+    unsigned BJTparasiticCapCSGiven : 1;
     unsigned BJTpotentialSubstrateGiven : 1;
     unsigned BJTexponentialSubstrateGiven : 1;
     unsigned BJTbetaExpGiven : 1;
     unsigned BJTenergyGapGiven : 1;
+    unsigned BJTenergyGapAlphaGiven : 1;
+    unsigned BJTenergyGapBetaGiven : 1;
     unsigned BJTtempExpISGiven : 1;
     unsigned BJTdepletionCapCoeffGiven : 1;
     unsigned BJTfNcoefGiven : 1;
@@ -729,10 +762,15 @@ enum {
     BJT_MOD_XCJC,
     BJT_MOD_TR,
     BJT_MOD_CJS,
+    BJT_MOD_CBCP,
+    BJT_MOD_CBEP,
+    BJT_MOD_CCSP,
     BJT_MOD_VJS,
     BJT_MOD_MJS,
     BJT_MOD_XTB,
     BJT_MOD_EG,
+    BJT_MOD_GAP1,
+    BJT_MOD_GAP2,
     BJT_MOD_XTI,
     BJT_MOD_FC,
     BJT_MOD_AF,

@@ -1,0 +1,26 @@
+* HSPICE Gummel-Poon high-current base-charge equation
+
+vc c 0 0.7
+vb b 0 0.7
+q1 c b 0 qnkf
+
+.model qnkf npn is=1e-15 bf=100 ikf=1m nkf=1.528 tnom=25
+.temp 25
+
+.control
+set noinit
+op
+let vt = (1.38064852e-23 / 1.6021766208e-19) * (25 + 273.15)
+let ibe = 1e-15 * (exp(0.7 / vt) - 1)
+let qb = (1 + (1 + 4 * ibe / 1e-3)^1.528) / 2
+let expected = ibe / qb
+let error = abs(@q1[ic] / expected - 1)
+
+if error > 1e-10
+  echo "ERROR: BJT NKF base-charge equation mismatch"
+  quit 1
+else
+  echo "INFO: success"
+  quit 0
+end
+.endc

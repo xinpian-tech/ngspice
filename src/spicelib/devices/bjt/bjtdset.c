@@ -479,7 +479,7 @@ int BJTdSetup(GENmodel *inModel, CKTcircuit *ckt)
              */
             tf=here->BJTttransitTimeF;
             tr=here->BJTttransitTimeR;
-            czbe=here->BJTtBEcap*here->BJTarea * here->BJTm;
+            czbe=here->BJTtBEcap * here->BJTm;
             pe=here->BJTtBEpot;
             xme=here->BJTtjunctionExpBE;
             cdis=model->BJTbaseFractionBCcap;

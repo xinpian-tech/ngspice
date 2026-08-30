@@ -35,6 +35,9 @@ BJTacLoad(GENmodel *inModel, CKTcircuit *ckt)
     double xcbx;
     double xcsub;
     double xcmcb;
+    double xcbcp;
+    double xcbep;
+    double xccsp;
     double m;
     double Irci_Vrci, Irci_Vbci, Irci_Vbcx, xcbcx;
 
@@ -68,6 +71,9 @@ BJTacLoad(GENmodel *inModel, CKTcircuit *ckt)
             xcsub= *(ckt->CKTstate0 + here->BJTcqsub) * ckt->CKTomega;
             xcmcb= *(ckt->CKTstate0 + here->BJTcexbc) * ckt->CKTomega;
             xcbcx= *(ckt->CKTstate0 + here->BJTcqbcx) * ckt->CKTomega;
+            xcbcp = model->BJTparasiticCapBC * here->BJTarea * ckt->CKTomega;
+            xcbep = model->BJTparasiticCapBE * here->BJTarea * ckt->CKTomega;
+            xccsp = model->BJTparasiticCapCS * here->BJTarea * ckt->CKTomega;
 
             *(here->BJTcolColPtr) +=                   m * (gcpr);
             *(here->BJTbaseBasePtr) +=                 m * (gx);
@@ -104,6 +110,24 @@ BJTacLoad(GENmodel *inModel, CKTcircuit *ckt)
             *(here->BJTsubstSubstConPtr + 1) +=        m * (-xcsub);
             *(here->BJTbaseColPrimePtr + 1) +=         m * (-xcbx);
             *(here->BJTcolPrimeBasePtr + 1) +=         m * (-xcbx);
+
+            *(here->BJTbaseBasePtr + 1) +=             m * (xcbcp + xcbep);
+            *(here->BJTcolColPtr + 1) +=                m * xcbcp;
+            *(here->BJTemitEmitPtr + 1) +=              m * xcbep;
+            *(here->BJTbaseColPtr + 1) -=               m * xcbcp;
+            *(here->BJTcolBasePtr + 1) -=               m * xcbcp;
+            *(here->BJTbaseEmitPtr + 1) -=              m * xcbep;
+            *(here->BJTemitBasePtr + 1) -=              m * xcbep;
+            *(here->BJTsubstSubstPtr + 1) +=            m * xccsp;
+            if (model->BJTsubs == VERTICAL) {
+                *(here->BJTcolColPtr + 1) +=            m * xccsp;
+                *(here->BJTcolSubstPtr + 1) -=          m * xccsp;
+                *(here->BJTsubstColPtr + 1) -=          m * xccsp;
+            } else {
+                *(here->BJTbaseBasePtr + 1) +=          m * xccsp;
+                *(here->BJTbaseSubstPtr + 1) -=         m * xccsp;
+                *(here->BJTsubstBasePtr + 1) -=         m * xccsp;
+            }
             if (model->BJTintCollResistGiven) {
                 *(here->BJTcollCXcollCXPtr)    += m *  Irci_Vrci;
                 *(here->BJTcollCXColPrimePtr)  += m * -Irci_Vrci;

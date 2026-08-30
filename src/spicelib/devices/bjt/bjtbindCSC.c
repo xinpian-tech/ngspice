@@ -55,6 +55,14 @@ BJTbindCSC (GENmodel *inModel, CKTcircuit *ckt)
             CREATE_KLU_BINDING_TABLE(BJTsubstSubstConPtr,      BJTsubstSubstConBinding,      BJTsubstNode,     BJTsubstConNode);
             CREATE_KLU_BINDING_TABLE(BJTbaseColPrimePtr,       BJTbaseColPrimeBinding,       BJTbaseNode,      BJTcolPrimeNode);
             CREATE_KLU_BINDING_TABLE(BJTcolPrimeBasePtr,       BJTcolPrimeBaseBinding,       BJTcolPrimeNode,  BJTbaseNode);
+            CREATE_KLU_BINDING_TABLE(BJTbaseColPtr,            BJTbaseColBinding,            BJTbaseNode,      BJTcolNode);
+            CREATE_KLU_BINDING_TABLE(BJTcolBasePtr,            BJTcolBaseBinding,            BJTcolNode,       BJTbaseNode);
+            CREATE_KLU_BINDING_TABLE(BJTbaseEmitPtr,           BJTbaseEmitBinding,           BJTbaseNode,      BJTemitNode);
+            CREATE_KLU_BINDING_TABLE(BJTemitBasePtr,           BJTemitBaseBinding,           BJTemitNode,      BJTbaseNode);
+            CREATE_KLU_BINDING_TABLE(BJTcolSubstPtr,           BJTcolSubstBinding,           BJTcolNode,       BJTsubstNode);
+            CREATE_KLU_BINDING_TABLE(BJTsubstColPtr,           BJTsubstColBinding,           BJTsubstNode,     BJTcolNode);
+            CREATE_KLU_BINDING_TABLE(BJTbaseSubstPtr,          BJTbaseSubstBinding,          BJTbaseNode,      BJTsubstNode);
+            CREATE_KLU_BINDING_TABLE(BJTsubstBasePtr,          BJTsubstBaseBinding,          BJTsubstNode,     BJTbaseNode);
 
             CREATE_KLU_BINDING_TABLE(BJTcollCXcollCXPtr,       BJTcollCXcollCXBinding,       BJTcollCXNode,    BJTcollCXNode);
 
@@ -114,6 +122,14 @@ BJTbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTsubstSubstConPtr,      BJTsubstSubstConBinding,      BJTsubstNode,     BJTsubstConNode);
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTbaseColPrimePtr,       BJTbaseColPrimeBinding,       BJTbaseNode,      BJTcolPrimeNode);
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTcolPrimeBasePtr,       BJTcolPrimeBaseBinding,       BJTcolPrimeNode,  BJTbaseNode);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTbaseColPtr,            BJTbaseColBinding,            BJTbaseNode,      BJTcolNode);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTcolBasePtr,            BJTcolBaseBinding,            BJTcolNode,       BJTbaseNode);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTbaseEmitPtr,           BJTbaseEmitBinding,           BJTbaseNode,      BJTemitNode);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTemitBasePtr,           BJTemitBaseBinding,           BJTemitNode,      BJTbaseNode);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTcolSubstPtr,           BJTcolSubstBinding,           BJTcolNode,       BJTsubstNode);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTsubstColPtr,           BJTsubstColBinding,           BJTsubstNode,     BJTcolNode);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTbaseSubstPtr,          BJTbaseSubstBinding,          BJTbaseNode,      BJTsubstNode);
+            CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTsubstBasePtr,          BJTsubstBaseBinding,          BJTsubstNode,     BJTbaseNode);
 
             CONVERT_KLU_BINDING_TABLE_TO_COMPLEX(BJTcollCXcollCXPtr,       BJTcollCXcollCXBinding,       BJTcollCXNode,    BJTcollCXNode);
 
@@ -173,6 +189,14 @@ BJTbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
             CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTsubstSubstConPtr,      BJTsubstSubstConBinding,      BJTsubstNode,     BJTsubstConNode);
             CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTbaseColPrimePtr,       BJTbaseColPrimeBinding,       BJTbaseNode,      BJTcolPrimeNode);
             CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTcolPrimeBasePtr,       BJTcolPrimeBaseBinding,       BJTcolPrimeNode,  BJTbaseNode);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTbaseColPtr,            BJTbaseColBinding,            BJTbaseNode,      BJTcolNode);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTcolBasePtr,            BJTcolBaseBinding,            BJTcolNode,       BJTbaseNode);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTbaseEmitPtr,           BJTbaseEmitBinding,           BJTbaseNode,      BJTemitNode);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTemitBasePtr,           BJTemitBaseBinding,           BJTemitNode,      BJTbaseNode);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTcolSubstPtr,           BJTcolSubstBinding,           BJTcolNode,       BJTsubstNode);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTsubstColPtr,           BJTsubstColBinding,           BJTsubstNode,     BJTcolNode);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTbaseSubstPtr,          BJTbaseSubstBinding,          BJTbaseNode,      BJTsubstNode);
+            CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTsubstBasePtr,          BJTsubstBaseBinding,          BJTsubstNode,     BJTbaseNode);
 
             CONVERT_KLU_BINDING_TABLE_TO_REAL(BJTcollCXcollCXPtr,       BJTcollCXcollCXBinding,       BJTcollCXNode,    BJTcollCXNode);
 

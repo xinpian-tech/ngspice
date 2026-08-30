@@ -18,6 +18,58 @@ Modified: 2000 AlansFixes
 #include "ngspice/devdefs.h"
 #include "ngspice/suffix.h"
 
+static int
+BJTloadParasiticCap(CKTcircuit *ckt, BJTinstance *here, double capacitance,
+        int qstate, int posNode, int negNode, double *posPosPtr,
+        double *negNegPtr, double *posNegPtr, double *negPosPtr)
+{
+    double ceq;
+    double geq;
+    double voltage;
+    int error;
+
+    if (capacitance == 0.0 ||
+            (!(ckt->CKTmode & (MODETRAN | MODEAC | MODEINITSMSIG)) &&
+             !((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC))))
+        return OK;
+
+    voltage = *(ckt->CKTrhsOld + posNode) - *(ckt->CKTrhsOld + negNode);
+#ifndef PREDICTOR
+    if (ckt->CKTmode & MODEINITPRED) {
+        *(ckt->CKTstate0 + qstate) = *(ckt->CKTstate1 + qstate);
+    } else
+#endif
+    {
+        *(ckt->CKTstate0 + qstate) = capacitance * voltage;
+    }
+
+    if (ckt->CKTmode & MODEINITSMSIG) {
+        *(ckt->CKTstate0 + qstate + 1) = capacitance;
+        return OK;
+    }
+    if ((ckt->CKTmode & MODETRANOP) && (ckt->CKTmode & MODEUIC))
+        return OK;
+    if (ckt->CKTmode & MODEDCTRANCURVE)
+        return OK;
+
+    if (ckt->CKTmode & MODEINITTRAN)
+        *(ckt->CKTstate1 + qstate) = *(ckt->CKTstate0 + qstate);
+    error = NIintegrate(ckt, &geq, &ceq, capacitance, qstate);
+    if (error)
+        return error;
+    if (ckt->CKTmode & MODEINITTRAN)
+        *(ckt->CKTstate1 + qstate + 1) = *(ckt->CKTstate0 + qstate + 1);
+
+    *(posPosPtr) += here->BJTm * geq;
+    *(negNegPtr) += here->BJTm * geq;
+    *(posNegPtr) -= here->BJTm * geq;
+    *(negPosPtr) -= here->BJTm * geq;
+    *(ckt->CKTrhs + posNode) -= here->BJTm * ceq;
+    *(ckt->CKTrhs + negNode) += here->BJTm * ceq;
+
+    return OK;
+}
+
 int
 BJTload(GENmodel *inModel, CKTcircuit *ckt)
      /* actually load the current resistance value into the
@@ -145,6 +197,36 @@ BJTload(GENmodel *inModel, CKTcircuit *ckt)
             vt = here->BJTtemp * CONSTKoverQ;
 
             m = here->BJTm;
+
+            error = BJTloadParasiticCap(ckt, here,
+                    model->BJTparasiticCapBC * here->BJTarea,
+                    here->BJTqcbcp, here->BJTbaseNode, here->BJTcolNode,
+                    here->BJTbaseBasePtr, here->BJTcolColPtr,
+                    here->BJTbaseColPtr, here->BJTcolBasePtr);
+            if (error)
+                return error;
+            error = BJTloadParasiticCap(ckt, here,
+                    model->BJTparasiticCapBE * here->BJTarea,
+                    here->BJTqcbep, here->BJTbaseNode, here->BJTemitNode,
+                    here->BJTbaseBasePtr, here->BJTemitEmitPtr,
+                    here->BJTbaseEmitPtr, here->BJTemitBasePtr);
+            if (error)
+                return error;
+            if (model->BJTsubs == VERTICAL) {
+                error = BJTloadParasiticCap(ckt, here,
+                        model->BJTparasiticCapCS * here->BJTarea,
+                        here->BJTqccsp, here->BJTcolNode, here->BJTsubstNode,
+                        here->BJTcolColPtr, here->BJTsubstSubstPtr,
+                        here->BJTcolSubstPtr, here->BJTsubstColPtr);
+            } else {
+                error = BJTloadParasiticCap(ckt, here,
+                        model->BJTparasiticCapCS * here->BJTarea,
+                        here->BJTqccsp, here->BJTbaseNode, here->BJTsubstNode,
+                        here->BJTbaseBasePtr, here->BJTsubstSubstPtr,
+                        here->BJTbaseSubstPtr, here->BJTsubstBasePtr);
+            }
+            if (error)
+                return error;
 
             if(ckt->CKTsenInfo){
 #ifdef SENSDEBUG
@@ -570,19 +652,17 @@ next1:      vtn=vt*here->BJTtemissionCoeffF;
             } else {
                 q2=here->BJTtinvRollOffF*cbe+here->BJTtinvRollOffR*cbc;
                 arg=MAX(0,1+4*q2);
-                sqarg=1;
-                if(!model->BJTnkfGiven) {
-                    if(arg != 0) sqarg=sqrt(arg);
-                } else {
-                    if(arg != 0) sqarg=pow(arg,model->BJTnkf);
-                }
+                sqarg=pow(arg,model->BJTnkf);
                 qb=q1*(1+sqarg)/2;
-                if(!model->BJTnkfGiven) {
-                    dqbdve=q1*(qb*here->BJTtinvEarlyVoltR+here->BJTtinvRollOffF*gbe/sqarg);
-                    dqbdvc=q1*(qb*here->BJTtinvEarlyVoltF+here->BJTtinvRollOffR*gbc/sqarg);
+                if (arg > 0.0) {
+                    double drolloff = 2.0 * model->BJTnkf * sqarg / arg;
+                    dqbdve=q1*(qb*here->BJTtinvEarlyVoltR+
+                            here->BJTtinvRollOffF*gbe*drolloff);
+                    dqbdvc=q1*(qb*here->BJTtinvEarlyVoltF+
+                            here->BJTtinvRollOffR*gbc*drolloff);
                 } else {
-                    dqbdve=q1*(qb*here->BJTtinvEarlyVoltR+here->BJTtinvRollOffF*gbe*2*sqarg*model->BJTnkf/arg);
-                    dqbdvc=q1*(qb*here->BJTtinvEarlyVoltF+here->BJTtinvRollOffR*gbc*2*sqarg*model->BJTnkf/arg);
+                    dqbdve=q1*qb*here->BJTtinvEarlyVoltR;
+                    dqbdvc=q1*qb*here->BJTtinvEarlyVoltF;
                 }
             }
             /*

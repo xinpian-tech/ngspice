@@ -141,6 +141,15 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
         case BJT_MOD_CJS:
             value->rValue = here->BJTcapSub;
             return(OK);
+        case BJT_MOD_CBCP:
+            value->rValue = here->BJTparasiticCapBC;
+            return(OK);
+        case BJT_MOD_CBEP:
+            value->rValue = here->BJTparasiticCapBE;
+            return(OK);
+        case BJT_MOD_CCSP:
+            value->rValue = here->BJTparasiticCapCS;
+            return(OK);
         case BJT_MOD_VJS:
             value->rValue = here->BJTpotentialSubstrate;
             return(OK);
@@ -152,6 +161,12 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
             return(OK);
         case BJT_MOD_EG:
             value->rValue = here->BJTenergyGap;
+            return(OK);
+        case BJT_MOD_GAP1:
+            value->rValue = here->BJTenergyGapAlpha;
+            return(OK);
+        case BJT_MOD_GAP2:
+            value->rValue = here->BJTenergyGapBeta;
             return(OK);
         case BJT_MOD_XTI:
             value->rValue = here->BJTtempExpIS;
@@ -437,4 +452,3 @@ BJTmAsk(CKTcircuit *ckt, GENmodel *instPtr, int which, IFvalue *value)
     }
     /* NOTREACHED */
 }
-

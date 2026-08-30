@@ -1,0 +1,31 @@
+* HSPICE BJT external parasitic capacitance equations
+
+vbc nbc 0 dc 0 ac 1
+vbe nbe 0 dc 0 ac 1
+vcs ncs 0 dc 0 ac 1
+
+qbc 0 nbc 0 0 qbc area=2 m=3
+qbe 0 nbe 0 0 qbe area=2 m=3
+qcs ncs 0 0 0 qcs area=2 m=3
+
+.model qbc npn is=1e-30 cbcp=1p
+.model qbe npn is=1e-30 cbep=2p
+.model qcs npn is=1e-30 ccsp=3p subs=1
+
+.control
+set noinit
+ac lin 1 1meg 1meg
+let cbc = abs(imag(i(vbc))) / (2 * pi * frequency)
+let cbe = abs(imag(i(vbe))) / (2 * pi * frequency)
+let ccs = abs(imag(i(vcs))) / (2 * pi * frequency)
+let error = abs(cbc / 6p - 1) + abs(cbe / 12p - 1) + abs(ccs / 18p - 1)
+
+if error > 1e-9
+  echo "ERROR: BJT parasitic capacitance scaling mismatch"
+  quit 1
+else
+  echo "INFO: success"
+  quit 0
+end
+.endc
+.end

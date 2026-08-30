@@ -1,0 +1,52 @@
+* HSPICE BJT TLEV=2 temperature-adjusted saturation current
+
+vc c 0 0.5
+vb b 0 0.5
+q1 c b 0 qtemp
+vcg cg 0 0.7
+vbg bg 0 0.7
+qgold cg bg 0 qgold
+
+.model qtemp npn is=1e-15 nf=1 tlev=2 eg=1.188 gap1=7.02e-4 gap2=1108 xti=3 tnom=25
+.model qgold npn is=4.6e-18 bf=3.02 nf=1.019 ikf=0.518 nkf=1.528
++ tlev=0 xti=3 eg=1.16 tbf1=0.00455 tbf2=-8.2651e-6
++ tnf1=3e-5 tnf2=1.4e-6 tikf1=-0.0099133 tikf2=3.339e-5 tnom=25
+.option gmin=1e-20
+.temp 125
+
+.control
+set noinit
+op
+let kq = 1.38064852e-23 / 1.6021766208e-19
+let tnom = 25 + 273.15
+let temp = 125 + 273.15
+let vtnom = kq * tnom
+let vt = kq * temp
+let egnom = 1.188 - 7.02e-4 * tnom^2 / (tnom + 1108)
+let egtemp = 1.188 - 7.02e-4 * temp^2 / (temp + 1108)
+let facln = egnom / vtnom - egtemp / vt + 3 * ln(temp / tnom)
+let ist = 1e-15 * exp(facln)
+let expected = ist * (exp(0.5 / vt) - 1)
+let error_tlev2 = abs(@q1[ic] / expected - 1)
+
+let dt = temp - tnom
+let facln_gold = 1.16 / vtnom - 1.16 / vt + 3 * ln(temp / tnom)
+let is_gold = 4.6e-18 * exp(facln_gold)
+let nf_gold = 1.019 * (1 + 3e-5 * dt + 1.4e-6 * dt^2)
+let ikf_gold = 0.518 * (1 - 0.0099133 * dt + 3.339e-5 * dt^2)
+let bf_gold = 3.02 * (1 + 0.00455 * dt - 8.2651e-6 * dt^2)
+let ibe_gold = is_gold * (exp(0.7 / (nf_gold * vt)) - 1)
+let qb_gold = (1 + (1 + 4 * ibe_gold / ikf_gold)^1.528) / 2
+let expected_ic_gold = ibe_gold / qb_gold
+let expected_ib_gold = ibe_gold / bf_gold
+let error_gold = abs(@qgold[ic] / expected_ic_gold - 1) + abs(@qgold[ib] / expected_ib_gold - 1)
+let error = error_tlev2 + error_gold
+
+if error > 1e-10
+  echo "ERROR: BJT TLEV=2 temperature equation mismatch"
+  quit 1
+else
+  echo "INFO: success"
+  quit 0
+end
+.endc

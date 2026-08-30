@@ -72,6 +72,8 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                 here=BJTnextInstance(here)) {
 
             double arg1, pbfact1, egfet1;
+            int separateSatCurrents = model->BJTBEsatCurGiven &&
+                    model->BJTBCsatCurGiven;
             if(!here->BJTdtempGiven)
                 here->BJTdtemp = 0.0;
 
@@ -148,46 +150,73 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
 
             vt = here->BJTtemp * CONSTKoverQ;
             fact2 = here->BJTtemp/REFTEMP;
-            egfet = 1.16-(7.02e-4*here->BJTtemp*here->BJTtemp)/
-                    (here->BJTtemp+1108);
+            if (model->BJTtlev == 2) {
+                egfet = model->BJTenergyGap -
+                        model->BJTenergyGapAlpha * here->BJTtemp * here->BJTtemp /
+                        (here->BJTtemp + model->BJTenergyGapBeta);
+            } else {
+                egfet = 1.16-(7.02e-4*here->BJTtemp*here->BJTtemp)/
+                        (here->BJTtemp+1108);
+            }
             arg = -egfet/(2*CONSTboltz*here->BJTtemp)+
                     1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
             pbfact = -2*vt*(1.5*log(fact2)+CHARGE*arg);
-            egfet1 = 1.16-(7.02e-4*model->BJTtnom*model->BJTtnom)/
-                    (model->BJTtnom+1108);
+            if (model->BJTtlev == 2) {
+                egfet1 = model->BJTenergyGap -
+                        model->BJTenergyGapAlpha * model->BJTtnom * model->BJTtnom /
+                        (model->BJTtnom + model->BJTenergyGapBeta);
+            } else {
+                egfet1 = 1.16-(7.02e-4*model->BJTtnom*model->BJTtnom)/
+                        (model->BJTtnom+1108);
+            }
             arg1 = -egfet1/(2*CONSTboltz*model->BJTtnom)+
                     1.1150877/(CONSTboltz*(REFTEMP+REFTEMP));
             pbfact1 = -2*vtnom*(1.5*log(fact1)+CHARGE*arg1);
 
             ratlog = log(here->BJTtemp/model->BJTtnom);
             ratio1 = here->BJTtemp/model->BJTtnom -1;
-            factlog = ratio1 * model->BJTenergyGap/vt +
-                    model->BJTtempExpIS*ratlog;
-            if ((model->BJTtlev == 0) || (model->BJTtlev == 1)) {
+            if ((model->BJTtlev == 0) || (model->BJTtlev == 2)) {
+                bfactor = exp(ratlog*model->BJTbetaExp);
+            } else if (model->BJTtlev == 1) {
+                bfactor = 1+model->BJTbetaExp*dt;
+            } else {
+                bfactor = 1.0;
+            }
+            if (model->BJTtlev == 2) {
+                factlog = egfet1 / vtnom - egfet / vt +
+                        model->BJTtempExpIS * ratlog;
+            } else {
+                factlog = ratio1 * model->BJTenergyGap/vt +
+                        model->BJTtempExpIS*ratlog;
+            }
+            if ((model->BJTtlev == 0) || (model->BJTtlev == 1) ||
+                    (model->BJTtlev == 2)) {
                 factor = exp(factlog);
                 here->BJTtSatCur = here->BJTarea * model->BJTsatCur * factor;
-                if ((model->BJTBEsatCurGiven) && (model->BJTBCsatCurGiven)) {
+                if (separateSatCurrents) {
                     factor = exp(factlog / model->BJTemissionCoeffF);
                     here->BJTBEtSatCur = here->BJTarea * model->BJTBEsatCur * factor;
                 } else {
                     here->BJTBEtSatCur = here->BJTtSatCur;
                 }
-                if ((model->BJTBEsatCurGiven) && (model->BJTBCsatCurGiven)) {
+                if (separateSatCurrents) {
                     factor = exp(factlog / model->BJTemissionCoeffR);
                     here->BJTBCtSatCur = model->BJTBCsatCur * factor;
                 } else {
                     here->BJTBCtSatCur = here->BJTtSatCur;
                 }
-                if (model->BJTsubSatCurGiven)
-                    here->BJTtSubSatCur = model->BJTsubSatCur * factor;
+                if (model->BJTsubSatCurGiven) {
+                    here->BJTtSubSatCur = model->BJTsubSatCur *
+                            exp(factlog / model->BJTemissionCoeffS) / bfactor;
+                }
             } else if (model->BJTtlev == 3) {
                 here->BJTtSatCur = here->BJTarea * pow(model->BJTsatCur,(1+model->BJTtis1*dt+model->BJTtis2*dt*dt));
-                if ((model->BJTBEsatCurGiven) && (model->BJTBCsatCurGiven)) {
+                if (separateSatCurrents) {
                     here->BJTBEtSatCur = here->BJTarea * pow(model->BJTBEsatCur,(1+model->BJTtis1*dt+model->BJTtis2*dt*dt));
                 } else {
                     here->BJTBEtSatCur = here->BJTtSatCur;
                 }
-                if ((model->BJTBEsatCurGiven) && (model->BJTBCsatCurGiven)) {
+                if (separateSatCurrents) {
                     here->BJTBCtSatCur = pow(model->BJTBCsatCur,(1+model->BJTtis1*dt+model->BJTtis2*dt*dt));
                 } else {
                     here->BJTBCtSatCur = here->BJTtSatCur;
@@ -195,13 +224,15 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                 if (model->BJTsubSatCurGiven)
                     here->BJTtSubSatCur = pow(model->BJTsubSatCur,(1+model->BJTtiss1*dt+model->BJTtiss2*dt*dt));
             }
-            if (model->BJTsubs == VERTICAL) {
-                here->BJTBCtSatCur *= here->BJTareab;
-            } else {
-                here->BJTBCtSatCur *= here->BJTareac;
+            if (separateSatCurrents) {
+                if (model->BJTsubs == VERTICAL) {
+                    here->BJTBCtSatCur *= here->BJTareab;
+                } else {
+                    here->BJTBCtSatCur *= here->BJTareac;
+                }
             }
             if (model->BJTsubSatCurGiven) {
-                if ((model->BJTBEsatCurGiven) && (model->BJTBCsatCurGiven)) {
+                if (separateSatCurrents) {
                     if (model->BJTsubs == VERTICAL) {
                         here->BJTtSubSatCur *= here->BJTareac;
                     } else {
@@ -228,11 +259,6 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
                 }
             }
 
-            if (model->BJTtlev == 0) {
-                bfactor = exp(ratlog*model->BJTbetaExp);
-            } else if (model->BJTtlev == 1) {
-                bfactor = 1+model->BJTbetaExp*dt;
-            }
             if ((model->BJTtbf1Given)||(model->BJTtbf2Given))
                 here->BJTtBetaF = model->BJTbetaF * (1+model->BJTtbf1*dt+model->BJTtbf2*dt*dt);
             else
@@ -242,7 +268,8 @@ BJTtemp(GENmodel *inModel, CKTcircuit *ckt)
             else
                 here->BJTtBetaR = model->BJTbetaR * bfactor;
 
-            if ((model->BJTtlev == 0) || (model->BJTtlev == 1)) {
+            if ((model->BJTtlev == 0) || (model->BJTtlev == 1) ||
+                    (model->BJTtlev == 2)) {
               here->BJTtBEleakCur = here->BJTarea * model->BJTleakBEcurrent *
                   exp(factlog/model->BJTleakBEemissionCoeff)/bfactor;
               here->BJTtBCleakCur = model->BJTleakBCcurrent *

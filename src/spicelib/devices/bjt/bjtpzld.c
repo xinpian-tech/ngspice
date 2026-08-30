@@ -31,6 +31,9 @@ BJTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     double xcbx;
     double xcsub;
     double xcmcb;
+    double cbcp;
+    double cbep;
+    double ccsp;
     double m;
     double Irci_Vrci, Irci_Vbci, Irci_Vbcx, xcbcx;
 
@@ -57,6 +60,9 @@ BJTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             xcsub= *(ckt->CKTstate0 + here->BJTcqsub);
             xcmcb= *(ckt->CKTstate0 + here->BJTcexbc);
             xcbcx= *(ckt->CKTstate0 + here->BJTcqbcx);
+            cbcp = model->BJTparasiticCapBC * here->BJTarea;
+            cbep = model->BJTparasiticCapBE * here->BJTarea;
+            ccsp = model->BJTparasiticCapCS * here->BJTarea;
 
             *(here->BJTcolColPtr) +=                 m * (gcpr);
             *(here->BJTbaseBasePtr) +=               m * ((gx) + (xcbx) * (s->real));
@@ -101,6 +107,29 @@ BJTpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
             *(here->BJTbaseColPrimePtr + 1) +=       m * ((-xcbx) * (s->imag));
             *(here->BJTcolPrimeBasePtr) +=           m * ((-xcbx) * (s->real));
             *(here->BJTcolPrimeBasePtr + 1) +=       m * ((-xcbx) * (s->imag));
+
+#define BJT_PZ_CAP_STAMP(posPos, negNeg, posNeg, negPos, cap) do { \
+            *(posPos) += m * (cap) * s->real; \
+            *((posPos) + 1) += m * (cap) * s->imag; \
+            *(negNeg) += m * (cap) * s->real; \
+            *((negNeg) + 1) += m * (cap) * s->imag; \
+            *(posNeg) -= m * (cap) * s->real; \
+            *((posNeg) + 1) -= m * (cap) * s->imag; \
+            *(negPos) -= m * (cap) * s->real; \
+            *((negPos) + 1) -= m * (cap) * s->imag; \
+        } while (0)
+            BJT_PZ_CAP_STAMP(here->BJTbaseBasePtr, here->BJTcolColPtr,
+                    here->BJTbaseColPtr, here->BJTcolBasePtr, cbcp);
+            BJT_PZ_CAP_STAMP(here->BJTbaseBasePtr, here->BJTemitEmitPtr,
+                    here->BJTbaseEmitPtr, here->BJTemitBasePtr, cbep);
+            if (model->BJTsubs == VERTICAL) {
+                BJT_PZ_CAP_STAMP(here->BJTcolColPtr, here->BJTsubstSubstPtr,
+                        here->BJTcolSubstPtr, here->BJTsubstColPtr, ccsp);
+            } else {
+                BJT_PZ_CAP_STAMP(here->BJTbaseBasePtr, here->BJTsubstSubstPtr,
+                        here->BJTbaseSubstPtr, here->BJTsubstBasePtr, ccsp);
+            }
+#undef BJT_PZ_CAP_STAMP
             if (model->BJTintCollResistGiven) {
                 *(here->BJTcollCXcollCXPtr)    += m *  Irci_Vrci;
                 *(here->BJTcollCXColPrimePtr)  += m * -Irci_Vrci;
