@@ -1,0 +1,149 @@
+* ICsprout 55LLULP resistor temperature, process, and mismatch equations
+
+.option temp=25
+
+v1 n1 0 .7
+a1 n1 0 null null r1
+.model r1 icsres (variant=1 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v2 n2 0 .7
+a2 n2 0 null null r2
+.model r2 icsres (variant=2 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v3 n3 0 .7
+a3 n3 0 null null r3
+.model r3 icsres (variant=3 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v4 n4 0 .7
+a4 n4 0 null null r4
+.model r4 icsres (variant=4 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v5 n5 0 .7
+a5 n5 0 null null r5
+.model r5 icsres (variant=5 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v6 n6 0 .7
+a6 n6 0 null null r6
+.model r6 icsres (variant=6 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v7 n7 0 .7
+a7 n7 0 null null r7
+.model r7 icsres (variant=7 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v8 n8 0 .7
+a8 n8 0 null null r8
+.model r8 icsres (variant=8 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v9 n9 0 .7
+a9 n9 0 null null r9
+.model r9 icsres (variant=9 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v10 n10 0 .7
+a10 n10 0 null null r10
+.model r10 icsres (variant=10 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v11 n11 0 .7
+a11 n11 0 null null r11
+.model r11 icsres (variant=11 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v12 n12 0 .7
+a12 n12 0 null null r12
+.model r12 icsres (variant=12 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v13 n13 0 .7
+a13 n13 0 null null r13
+.model r13 icsres (variant=13 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v20 n20 0 .7
+a20 n20 0 null null r20
+.model r20 icsres (variant=20 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v21 n21 0 .7
+a21 n21 0 null null r21
+.model r21 icsres (variant=21 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+
+.control
+set noinit
+set temp=-40
+op
+let variants = vector(15)
+let variants[0] = 1
+let variants[1] = 2
+let variants[2] = 3
+let variants[3] = 4
+let variants[4] = 5
+let variants[5] = 6
+let variants[6] = 7
+let variants[7] = 8
+let variants[8] = 9
+let variants[9] = 10
+let variants[10] = 11
+let variants[11] = 12
+let variants[12] = 13
+let variants[13] = 20
+let variants[14] = 21
+let expected = vector(15)
+let expected[0] = 8.47223743369831528e-2
+let expected[1] = 1.14676039551895800e-1
+let expected[2] = 1.06977147359105781e-1
+let expected[3] = 1.18394536031031908e-1
+let expected[4] = 1.13252332825180884e-3
+let expected[5] = 4.63486766620636588e-4
+let expected[6] = 1.75743469387807522e-3
+let expected[7] = 7.87484260098532916e-3
+let expected[8] = 4.16846233862144810e-3
+let expected[9] = 3.59890624029866012e-3
+let expected[10] = 1.33100825946496455e-3
+let expected[11] = 7.30960332250769529
+let expected[12] = 9.04186630375587796
+let expected[13] = 4.66306523388704051e1
+let expected[14] = 4.89333222153202669e1
+let error = vector(15)
+let index = 0
+foreach variant $&variants
+  set source = "v{$variant}"
+  let error[index] = abs((-i($source) - expected[index]) / expected[index])
+  let index = index + 1
+end
+if maximum(error) > 1e-12
+  echo "ERROR: resistor -40 C process and mismatch equations"
+  quit 1
+end
+
+set temp=125
+op
+let variants = vector(15)
+let variants[0] = 1
+let variants[1] = 2
+let variants[2] = 3
+let variants[3] = 4
+let variants[4] = 5
+let variants[5] = 6
+let variants[6] = 7
+let variants[7] = 8
+let variants[8] = 9
+let variants[9] = 10
+let variants[10] = 11
+let variants[11] = 12
+let variants[12] = 13
+let variants[13] = 20
+let variants[14] = 21
+let expected = vector(15)
+let expected[0] = 6.02932890776768995e-2
+let expected[1] = 7.65244242725378609e-2
+let expected[2] = 7.52976038734983338e-2
+let expected[3] = 7.96987800377320782e-2
+let expected[4] = 1.21252707978028885e-3
+let expected[5] = 3.76053096850356402e-4
+let expected[6] = 1.38085971615004586e-3
+let expected[7] = 6.32989381365346541e-3
+let expected[8] = 3.24320277433713146e-3
+let expected[9] = 3.72254608371537206e-3
+let expected[10] = 1.39893780979774302e-3
+let expected[11] = 4.29491177865880225
+let expected[12] = 5.45950176834944045
+let expected[13] = 2.61342355439879412e1
+let expected[14] = 2.59467682143322129e1
+let error = vector(15)
+let index = 0
+foreach variant $&variants
+  set source = "v{$variant}"
+  let error[index] = abs((-i($source) - expected[index]) / expected[index])
+  let index = index + 1
+end
+if maximum(error) > 1e-12
+  echo "ERROR: resistor 125 C process and mismatch equations"
+  quit 1
+end
+
+echo "INFO: success"
+quit 0
+.endc
+
+.end

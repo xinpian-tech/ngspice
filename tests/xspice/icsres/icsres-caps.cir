@@ -1,0 +1,161 @@
+* ICsprout 55LLULP three-terminal resistor capacitance equations
+
+.option temp=25 method=gear maxord=2
+
+vr3 r3 0 0
+v23 c23 0 dc 0 ac 1
+v13 c13 0 dc 0 ac 1
+a3 r3 0 c23 0 c13 0 m3
+.model m3 icsres (variant=3 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+vr4 r4 0 0
+v24 c24 0 dc 0 ac 1
+v14 c14 0 dc 0 ac 1
+a4 r4 0 c24 0 c14 0 m4
+.model m4 icsres (variant=4 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+vr5 r5 0 0
+v25 c25 0 dc 0 ac 1
+v15 c15 0 dc 0 ac 1
+a5 r5 0 c25 0 c15 0 m5
+.model m5 icsres (variant=5 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+vr10 r10 0 0
+v210 c210 0 dc 0 ac 1
+v110 c110 0 dc 0 ac 1
+a10 r10 0 c210 0 c110 0 m10
+.model m10 icsres (variant=10 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+vr11 r11 0 0
+v211 c211 0 dc 0 ac 1
+v111 c111 0 dc 0 ac 1
+a11 r11 0 c211 0 c111 0 m11
+.model m11 icsres (variant=11 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+vr12 r12 0 0
+v212 c212 0 dc 0 ac 1
+v112 c112 0 dc 0 ac 1
+a12 r12 0 c212 0 c112 0 m12
+.model m12 icsres (variant=12 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+vr13 r13 0 0
+v213 c213 0 dc 0 ac 1
+v113 c113 0 dc 0 ac 1
+a13 r13 0 c213 0 c113 0 m13
+.model m13 icsres (variant=13 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+vr14 r14 0 0
+v214 c214 0 dc 0 ac 1
+v114 c114 0 dc 0 ac 1
+a14 r14 0 c214 0 c114 0 m14
+.model m14 icsres (variant=14 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+vr15 r15 0 0
+v215 c215 0 dc 0 ac 1
+v115 c115 0 dc 0 ac 1
+a15 r15 0 c215 0 c115 0 m15
+.model m15 icsres (variant=15 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+vr16 r16 0 0
+v216 c216 0 dc 0 ac 1
+v116 c116 0 dc 0 ac 1
+a16 r16 0 c216 0 c116 0 m16
+.model m16 icsres (variant=16 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+vr17 r17 0 0
+v217 c217 0 dc 0 ac 1
+v117 c117 0 dc 0 ac 1
+a17 r17 0 c217 0 c117 0 m17
+.model m17 icsres (variant=17 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+vr18 r18 0 0
+v218 c218 0 dc 0 ac 1
+v118 c118 0 dc 0 ac 1
+a18 r18 0 c218 0 c118 0 m18
+.model m18 icsres (variant=18 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+vr19 r19 0 0
+v219 c219 0 dc 0 ac 1
+v119 c119 0 dc 0 ac 1
+a19 r19 0 c219 0 c119 0 m19
+.model m19 icsres (variant=19 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+vr20 r20 0 0
+v220 c220 0 dc 0 ac 1
+v120 c120 0 dc 0 ac 1
+a20 r20 0 c220 0 c120 0 m20
+.model m20 icsres (variant=20 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+vr21 r21 0 0
+v221 c221 0 dc 0 ac 1
+v121 c121 0 dc 0 ac 1
+a21 r21 0 c221 0 c121 0 m21
+.model m21 icsres (variant=21 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+
+vtrr4 trr4 0 0
+vtr24 tr24 0 pwl(0 0 1u 1)
+vtr14 tr14 0 pwl(0 0 1u 2)
+atr4 trr4 0 tr24 0 tr14 0 m4
+vtrr10 trr10 0 0
+vtr210 tr210 0 pwl(0 0 1u 1)
+vtr110 tr110 0 pwl(0 0 1u 1)
+atr10 trr10 0 tr210 0 tr110 0 m10
+vtrr12 trr12 0 0
+vtr212 tr212 0 pwl(0 0 1u 1)
+vtr112 tr112 0 pwl(0 0 1u 1)
+atr12 trr12 0 tr212 0 tr112 0 m12
+
+.control
+set noinit
+ac lin 1 1gig 1gig
+let variants = vector(15)
+let variants[0] = 3
+let variants[1] = 4
+let variants[2] = 5
+let variants[3] = 10
+let variants[4] = 11
+let variants[5] = 12
+let variants[6] = 13
+let variants[7] = 14
+let variants[8] = 15
+let variants[9] = 16
+let variants[10] = 17
+let variants[11] = 18
+let variants[12] = 19
+let variants[13] = 20
+let variants[14] = 21
+let expected_c2 = vector(15)
+let expected_c2[0] = 7.93987113599999910e-16
+let expected_c2[1] = 7.91544431999999971e-16
+let expected_c2[2] = 7.67370820799999950e-16
+let expected_c2[3] = 5.46669297765000067e-16
+let expected_c2[4] = 5.63344194540000053e-16
+let expected_c2[5] = 7.40616565619999923e-16
+let expected_c2[6] = 7.06666349599999962e-16
+let expected_c2[7] = 6.79881119919999950e-16
+let expected_c2[8] = 6.65077763840000115e-16
+let expected_c2[9] = 6.57236206640000012e-16
+let expected_c2[10] = 6.50800623279999957e-16
+let expected_c2[11] = 6.45883382080000039e-16
+let expected_c2[12] = 7.87275886399999926e-16
+let expected_c2[13] = 8.59642283451999988e-16
+let expected_c2[14] = 4.41089546944000004e-16
+let expected_c1 = expected_c2
+let expected_c1[1] = 8.55572991999999912e-16
+let expected_c1[2] = 8.29854284799999979e-16
+let cap_error = vector(30)
+let index = 0
+foreach variant $&variants
+  set source2 = "v2{$variant}"
+  set source1 = "v1{$variant}"
+  let cap_error[2 * index] = abs((-imag(i($source2)) / (2 * pi * 1e9) - expected_c2[index]) / expected_c2[index])
+  let cap_error[2 * index + 1] = abs((-imag(i($source1)) / (2 * pi * 1e9) - expected_c1[index]) / expected_c1[index])
+  let index = index + 1
+end
+if maximum(cap_error) > 1e-12
+  echo "ERROR: resistor substrate-capacitance equations"
+  quit 1
+end
+
+tran 10n 500n
+let last = length(time) - 1
+let tr_error4_2 = abs((-i(vtr24)[last] - 7.91544431999999971e-10) / 7.91544431999999971e-10)
+let tr_error4_1 = abs((-i(vtr14)[last] - 1.71114598399999982e-9) / 1.71114598399999982e-9)
+let tr_error10 = abs((-i(vtr210)[last] - 5.46669297765000067e-10) / 5.46669297765000067e-10)
+let tr_error12 = abs((-i(vtr212)[last] - 7.40616565619999923e-10) / 7.40616565619999923e-10)
+if (tr_error4_2 > 1e-9) or (tr_error4_1 > 1e-9) or (tr_error10 > 1e-9) or (tr_error12 > 1e-9)
+  echo "ERROR: resistor substrate-capacitance transient equations"
+  quit 1
+end
+
+echo "INFO: success"
+quit 0
+.endc
+
+.end

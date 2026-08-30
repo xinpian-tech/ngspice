@@ -1,0 +1,143 @@
+* ICsprout 55LLULP resistor equations: all 21 base variants
+
+.option temp=25
+
+v1 n1 0 dc .7 ac 1
+a1 n1 0 null null r1
+.model r1 icsres (variant=1 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v2 n2 0 dc .7 ac 1
+a2 n2 0 null null r2
+.model r2 icsres (variant=2 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v3 n3 0 dc .7 ac 1
+a3 n3 0 null null r3
+.model r3 icsres (variant=3 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v4 n4 0 dc .7 ac 1
+a4 n4 0 null null r4
+.model r4 icsres (variant=4 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v5 n5 0 dc .7 ac 1
+a5 n5 0 null null r5
+.model r5 icsres (variant=5 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v6 n6 0 dc .7 ac 1
+a6 n6 0 null null r6
+.model r6 icsres (variant=6 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v7 n7 0 dc .7 ac 1
+a7 n7 0 null null r7
+.model r7 icsres (variant=7 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v8 n8 0 dc .7 ac 1
+a8 n8 0 null null r8
+.model r8 icsres (variant=8 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v9 n9 0 dc .7 ac 1
+a9 n9 0 null null r9
+.model r9 icsres (variant=9 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v10 n10 0 dc .7 ac 1
+a10 n10 0 null null r10
+.model r10 icsres (variant=10 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v11 n11 0 dc .7 ac 1
+a11 n11 0 null null r11
+.model r11 icsres (variant=11 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v12 n12 0 dc .7 ac 1
+a12 n12 0 null null r12
+.model r12 icsres (variant=12 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v13 n13 0 dc .7 ac 1
+a13 n13 0 null null r13
+.model r13 icsres (variant=13 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v14 n14 0 dc .7 ac 1
+a14 n14 0 null null r14
+.model r14 icsres (variant=14 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v15 n15 0 dc .7 ac 1
+a15 n15 0 null null r15
+.model r15 icsres (variant=15 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v16 n16 0 dc .7 ac 1
+a16 n16 0 null null r16
+.model r16 icsres (variant=16 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v17 n17 0 dc .7 ac 1
+a17 n17 0 null null r17
+.model r17 icsres (variant=17 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v18 n18 0 dc .7 ac 1
+a18 n18 0 null null r18
+.model r18 icsres (variant=18 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v19 n19 0 dc .7 ac 1
+a19 n19 0 null null r19
+.model r19 icsres (variant=19 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v20 n20 0 dc .7 ac 1
+a20 n20 0 null null r20
+.model r20 icsres (variant=20 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+v21 n21 0 dc .7 ac 1
+a21 n21 0 null null r21
+.model r21 icsres (variant=21 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+
+.control
+set noinit
+op
+let expected_i = vector(21)
+let expected_i[0] = 7.39014844225085732e-2
+let expected_i[1] = 9.52651792524581154e-2
+let expected_i[2] = 9.16906452127976695e-2
+let expected_i[3] = 9.85029101998345924e-2
+let expected_i[4] = 1.16694818685134766e-3
+let expected_i[5] = 4.46510405076239159e-4
+let expected_i[6] = 1.60262578656374327e-3
+let expected_i[7] = 7.32558611054115634e-3
+let expected_i[8] = 3.92962664152558556e-3
+let expected_i[9] = 3.68122582218613189e-3
+let expected_i[10] = 1.37128080929804145e-3
+let expected_i[11] = 5.97894668707091892
+let expected_i[12] = 7.29438571767400301
+let expected_i[13] = 7.29438571767400301
+let expected_i[14] = 7.29438571767400301
+let expected_i[15] = 7.29438571767400301
+let expected_i[16] = 7.29438571767400301
+let expected_i[17] = 7.29438571767400301
+let expected_i[18] = 7.29438571767400301
+let expected_i[19] = 3.55485712139987200e1
+let expected_i[20] = 3.75683256975316127e1
+let dc_error = vector(21)
+let tests = 1 + vector(21)
+foreach n $&tests
+  set source = "v{$n}"
+  let dc_error[$n - 1] = abs((-i($source) - expected_i[$n - 1]) / expected_i[$n - 1])
+end
+if maximum(dc_error) > 1e-12
+  echo "ERROR: resistor DC equations"
+  quit 1
+end
+
+ac lin 1 1meg 1meg
+let expected_g = vector(21)
+let expected_g[0] = 1.00600818391739913e-1
+let expected_g[1] = 1.28065582815427736e-1
+let expected_g[2] = 1.20728438572403909e-1
+let expected_g[3] = 1.29050041022736456e-1
+let expected_g[4] = 1.68978956213558236e-3
+let expected_g[5] = 6.30001981207930703e-4
+let expected_g[6] = 2.22690391022226748e-3
+let expected_g[7] = 1.02718136631954511e-2
+let expected_g[8] = 5.53674995573365768e-3
+let expected_g[9] = 5.38996672417794975e-3
+let expected_g[10] = 1.98125175299200757e-3
+let expected_g[11] = 8.47347272288512876
+let expected_g[12] = 1.03439894171120681e1
+let expected_g[13] = 1.03439894171120681e1
+let expected_g[14] = 1.03439894171120681e1
+let expected_g[15] = 1.03439894171120681e1
+let expected_g[16] = 1.03439894171120681e1
+let expected_g[17] = 1.03439894171120681e1
+let expected_g[18] = 1.03439894171120681e1
+let expected_g[19] = 5.07836731628553224e1
+let expected_g[20] = 5.36690367107594497e1
+let ac_error = vector(21)
+let tests = 1 + vector(21)
+foreach n $&tests
+  set source = "v{$n}"
+  let ac_error[$n - 1] = abs((-real(i($source)) - expected_g[$n - 1]) / expected_g[$n - 1])
+end
+if maximum(ac_error) > 1e-12
+  echo "ERROR: resistor analytic AC Jacobians"
+  quit 1
+end
+
+echo "INFO: success"
+quit 0
+.endc
+
+.end

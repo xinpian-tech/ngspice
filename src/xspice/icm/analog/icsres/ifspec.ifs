@@ -1,0 +1,84 @@
+NAME_TABLE:
+
+C_Function_Name:       cm_icsres
+Spice_Model_Name:      icsres
+Description:           "ICsprout 55LLULP resistor"
+
+
+PORT_TABLE:
+
+Port_Name:             r                  c2s                c1s
+Description:           "resistor branch" "n2 substrate cap" "n1 substrate cap"
+Direction:             inout              inout              inout
+Default_Type:          gd                 gd                 gd
+Allowed_Types:         [gd]               [gd]               [gd]
+Vector:                no                 no                 no
+Vector_Bounds:          -                  -                  -
+Null_Allowed:          no                 yes                yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:        variant        l              w
+Description:           "resistor type" "drawn length" "drawn width"
+Data_Type:             real           real           real
+Default_Value:         -              -              -
+Limits:                [1 21]         -              -
+Vector:                no             no             no
+Vector_Bounds:          -              -              -
+Null_Allowed:          no             no             no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:        mr             resmis_mod     flag_cc
+Description:           "multiplier"   "mismatch enable" "sidewall enable"
+Data_Type:             real           real           real
+Default_Value:         -              -              -
+Limits:                -              -              -
+Vector:                no             no             no
+Vector_Bounds:          -              -              -
+Null_Allowed:          no             no             no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:        drsh           ddw            dcox
+Description:           "sheet process" "width process" "area-cap process"
+Data_Type:             real           real           real
+Default_Value:         -              -              -
+Limits:                -              -              -
+Vector:                no             no             no
+Vector_Bounds:          -              -              -
+Null_Allowed:          no             no             no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:        dcapsw         sigma_mis
+Description:           "edge-cap process" "mismatch sample"
+Data_Type:             real           real
+Default_Value:         -              -
+Limits:                -              -
+Vector:                no             no
+Vector_Bounds:          -              -
+Null_Allowed:          no             no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:        noise_programmatic
+Description:           "enable resistor noise"
+Data_Type:             boolean
+Default_Value:         TRUE
+Limits:                -
+Vector:                no
+Vector_Bounds:          -
+Null_Allowed:          yes
+
+
+STATIC_VAR_TABLE:
+
+Static_Var_Name:       noise_voltage
+Description:           "DC branch voltage for noise"
+Data_Type:             real

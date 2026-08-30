@@ -1,0 +1,37 @@
+* ICsprout 55LLULP resistor thermal and ppo_sab flicker-noise equations
+
+.option temp=25
+
+vb11 supply11 0 dc .7 ac 1
+l11 supply11 n11 1e12
+a11 n11 0 null null r11
+.model r11 icsres (variant=11 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+
+vb12 supply12 0 dc .7 ac 1
+l12 supply12 n12 1e12
+a12 n12 0 null null r12
+.model r12 icsres (variant=12 l=2u w=1.5u mr=2 resmis_mod=1 flag_cc=1 drsh=.003 ddw=1n dcox=1u dcapsw=2p sigma_mis=.75)
+
+.control
+set noinit
+noise v(n11) vb11 lin 1 1k 1k 1
+let ppo_sab_psd = onoise_spectrum * onoise_spectrum
+let ppo_sab_error = abs((ppo_sab_psd - 3.72210206729481489e-14) / 3.72210206729481489e-14)
+if ppo_sab_error > 1e-10
+  echo "ERROR: ppo_sab thermal plus flicker-noise equation"
+  quit 1
+end
+
+noise v(n12) vb12 lin 1 1k 1k
+let metal_psd = onoise_spectrum * onoise_spectrum
+let metal_error = abs((metal_psd - 1.95876216240310451e-21) / 1.95876216240310451e-21)
+if metal_error > 1e-10
+  echo "ERROR: resistor thermal-noise equation"
+  quit 1
+end
+
+echo "INFO: success"
+quit 0
+.endc
+
+.end
