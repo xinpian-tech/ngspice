@@ -1,0 +1,22 @@
+* nonlinear capacitor multiplicity
+
+v1 1 0 pwl(0 0 1u 1)
+v2 2 0 pwl(0 0 1u 1)
+c1 1 0 c='1p * (1 + v(1))' m=1
+c2 2 0 c='1p * (1 + v(2))' m=3
+
+.control
+set noinit
+tran 10n 500n
+let last = length(time) - 1
+let ratio = i(v2)[last] / i(v1)[last]
+let err = ratio - 3
+
+if abs(err) > 1e-9
+  echo "ERROR: nonlinear capacitor m test failed"
+  quit 1
+else
+  echo "INFO: success"
+  quit 0
+end
+.endc

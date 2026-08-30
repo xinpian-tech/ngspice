@@ -6967,8 +6967,8 @@ static void inp_compat(struct card *card)
                 }
 #else
                 // Gxxx  n-aux 0  n2 n1  1e9
-                ckt_array[0] = tprintf("g%s %s_int1 0 %s %s %se9", title_tok,
-                    title_tok, node2, node1, mstr);
+                ckt_array[0] = tprintf("g%s %s_int1 0 %s %s 1e9", title_tok,
+                    title_tok, node2, node1);
                 // Rxxx  n-aux 0 1e-9 ; generate voltage from injected current by Gxxx
                 ckt_array[1] = tprintf("r%s %s_int1 0 1e-9", title_tok,title_tok);
                 // Cxxx  n-aux1  n-aux2  1e-6
@@ -6977,10 +6977,10 @@ static void inp_compat(struct card *card)
                 ckt_array[3] = tprintf("vcurrmeas%s %s_int2 0 0", title_tok, title_tok);
                 // Rxxxpar  n2 n1 1e15 ; generally avoid floating nodes
                 ckt_array[4] = tprintf("r%spar %s %s 1e15", title_tok, node2, node1);
-                // Bxxx  n1 n2  I = 1e6 * i(Vxxx) * equation
-                ckt_array[5] = tprintf("b%s %s %s i = 1e6 * i(vcurrmeas%s) * (%s) "
+                // Bxxx  n1 n2  I = m * 1e6 * i(Vxxx) * equation
+                ckt_array[5] = tprintf("b%s %s %s i = (%s) * 1e6 * i(vcurrmeas%s) * (%s) "
                     "%s reciproctc=1",
-                    title_tok, node1, node2, title_tok, equation, tcrstr);
+                    title_tok, node1, node2, mstr, title_tok, equation, tcrstr);
                 // comment out current variable capacitor line
                 *(card->line) = '*';
                 // insert new B source line immediately after current line
