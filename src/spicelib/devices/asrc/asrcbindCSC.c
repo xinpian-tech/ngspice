@@ -26,6 +26,8 @@ ASRCbindCSC (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = ASRCinstances(model); here != NULL ; here = ASRCnextInstance(here))
         {
+            if (!here->ASRCtree)
+                continue;
             j = 0 ;
             if (here->ASRCtype == ASRC_VOLTAGE)
             {
@@ -77,6 +79,8 @@ ASRCbindCSCComplex (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = ASRCinstances(model); here != NULL ; here = ASRCnextInstance(here))
         {
+            if (!here->ASRCtree)
+                continue;
             j = 0 ;
             if (here->ASRCtype == ASRC_VOLTAGE)
             {
@@ -128,6 +132,8 @@ ASRCbindCSCComplexToReal (GENmodel *inModel, CKTcircuit *ckt)
         /* loop through all the instances of the model */
         for (here = ASRCinstances(model); here != NULL ; here = ASRCnextInstance(here))
         {
+            if (!here->ASRCtree)
+                continue;
             j = 0 ;
             if (here->ASRCtype == ASRC_VOLTAGE)
             {

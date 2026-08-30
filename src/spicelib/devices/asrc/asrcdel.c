@@ -16,9 +16,11 @@ ASRCdelete(GENinstance *gen_inst)
     ASRCinstance *inst = (ASRCinstance *) gen_inst;
 
     INPfreeTree(inst->ASRCtree);
+    INPfreeTree(inst->ASRCnoiseTree);
     FREE(inst->ASRCacValues);
     FREE(inst->ASRCposPtr);
     FREE(inst->ASRCvars);
+    FREE(inst->ASRCnoiseVars);
 #ifdef KLU
     FREE(inst->ASRCposBinding);
 #endif

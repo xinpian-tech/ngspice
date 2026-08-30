@@ -54,6 +54,11 @@ ASRCparam(int param, IFvalue *value, GENinstance *fast, IFvalue *select)
         here->ASRCdtemp = value->rValue;
         here->ASRCdtempGiven = TRUE;
         break;
+    case ASRC_NOISE:
+        here->ASRCtype = ASRC_CURRENT;
+        here->ASRCnoiseTree = value->tValue;
+        here->ASRCnoiseGiven = TRUE;
+        break;
     default:
         return(E_BADPARM);
     }

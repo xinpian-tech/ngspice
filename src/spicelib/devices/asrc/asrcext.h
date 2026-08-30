@@ -15,6 +15,7 @@ extern int ASRCacLoad(GENmodel *, CKTcircuit *);
 extern int ASRCsetup(SMPmatrix *, GENmodel *, CKTcircuit *, int *);
 extern int ASRCunsetup(GENmodel *, CKTcircuit *);
 extern int ASRCtemp(GENmodel *, CKTcircuit *);
+extern int ASRCnoise(int, int, GENmodel *, CKTcircuit *, Ndata *, double *);
 
 #ifdef KLU
 extern int ASRCbindCSC (GENmodel *, CKTcircuit *) ;

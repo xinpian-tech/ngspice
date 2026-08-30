@@ -30,6 +30,9 @@ ASRCpzLoad(GENmodel *inModel, CKTcircuit *ckt, SPcomplex *s)
     for (; model; model = ASRCnextModel(model)) {
         for (here = ASRCinstances(model); here; here = ASRCnextInstance(here)) {
 
+            if (!here->ASRCtree)
+                continue;
+
             difference = (here->ASRCtemp + here->ASRCdtemp) - 300.15;
             factor = 1.0
                 + here->ASRCtc1 * difference

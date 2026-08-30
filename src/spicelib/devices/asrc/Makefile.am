@@ -16,6 +16,7 @@ libasrc_la_SOURCES =	\
 	asrcinit.c	\
 	asrcinit.h	\
 	asrcload.c	\
+	asrcnoise.c	\
 	asrcpar.c	\
 	asrcpzld.c	\
 	asrcset.c \

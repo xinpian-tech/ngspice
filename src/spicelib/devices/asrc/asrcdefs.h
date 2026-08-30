@@ -9,6 +9,7 @@ Author: 1985 Thomas L. Quarles
 #include "ngspice/cktdefs.h"
 #include "ngspice/ifsim.h"
 #include "ngspice/complex.h"
+#include "ngspice/noisedef.h"
 
 
 /*
@@ -33,6 +34,8 @@ typedef struct sASRCinstance {
     int ASRCbranch;            /* number of branch equation added for v source */
     IFparseTree *ASRCtree;     /* The parse tree */
     int *ASRCvars;             /* indices of the controlling nodes/branches */
+    IFparseTree *ASRCnoiseTree;/* Noise power spectral density parse tree */
+    int *ASRCnoiseVars;        /* controlling nodes/branches for noise */
 
     double ASRCtemp;           /* temperature at which this resistor operates */
     double ASRCdtemp;          /* delta-temperature of a particular instance  */
@@ -53,6 +56,13 @@ typedef struct sASRCinstance {
     unsigned ASRCmGiven : 1;          /* indicates tc2 parameter specified */
     unsigned ASRCreciproctcGiven : 1; /* indicates reciproctc flag parameter specified */
     unsigned ASRCreciprocmGiven : 1;  /* indicates reciprocm flag parameter specified */
+    unsigned ASRCnoiseGiven : 1;      /* indicates a noise PSD was specified */
+
+#ifndef NONOISE
+    double ASRCnVar[NSTATVARS][1];
+#else
+    double **ASRCnVar;
+#endif
 
 #ifdef KLU
     BindElement **ASRCposBinding ;
@@ -94,6 +104,7 @@ enum {
     ASRC_RTC,
     ASRC_M,
     ASRC_RM,
+    ASRC_NOISE,
 };
 
 /* module-wide variables */

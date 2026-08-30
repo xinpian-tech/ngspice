@@ -34,8 +34,15 @@ int ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
     for (; model; model = ASRCnextModel(model)) {
         for (here = ASRCinstances(model); here; here=ASRCnextInstance(here)) {
 
-            if (!here->ASRCtree)
+            if (!here->ASRCtree && !here->ASRCnoiseGiven)
                 return E_PARMVAL;
+
+            if (here->ASRCnoiseGiven && here->ASRCtype != ASRC_CURRENT) {
+                SPfrontEnd->IFerrorf(ERR_FATAL,
+                    "instance %s: noise PSD is supported only for current ASRCs",
+                    here->ASRCname);
+                return E_UNSUPP;
+            }
 
             if (here->ASRCtype == ASRC_VOLTAGE)
                 if (here->ASRCposNode == here->ASRCnegNode) {
@@ -53,6 +60,13 @@ int ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                 here->ASRCreciprocm = 0;
             if (!here->ASRCmGiven)
                 here->ASRCm = 1.0;
+
+            if (here->ASRCnoiseGiven)
+                here->ASRCnoiseVars = TMALLOC(int,
+                    here->ASRCnoiseTree->numVars);
+
+            if (!here->ASRCtree)
+                goto setup_noise;
 
             switch (here->ASRCtype) {
             case ASRC_VOLTAGE:
@@ -121,6 +135,31 @@ int ASRCsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt,
                     TSTALLOC(ASRCposPtr[j++], here->ASRCnegNode, column);
                 }
             }
+
+setup_noise:
+            if (here->ASRCnoiseGiven) {
+                for (i = 0; i < here->ASRCnoiseTree->numVars; i++) {
+                    switch (here->ASRCnoiseTree->varTypes[i]) {
+                    case IF_INSTANCE:
+                        here->ASRCnoiseVars[i] = CKTfndBranch(ckt,
+                            here->ASRCnoiseTree->vars[i].uValue);
+                        if (here->ASRCnoiseVars[i] == 0) {
+                            SPfrontEnd->IFerrorf(ERR_FATAL,
+                                "%s: unknown controlling source %s",
+                                here->ASRCname,
+                                here->ASRCnoiseTree->vars[i].uValue);
+                            return E_BADPARM;
+                        }
+                        break;
+                    case IF_NODE:
+                        here->ASRCnoiseVars[i] =
+                            here->ASRCnoiseTree->vars[i].nValue->number;
+                        break;
+                    default:
+                        return E_BADPARM;
+                    }
+                }
+            }
         }
     }
 
@@ -142,6 +181,7 @@ ASRCunsetup(GENmodel *inModel, CKTcircuit *ckt)
 
             FREE(here->ASRCposPtr);
             FREE(here->ASRCvars);
+            FREE(here->ASRCnoiseVars);
             FREE(here->ASRCacValues);
 #ifdef KLU
             FREE(here->ASRCposBinding);
