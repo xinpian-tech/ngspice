@@ -14,6 +14,22 @@ Modified by Paolo Nenzi 2003, Dietmar Warning 2012 and Arpad Buermen 2025
 #include "ngspice/sperror.h"
 #include "ngspice/suffix.h"
 
+static void
+DIOapplyKneeCurrent(double *current, double *conductance,
+        double *temperatureDerivative, double kneeCurrent, int reverse)
+{
+    double denominator;
+    double derivative;
+    double ratio = reverse ? -*current / kneeCurrent : *current / kneeCurrent;
+
+    denominator = sqrt(1.0 + ratio);
+    derivative = (1.0 + 0.5 * ratio) /
+            (denominator * denominator * denominator);
+    *current /= denominator;
+    *conductance *= derivative;
+    *temperatureDerivative *= derivative;
+}
+
 int
 DIOload(GENmodel *inModel, CKTcircuit *ckt)
         /* actually load the current resistance value into the
@@ -37,8 +53,6 @@ DIOload(GENmodel *inModel, CKTcircuit *ckt)
     double czeroSW;
     double czof2SW;
     double sargSW;
-    double sqrt_ikx;
-
     double delvd, delvdsw=0.0; /* change in diode voltage temporary */
     double evd;
     double evrev;
@@ -319,7 +333,9 @@ next1:
                 DIOtempUpdate(model, here, Temp, ckt);
                 vt = CONSTKoverQ * Temp;
                 vte = model->DIOemissionCoeff * vt;
+                vtesw = model->DIOswEmissionCoeff * vt;
                 vtebrk = model->DIObrkdEmissionCoeff * vt;
+                vterec = model->DIOrecEmissionCoeff * vt;
             } else {
                 Temp = here->DIOtemp;
             }
@@ -340,7 +356,7 @@ next1:
 
                 if (model->DIOswEmissionCoeffGiven) {    /* with own characteristic */
 
-                    if (vds >= -3*vtesw) {               /* forward */
+                    if (vds >= (model->DIOlevel == 3 ? -10*vtesw : -3*vtesw)) {
 
                         evd = exp(vds/vtesw);
                         cdsw = csatsw*(evd-1);
@@ -350,12 +366,19 @@ next1:
                     } else if ((!(model->DIObreakdownVoltageGiven)) ||
                             vds >= -here->DIOtBrkdwnV) { /* reverse */
 
-                        argsw = 3*vtesw/(vds*CONSTe);
-                        argsw = argsw * argsw * argsw;
-                        argsw_dT = 3 * argsw / Temp;
-                        cdsw = -csatsw*(1+argsw);
-                        gdsw = csatsw*3*argsw/vds;
-                        cdsw_dT = -csatsw_dT - (csatsw_dT*argsw + csatsw*argsw_dT);
+                        if (model->DIOlevel == 3) {
+                            cdsw = -csatsw;
+                            gdsw = 0.0;
+                            cdsw_dT = -csatsw_dT;
+                        } else {
+                            argsw = 3*vtesw/(vds*CONSTe);
+                            argsw = argsw * argsw * argsw;
+                            argsw_dT = 3 * argsw / Temp;
+                            cdsw = -csatsw*(1+argsw);
+                            gdsw = csatsw*3*argsw/vds;
+                            cdsw_dT = -csatsw_dT -
+                                    (csatsw_dT*argsw + csatsw*argsw_dT);
+                        }
 
                     } else if (!model->DIOresistSWGiven){ /* breakdown, but not for separate sidewall diode */
                         double evrev_dT;
@@ -376,7 +399,7 @@ next1:
              *   temperature dependent diode saturation current and derivative
              */
 
-            if (vd >= -3*vte) {      /* bottom and sidewall current forward with common voltage */
+            if (vd >= (model->DIOlevel == 3 ? -10*vte : -3*vte)) {
                                      /* and with common characteristic */
                 evd = exp(vd/vte);
                 cdb = csat*(evd-1);
@@ -407,26 +430,38 @@ next1:
             } else if ((!(model->DIObreakdownVoltageGiven)) ||
                     vd >= -here->DIOtBrkdwnV) { /* reverse */
 
-                double darg_dT;
-
-                arg = 3*vte/(vd*CONSTe);
-                arg = arg * arg * arg;
-                darg_dT = 3 * arg / Temp;
-                if (model->DIOrecSatCurGiven) {
-                    evd_rec = exp((-3*vte)/vterec);
-                    cdb_rec = here->DIOtRecSatCur*(evd_rec-1);
-                    t1 = pow((1-(-3*vte)/here->DIOtJctPot), 2) + 0.005;
-                    gen_fac = pow(t1, here->DIOtGradingCoeff/2);
-                    cdb = -csat*(1+arg) + gen_fac*cdb_rec;
+                if (model->DIOlevel == 3) {
+                    cdb = -csat;
+                    gdb = 0.0;
+                    cdb_dT = -csat_dT;
+                    if ((model->DIOsatSWCurGiven)&&(!model->DIOswEmissionCoeffGiven)) {
+                        cdsw = -csatsw;
+                        gdsw = 0.0;
+                        cdsw_dT = -csatsw_dT;
+                    }
                 } else {
-                    cdb = -csat*(1+arg);
-                }
-                gdb = csat*3*arg/vd;
-                cdb_dT = -csat_dT - (csat_dT*arg + csat*darg_dT);
-                if ((model->DIOsatSWCurGiven)&&(!model->DIOswEmissionCoeffGiven)) {
-                    cdsw = -csatsw*(1+arg);
-                    gdsw = csatsw*3*arg/vd;
-                    cdsw_dT = -csatsw_dT - (csatsw_dT*arg + csatsw*darg_dT);
+                    double darg_dT;
+
+                    arg = 3*vte/(vd*CONSTe);
+                    arg = arg * arg * arg;
+                    darg_dT = 3 * arg / Temp;
+                    if (model->DIOrecSatCurGiven) {
+                        evd_rec = exp((-3*vte)/vterec);
+                        cdb_rec = here->DIOtRecSatCur*(evd_rec-1);
+                        t1 = pow((1-(-3*vte)/here->DIOtJctPot), 2) + 0.005;
+                        gen_fac = pow(t1, here->DIOtGradingCoeff/2);
+                        cdb = -csat*(1+arg) + gen_fac*cdb_rec;
+                    } else {
+                        cdb = -csat*(1+arg);
+                    }
+                    gdb = csat*3*arg/vd;
+                    cdb_dT = -csat_dT - (csat_dT*arg + csat*darg_dT);
+                    if ((model->DIOsatSWCurGiven)&&(!model->DIOswEmissionCoeffGiven)) {
+                        cdsw = -csatsw*(1+arg);
+                        gdsw = csatsw*3*arg/vd;
+                        cdsw_dT = -csatsw_dT -
+                                (csatsw_dT*arg + csatsw*darg_dT);
+                    }
                 }
 
             } else {                            /* breakdown */
@@ -482,30 +517,17 @@ next1:
 
             }
 
-            if (vd >= -3*vte) { /* limit forward */
-
-                if ( (model->DIOforwardKneeCurrentGiven) && (cdb > 1.0e-18) ) {
-                    double ikf_area_m = here->DIOforwardKneeCurrent;
-                    sqrt_ikx = sqrt(cdb/ikf_area_m);
-                    gdb = ((1+sqrt_ikx)*gdb - cdb*gdb/(2*sqrt_ikx*ikf_area_m))/(1+2*sqrt_ikx + cdb/ikf_area_m);
-                    cdb = cdb/(1+sqrt_ikx);
-                }
-
-            } else {            /* limit reverse */
-
-                if ( (model->DIOreverseKneeCurrentGiven) && (cdb < -1.0e-18) ) {
-                    double ikr_area_m = here->DIOreverseKneeCurrent;
-                    sqrt_ikx = sqrt(cdb/(-ikr_area_m));
-                    gdb = ((1+sqrt_ikx)*gdb + cdb*gdb/(2*sqrt_ikx*ikr_area_m))/(1+2*sqrt_ikx - cdb/ikr_area_m);
-                    cdb = cdb/(1+sqrt_ikx);
-                }
+            if ((model->DIOforwardKneeCurrentGiven) && (cdb > 1.0e-18)) {
+                DIOapplyKneeCurrent(&cdb, &gdb, &cdb_dT,
+                        here->DIOforwardKneeCurrent, FALSE);
+            } else if ((model->DIOreverseKneeCurrentGiven) && (cdb < -1.0e-18)) {
+                DIOapplyKneeCurrent(&cdb, &gdb, &cdb_dT,
+                        here->DIOreverseKneeCurrent, TRUE);
             }
 
             if ( (model->DIOforwardSWKneeCurrentGiven) && (cdsw > 1.0e-18) ) {
-                double ikp_peri_m = here->DIOforwardSWKneeCurrent;
-                sqrt_ikx = sqrt(cdsw/ikp_peri_m);
-                gdsw = ((1+sqrt_ikx)*gdsw - cdsw*gdsw/(2*sqrt_ikx*ikp_peri_m))/(1+2*sqrt_ikx + cdsw/ikp_peri_m);
-                cdsw = cdsw/(1+sqrt_ikx);
+                DIOapplyKneeCurrent(&cdsw, &gdsw, &cdsw_dT,
+                        here->DIOforwardSWKneeCurrent, FALSE);
             }
 
             if (!model->DIOresistSWGiven) {
@@ -556,7 +578,7 @@ next1:
                     deplcapSW = czeroSW*sargSW;
                 } else {
                     czof2SW=czeroSW/here->DIOtF2SW;
-                    deplchargeSW = czeroSW*here->DIOtF1+czof2SW*(here->DIOtF3SW*(vdx-here->DIOtDepSWCap)+
+                    deplchargeSW = czeroSW*here->DIOtF1SW+czof2SW*(here->DIOtF3SW*(vdx-here->DIOtDepSWCap)+
                                    (model->DIOgradingSWCoeff/(here->DIOtJctSWPot+here->DIOtJctSWPot))*(vdx*vdx-here->DIOtDepSWCap*here->DIOtDepSWCap));
                     deplcapSW = czof2SW*(here->DIOtF3SW+model->DIOgradingSWCoeff*vdx/here->DIOtJctSWPot);
                 }

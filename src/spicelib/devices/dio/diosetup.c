@@ -50,7 +50,7 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             model->DIOsatSWCur = 0.0;
         }
         if(!model->DIOswEmissionCoeffGiven) {
-            model->DIOswEmissionCoeff = 1;
+            model->DIOswEmissionCoeff = model->DIOemissionCoeff;
         }
         if(!model->DIObreakdownCurrentGiven) {
             model->DIObreakdownCurrent = 1e-3;
@@ -333,8 +333,10 @@ DIOsetup(SMPmatrix *matrix, GENmodel *inModel, CKTcircuit *ckt, int *states)
             if (model->DIOlevel == 3) {
                 double wm, lm, wp, lp;
                 if((here->DIOwGiven) && (here->DIOlGiven))  {
-                    here->DIOarea = (here->DIOw+model->DIOmaskOffset) * (here->DIOl+model->DIOmaskOffset) * here->DIOm * scale * scale;
-                    here->DIOpj = (2 * (here->DIOw+model->DIOmaskOffset) + 2 * (here->DIOl+model->DIOmaskOffset)) * here->DIOm * scale;
+                    here->DIOarea = (here->DIOw+model->DIOmaskOffset) *
+                            (here->DIOl+model->DIOmaskOffset) * scale * scale;
+                    here->DIOpj = (2 * (here->DIOw+model->DIOmaskOffset) +
+                            2 * (here->DIOl+model->DIOmaskOffset)) * scale;
                 }
                 if (here->DIOwidthMetalGiven)
                     wm = here->DIOwidthMetal;
@@ -495,9 +497,10 @@ DIOunsetup(
         {
 
             if (here->DIOposPrimeNode > 0
-              && here->DIOposPrimeNode != here->DIOposNode)
+              && here->DIOposPrimeNode != here->DIOposNode) {
                 CKTdltNNum(ckt, here->DIOposPrimeNode);
                 here->DIOposPrimeNode = 0;
+            }
 
             if(model->DIOresistSWGiven) {
                 /* separate sidewall */
@@ -508,9 +511,10 @@ DIOunsetup(
             }
 
             /* rev-rec */
-            if (here->DIOqpNode > 0)
+            if (here->DIOqpNode > 0) {
                 CKTdltNNum(ckt, here->DIOqpNode);
                 here->DIOqpNode = 0;
+            }
 
         }
     }

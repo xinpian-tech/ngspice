@@ -116,15 +116,15 @@ DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
             czero=here->DIOtJctCap; // area and multiplier are already counted in DIOtJctCap
 			if (czero != 0.0) {
 			  if (vd < here->DIOtDepCap){
-			  	arg=1-vd/model->DIOjunctionPot;
+                arg=1-vd/here->DIOtJctPot;
 			  	sarg=exp(-here->DIOtGradingCoeff*log(arg));
 			  	/* the expression for depletion charge 
 			  	                        model->DIOjunctionPot*czero*
                               (1-arg*sarg)/(1-here->DIOtGradingCoeff);
 			  			    */
 			  	cjunc1 = czero*sarg;
-			  	cjunc2 = cjunc1/2/model->DIOjunctionPot*here->DIOtGradingCoeff/arg;
-			  	cjunc3 = cjunc2/3/model->DIOjunctionPot/arg*(here->DIOtGradingCoeff + 1);
+                cjunc2 = cjunc1/2/here->DIOtJctPot*here->DIOtGradingCoeff/arg;
+                cjunc3 = cjunc2/3/here->DIOtJctPot/arg*(here->DIOtGradingCoeff + 1);
 			  } 
 			  else {
 			  	czof2=czero/here->DIOtF2;
@@ -135,7 +135,7 @@ DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
 			  	                        model->DIOjunctionPot))*(vd*vd-here->DIOtDepCap*
                           here->DIOtDepCap));
 			  				*/
-			  	cjunc2 = czof2/2/model->DIOjunctionPot*here->DIOtGradingCoeff;
+                cjunc2 = czof2/2/here->DIOtJctPot*here->DIOtGradingCoeff;
 			  	cjunc3 =0.0;
 			  }
 			} 
@@ -145,16 +145,16 @@ DIOdSetup(DIOmodel *model, CKTcircuit *ckt)
 			}
             czeroSW=+here->DIOtJctSWCap; // pj and multiplier are already counted in DIOtJctSWCap
 			if (czeroSW != 0.0) {
-			  if (vd < here->DIOtDepCap){
-			  	arg=1-vd/model->DIOjunctionSWPot;
+			  if (vd < here->DIOtDepSWCap){
+                arg=1-vd/here->DIOtJctSWPot;
 			  	sarg=exp(-model->DIOgradingSWCoeff*log(arg));
 			  	cjunc1SW = czeroSW*sarg;
-			  	cjunc2SW = cjunc1SW/2/model->DIOjunctionSWPot*model->DIOgradingSWCoeff/arg;
-			  	cjunc3SW = cjunc2SW/3/model->DIOjunctionSWPot/arg*(model->DIOgradingSWCoeff + 1);
+                cjunc2SW = cjunc1SW/2/here->DIOtJctSWPot*model->DIOgradingSWCoeff/arg;
+                cjunc3SW = cjunc2SW/3/here->DIOtJctSWPot/arg*(model->DIOgradingSWCoeff + 1);
 			  } 
 			  else {
 			  	czof2=czeroSW/here->DIOtF2SW;
-			  	cjunc2SW = czof2/2/model->DIOjunctionSWPot*model->DIOgradingSWCoeff;
+                cjunc2SW = czof2/2/here->DIOtJctSWPot*model->DIOgradingSWCoeff;
 			  	cjunc3SW = 0.0;
 			  }
 			} 

@@ -1,0 +1,73 @@
+* HSPICE level-3 diode equations used by the 55LLULP golden models
+
+vrev nrev 0 -0.5
+drev nrev 0 dhsp
+vcap ncap 0 dc -0.1 ac 1
+dcap ncap 0 dhsp
+vfwd nfwd 0 0.8
+dfwd nfwd 0 dknee m=3
+vgeo ngeo 0 0.2
+dgeo ngeo 0 dgeometry w=2u l=3u m=4
+vcharge ncharge 0 0.5
+dcharge ncharge 0 dcharge
+
+.model dhsp d level=3 js=2e-6 jsw=3e-3 area=4e-9 pj=5e-5 n=1.2
++ jtun=7e-5 jtunsw=11e-8 ntun=30 xtitun=-56 keg=1
++ cj=8e-4 cjsw=2e-10 pb=0.7 php=0.8 mj=0.35 mjsw=0.4 fc=0 fcs=0
++ tlev=1 tlevc=1 tnom=25 eg=1.16 xti=3
++ cta=0.001 ctp=0.002 tpb=0.0015 tphp=0.0011
+.model dknee d level=3 is=1e-12 n=1 ik=1e-3 area=2 tnom=125
+.model dgeometry d level=3 is=1e6 n=1 tnom=125
+.model dcharge d level=3 is=1e-30 cj=1p cjsw=2p area=1 pj=1
++ pb=0.6 php=0.9 mj=0.3 mjsw=0.7 fc=0.2 fcs=0.4 tnom=125
+
+.option gmin=1e-20
+.temp 125
+
+.control
+set noinit
+op
+ac lin 1 1meg 1meg
+let kq = 1.38064852e-23 / 1.6021766208e-19
+let tnom = 25 + 273.15
+let temp = 125 + 273.15
+let vt = kq * temp
+let vtnom = kq * tnom
+let facln = 1.16 / vtnom - 1.16 / vt + 3 * ln(temp / tnom)
+let isat = (2e-6 * 4e-9 + 3e-3 * 5e-5) * exp(facln / 1.2)
+let faclnt = 1.16 / vtnom - 1.16 / vt - 56 * ln(temp / tnom)
+let itun = (7e-5 * 4e-9 + 11e-8 * 5e-5) * exp(faclnt)
+let expected_rev = -isat - itun * (exp(0.5 / (30 * vt)) - 1)
+let raw_fwd = 1e-12 * 2 * 3 * (exp(0.8 / vt) - 1)
+let ik_fwd = 1e-3 * 2 * 3
+let expected_fwd = raw_fwd / sqrt(1 + raw_fwd / ik_fwd)
+let expected_geo = 1e6 * (2u * 3u) * 4 * (exp(0.2 / vt) - 1)
+let error_dc = abs(@drev[id] / expected_rev - 1) + \
++ abs(@dfwd[id] / expected_fwd - 1) + abs(@dgeo[id] / expected_geo - 1)
+let f1 = 0.6 * (1 - (1 - 0.2)^(1 - 0.3)) / (1 - 0.3)
+let qbottom = 1p * f1 + 1p / (1 - 0.2)^(1 + 0.3) * \
++ ((1 - 0.2 * (1 + 0.3)) * (0.5 - 0.2 * 0.6) + \
++ 0.3 / (2 * 0.6) * (0.5^2 - (0.2 * 0.6)^2))
+let f1sw = 0.9 * (1 - (1 - 0.4)^(1 - 0.7)) / (1 - 0.7)
+let qside = 2p * f1sw + 2p / (1 - 0.4)^(1 + 0.7) * \
++ ((1 - 0.4 * (1 + 0.7)) * (0.5 - 0.4 * 0.9) + \
++ 0.7 / (2 * 0.9) * (0.5^2 - (0.4 * 0.9)^2))
+let error_charge = abs(@dcharge[charge] / (qbottom + qside) - 1)
+let pbtemp = 0.7 - 0.0015 * (temp - tnom)
+let phptemp = 0.8 - 0.0011 * (temp - tnom)
+let cjtemp = 8e-4 * 4e-9 * (1 + 0.001 * (temp - tnom))
+let cjswtemp = 2e-10 * 5e-5 * (1 + 0.002 * (temp - tnom))
+let expected_cap = cjtemp * (1 - (-0.1) / pbtemp)^(-0.35) + \
++ cjswtemp * (1 - (-0.1) / phptemp)^(-0.4)
+let measured_cap = abs(imag(i(vcap))) / (2 * pi * frequency)
+let error = error_dc + error_charge + abs(measured_cap / expected_cap - 1)
+
+if error > 1e-9
+  echo "ERROR: HSPICE level-3 diode equation mismatch"
+  quit 1
+else
+  echo "INFO: success"
+  quit 0
+end
+.endc
+.end

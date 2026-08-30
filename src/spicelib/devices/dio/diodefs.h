@@ -163,6 +163,7 @@ typedef struct sDIOinstance {
     double DIOtVcrit;   /* temperature adjusted V crit */
     double DIOtVcritSW; /* temperature adjusted V crit sidewall*/
     double DIOtF1;      /* temperature adjusted f1 */
+    double DIOtF1SW;    /* temperature adjusted sidewall f1 */
     double DIOtBrkdwnV; /* temperature adjusted breakdown voltage */
 
     double DIOtF2;     /* coeff. for capacitance equation precomputation */
