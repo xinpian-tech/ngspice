@@ -1,0 +1,53 @@
+NAME_TABLE:
+
+C_Function_Name:       cm_icsmom
+Spice_Model_Name:      icsmom
+Description:           "ICsprout 55LLULP MOM capacitor"
+
+
+PORT_TABLE:
+
+Port_Name:             ab                 ap                 bp
+Description:           "main branch"      "a parasitic"      "b parasitic"
+Direction:             inout              inout              inout
+Default_Type:          gd                 gd                 gd
+Allowed_Types:         [gd]               [gd]               [gd]
+Vector:                no                 no                 no
+Vector_Bounds:          -                  -                  -
+Null_Allowed:          no                 yes                yes
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:        lf             nf             bm
+Description:           "finger length" "fingers"     "bottom metal"
+Data_Type:             real           real           real
+Default_Value:         -              -              -
+Limits:                -              -              -
+Vector:                no             no             no
+Vector_Bounds:          -              -              -
+Null_Allowed:          no             no             no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:        tm             mr             mismod
+Description:           "top metal"    "multiplier"   "mismatch enable"
+Data_Type:             real           real           real
+Default_Value:         -              -              -
+Limits:                -              -              -
+Vector:                no             no             no
+Vector_Bounds:          -              -              -
+Null_Allowed:          no             no             no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:        shielding      dmom           sigma_mis
+Description:           "shielding"    "process"      "mismatch sample"
+Data_Type:             real           real           real
+Default_Value:         -              -              -
+Limits:                -              -              -
+Vector:                no             no             no
+Vector_Bounds:          -              -              -
+Null_Allowed:          no             no             no

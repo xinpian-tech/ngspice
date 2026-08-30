@@ -1,0 +1,25 @@
+* ICsprout 55LLULP MOM equations at 125 C
+
+.option temp=125
+
+va na 0 dc 1.5 ac 1
+vb nb 0 dc -1.0 ac 0
+vp np 0 dc 0 ac 0
+a3 na nb na np nb np mom3
+.model mom3 icsmom (lf=4u nf=12 bm=3 tm=6 mr=3 mismod=1 shielding=2 dmom=-0.1 sigma_mis=0.5)
+
+.control
+ac lin 1 1meg 1meg
+let err_a = abs((imag(i(va)) + 3.4494353447670233e-7) / 3.4494353447670233e-7)
+let err_b = abs((imag(i(vb)) - 3.3580784781351020e-7) / 3.3580784781351020e-7)
+let err_p = abs((imag(i(vp)) - 9.1356866631921310e-9) / 9.1356866631921310e-9)
+if (err_a > 1e-10) or (err_b > 1e-10) or (err_p > 1e-10)
+  echo "ERROR: high-temperature MOM process/mismatch equations"
+  quit 1
+end
+
+echo "INFO: success"
+quit 0
+.endc
+
+.end

@@ -1,0 +1,54 @@
+* ICsprout 55LLULP MOM equations at 25 C
+
+.option temp=25 method=gear maxord=2
+
+v2 n2 0 dc 0.3 ac 1
+a2 n2 0 null null mom2
+.model mom2 icsmom (lf=1u nf=6 bm=1 tm=3 mr=1 mismod=1 shielding=0 dmom=0 sigma_mis=0)
+
+va na 0 dc 0.4 ac 1
+vb nb 0 dc -0.3 ac 0
+vp np 0 dc 0.1 ac 0
+a3 na nb na np nb np mom3
+.model mom3 icsmom (lf=2u nf=8 bm=2 tm=5 mr=2 mismod=1 shielding=1 dmom=-0.1 sigma_mis=0.75)
+
+vtr2 ntr2 0 pwl(0 0 1u 1)
+atr2 ntr2 0 null null momtr2
+.model momtr2 icsmom (lf=1u nf=6 bm=1 tm=3 mr=1 mismod=1 shielding=0 dmom=0 sigma_mis=0)
+
+vtra ntra 0 pwl(0 0 1u 1)
+vtrb ntrb 0 0
+vtrp ntrp 0 0
+atr3 ntra ntrb ntra ntrp ntrb ntrp momtr3
+.model momtr3 icsmom (lf=2u nf=8 bm=2 tm=5 mr=2 mismod=1 shielding=1 dmom=-0.1 sigma_mis=0.75)
+
+.control
+set noinit
+ac lin 1 1meg 1meg
+let err_2t = abs((imag(i(v2)) + 1.1751118208971684e-8) / 1.1751118208971684e-8)
+let err_3ta = abs((imag(i(va)) + 7.7780996942964950e-8) / 7.7780996942964950e-8)
+let err_3tb = abs((imag(i(vb)) - 7.5700836657305200e-8) / 7.5700836657305200e-8)
+let err_3tp = abs((imag(i(vp)) - 2.0801602856597460e-9) / 2.0801602856597460e-9)
+if err_2t > 1e-10
+  echo "ERROR: 2-terminal MOM main-capacitance equation"
+  quit 1
+end
+if (err_3ta > 1e-10) or (err_3tb > 1e-10) or (err_3tp > 1e-10)
+  echo "ERROR: 3-terminal MOM main/parasitic equations"
+  quit 1
+end
+
+tran 10n 500n
+let last = length(time) - 1
+let err_tr2 = abs((i(vtr2)[last] + 1.8702485509229890e-9) / 1.8702485509229890e-9)
+let err_tr3 = abs((i(vtra)[last] + 1.2379230133309208e-8) / 1.2379230133309208e-8)
+if (err_tr2 > 1e-9) or (err_tr3 > 1e-9)
+  echo "ERROR: MOM transient C(V)dV/dt equations"
+  quit 1
+end
+
+echo "INFO: success"
+quit 0
+.endc
+
+.end
