@@ -74,6 +74,8 @@ double cm_analog_ramp_factor(void);
 void  cm_analog_alloc(int tag, int bytes);
 void *cm_analog_get_ptr(int tag, int timepoint);
 int  cm_analog_integrate(double integrand, double *integral, double *partial);
+int  cm_analog_derivative(double value, double *state, double *derivative,
+                          double *partial);
 int  cm_analog_converge(double *state);
 int  cm_analog_set_temp_bkpt(double time);
 int  cm_analog_set_perm_bkpt(double time);

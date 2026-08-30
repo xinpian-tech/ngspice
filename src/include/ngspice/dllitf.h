@@ -92,6 +92,7 @@ struct coreInfo_t {
 #endif
     int       ((*dllitf_MIFnoise)(int, int, GENmodel *, CKTcircuit *, Ndata *, double *));
     int       ((*dllitf_cm_noise_add_source)(const char *, int, int, Mif_Noise_Src_Type_t));
+    int       ((*dllitf_cm_analog_derivative)(double, double *, double *, double *));
 };
 
 #endif

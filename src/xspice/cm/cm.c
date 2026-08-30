@@ -310,6 +310,124 @@ int  cm_analog_integrate(
 
 
 /*
+cm_analog_derivative()
+
+Store a code-model quantity in a two-double SPICE state pair and evaluate its
+time derivative with the circuit's active integration method.  The first
+double is the quantity and the adjacent second double is NIintegrate's
+derivative state.  The returned partial is d(derivative)/d(value).
+*/
+
+int cm_analog_derivative(
+    double value,
+    double *state,
+    double *derivative,
+    double *partial)
+{
+    MIFinstance *here;
+    CKTcircuit *ckt;
+    Mif_Intgr_t *intgr;
+    Mif_Boolean_t got_index;
+    char *char_state0;
+    char *char_state;
+    int byte_index;
+    int state_index;
+    int error;
+    int i;
+    double geq;
+    double ceq;
+
+    here = g_mif_info.instance;
+    ckt = g_mif_info.ckt;
+
+    if (g_mif_info.circuit.anal_type != MIF_TRAN) {
+        g_mif_info.errmsg =
+            "ERROR - cm_analog_derivative() - Called in non-transient analysis\n";
+        *derivative = 0.0;
+        *partial = 0.0;
+        return MIF_ERROR;
+    }
+
+    if (ckt->CKTnumStates < 2) {
+        g_mif_info.errmsg =
+            "ERROR - cm_analog_derivative() - State must be two doubles allocated by cm_analog_alloc()\n";
+        *derivative = 0.0;
+        *partial = 0.0;
+        return MIF_ERROR;
+    }
+
+    char_state0 = (char *) ckt->CKTstate0;
+    char_state = (char *) state;
+    byte_index = (int) (char_state - char_state0);
+
+    if ((byte_index < 0) ||
+        (byte_index > (ckt->CKTnumStates - 2) * (int) sizeof(double)) ||
+        (byte_index % (int) sizeof(double)) != 0) {
+        g_mif_info.errmsg =
+            "ERROR - cm_analog_derivative() - State pair must be in state vector 0\n";
+        *derivative = 0.0;
+        *partial = 0.0;
+        return MIF_ERROR;
+    }
+
+    for (got_index = MIF_FALSE, i = 0; i < here->num_intgr; i++) {
+        if (here->intgr[i].byte_index == byte_index)
+            got_index = MIF_TRUE;
+    }
+
+    if ((!got_index) && (!g_mif_info.circuit.anal_init)) {
+        g_mif_info.errmsg =
+            "ERROR - cm_analog_derivative() - New derivative and not initialization pass\n";
+        *derivative = 0.0;
+        *partial = 0.0;
+        return MIF_ERROR;
+    }
+
+    if (!got_index) {
+        if (here->num_intgr == 0) {
+            here->num_intgr = 1;
+            here->intgr = TMALLOC(Mif_Intgr_t, 1);
+        } else {
+            here->num_intgr++;
+            here->intgr = TREALLOC(Mif_Intgr_t, here->intgr, here->num_intgr);
+        }
+        intgr = &(here->intgr[here->num_intgr - 1]);
+        intgr->byte_index = byte_index;
+        if (cm_analog_converge(state)) {
+            g_mif_info.errmsg =
+                "ERROR - cm_analog_derivative() - Failure in cm_analog_converge() call\n";
+            *derivative = 0.0;
+            *partial = 0.0;
+            return MIF_ERROR;
+        }
+    }
+
+    state_index = byte_index / (int) sizeof(double);
+    state[0] = value;
+    if (ckt->CKTtime == 0.0) {
+        for (i = 0; i <= ckt->CKTmaxOrder + 1; i++) {
+            ckt->CKTstates[i][state_index] = value;
+            ckt->CKTstates[i][state_index + 1] = 0.0;
+        }
+        *derivative = 0.0;
+        *partial = 0.0;
+        return MIF_OK;
+    }
+
+    error = NIintegrate(ckt, &geq, &ceq, 1.0, state_index);
+    if (error) {
+        *derivative = 0.0;
+        *partial = 0.0;
+        return error;
+    }
+
+    *derivative = state[1];
+    *partial = geq;
+    return MIF_OK;
+}
+
+
+/*
 cm_analog_converge()
 
 This function registers a state variable allocated with

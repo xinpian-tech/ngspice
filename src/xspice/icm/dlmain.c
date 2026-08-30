@@ -305,6 +305,11 @@ int  cm_analog_integrate(double integrand, double *integral, double *partial) {
 	return (coreitf->dllitf_cm_analog_integrate)(integrand,integral,partial);
 }
 
+int cm_analog_derivative(double value, double *state, double *derivative,
+                         double *partial) {
+	return (coreitf->dllitf_cm_analog_derivative)(value,state,derivative,partial);
+}
+
 int  cm_analog_converge(double *state) {
 	return (coreitf->dllitf_cm_analog_converge)(state);
 }

@@ -100,5 +100,6 @@ struct coreInfo_t  coreInfo =
 #endif
   ,
   MIFnoise,
-  cm_noise_add_source
+  cm_noise_add_source,
+  cm_analog_derivative
 };
