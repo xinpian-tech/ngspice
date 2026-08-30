@@ -1,0 +1,17 @@
+*ng_script
+.control
+set statlocal
+setseed 55
+source $inputdir/stat-scope-model.cir
+op
+let process_error = abs(v(process1) - v(process2))
+let mismatch_delta = abs(v(mismatch1) - v(mismatch2))
+
+if process_error > 1e-15 or mismatch_delta < 1e-6
+  echo "ERROR: statistical parameter scope test failed"
+  quit 1
+else
+  echo "INFO: success"
+  quit 0
+end
+.endc

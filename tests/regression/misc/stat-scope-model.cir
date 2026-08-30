@@ -1,0 +1,14 @@
+* statistical scope values
+
+.param process_value = agauss(0, 1, 1)
+
+.subckt cell process mismatch
+.param mismatch_value = agauss(0, 1, 1)
+bprocess process 0 v={process_value}
+bmismatch mismatch 0 v={mismatch_value}
+.ends cell
+
+x1 process1 mismatch1 cell
+x2 process2 mismatch2 cell
+
+.end

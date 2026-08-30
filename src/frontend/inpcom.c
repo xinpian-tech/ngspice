@@ -8240,6 +8240,7 @@ static void inp_fix_temper_in_param(struct card *deck)
 static void inp_fix_agauss_in_param(struct card *deck, char *fcn)
 {
     int skip_control = 0, subckt_depth = 0, j, *sub_count;
+    bool statlocal = cp_getvar("statlocal", CP_BOOL, NULL, 0);
     char *funcbody, *funcname;
     struct func_temper *f, *funcs = NULL, **funcs_tail_ptr = &funcs;
     struct card *card;
@@ -8290,6 +8291,13 @@ static void inp_fix_agauss_in_param(struct card *deck, char *fcn)
         if (ciprefix(".para", curr_line)) {
 
             char *p, *temper, *equal_ptr, *lhs_b, *lhs_e;
+
+            /* Global statistical parameters represent process variation and
+             * are sampled once.  With statlocal, only parameters declared in
+             * a subcircuit are preserved as functions for per-instance
+             * mismatch sampling after subcircuit expansion. */
+            if (!statlocal || subckt_depth == 0)
+                continue;
 
             temper = search_identifier(curr_line, fcn, curr_line);
 
