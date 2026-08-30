@@ -1,0 +1,28 @@
+* unary signs in parameter equations
+
+.param base=2
+b1 plus 0 v='{1++base}'
+b2 multiply_plus 0 v='{3*+base}'
+b3 multiply_minus 0 v='{3*-base}'
+b4 double_minus 0 v='{--base}'
+b5 parenthesized 0 v='{-(base+1)}'
+b6 exponent 0 v='{2^-base}'
+b7 logical 0 v='{!+base}'
+
+.control
+set noinit
+op
+let error = abs(v(plus) - 3) + abs(v(multiply_plus) - 6)
+let error = error + abs(v(multiply_minus) + 6)
+let error = error + abs(v(double_minus) - 2)
+let error = error + abs(v(parenthesized) + 3)
+let error = error + abs(v(exponent) - .25) + abs(v(logical))
+
+if error > 1e-15
+  echo "ERROR: unary sign equations"
+  quit 1
+else
+  echo "INFO: success"
+  quit 0
+end
+.endc

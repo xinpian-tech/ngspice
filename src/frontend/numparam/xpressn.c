@@ -858,6 +858,12 @@ operate(char op, double x, double y)
         else
             x = z;
         break;
+    case 'p':                   /* unary + */
+        x = y;
+        break;
+    case 'm':                   /* unary - */
+        x = -y;
+        break;
     case '%':                   /* % */
         t = trunc(x / y);
         x = x - y * t;
@@ -886,7 +892,6 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
        Allowed transitions:  1->2->(3,1) and 3->(3,1).
     */
     bool error = *perror;
-    bool negate = 0;
     unsigned char state, oldstate, topop, ustack, level, fu;
     double u = 0.0;
     double accu[nprece + 1];
@@ -1039,10 +1044,6 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             s = s_next;
         } else if (((c == '.') || ((c >= '0') && (c <= '9')))) {
             u = fetchnumber(dico, &s, &error);
-            if (negate) {
-                u = -1 * u;
-                negate = 0;
-            }
             state = S_atom;
         } else {
             c = fetchoperator(dico, s_end, &s, &state, &level, &error);
@@ -1055,9 +1056,9 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
             ((oldstate == S_atom) && (state == S_binop)) ||
             ((oldstate != S_atom) && (state != S_binop));
 
-        if (oldstate == S_binop && state == S_binop && c == '-') {
-            ok = 1;
-            negate = 1;
+        if (oldstate != S_atom && state == S_binop &&
+            (c == '+' || c == '-')) {
+            uop[++ustack] = c == '+' ? 'p' : 'm';
             continue;
         }
 
@@ -1121,10 +1122,6 @@ formula(dico_t *dico, const char *s, const char *s_end, bool *perror)
 
     if ((natom == 0) || (oldstate != S_stop))
         error = message(dico, " Expression err: %s\n", s_orig);
-
-    if (negate == 1)
-        error = message(dico,
-                        " Problem with formula eval -- wrongly determined negation!\n");
 
     *perror = error;
 
