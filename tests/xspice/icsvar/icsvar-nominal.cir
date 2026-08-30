@@ -1,0 +1,50 @@
+* ICsprout 55LLULP varactor equations at 25 C
+
+.option temp=25 method=gear maxord=2
+
+v12 n12 0 dc 0.2 ac 1
+a12 n12 0 var12
+.model var12 icsvar (variant=12 l=2u w=1.5u nf=4 mr=2 mismod=1 dcgg=0 dtox=0 sigma_mis=0)
+
+v33 n33 0 dc -0.4 ac 1
+a33 n33 0 var33
+.model var33 icsvar (variant=33 l=2u w=1.5u nf=4 mr=2 mismod=1 dcgg=0 dtox=0 sigma_mis=0)
+
+vtr ntr 0 pwl(0 0 1u 1)
+atr ntr 0 vartr
+.model vartr icsvar (variant=12 l=2u w=1.5u nf=4 mr=2 mismod=1 dcgg=0 dtox=0 sigma_mis=0)
+
+.control
+set noinit
+op
+let err_i12 = abs((i(v12) + 2.8431513769235716e-11) / 2.8431513769235716e-11)
+if err_i12 > 1e-10
+  echo "ERROR: 1.2 V varactor gate-current equation"
+  quit 1
+end
+
+ac lin 1 1meg 1meg
+let err_c12 = abs((imag(i(v12)) + 1.4692421487056134e-6) / 1.4692421487056134e-6)
+let err_c33 = abs((imag(i(v33)) + 3.8065260641242044e-7) / 3.8065260641242044e-7)
+if err_c12 > 1e-10
+  echo "ERROR: 1.2 V varactor capacitance equation"
+  quit 1
+end
+if err_c33 > 1e-10
+  echo "ERROR: 3.3 V varactor capacitance equation"
+  quit 1
+end
+
+tran 10n 500n
+let last = length(time) - 1
+let err_tr = abs((i(vtr)[last] + 2.6252634013789884e-7) / 2.6252634013789884e-7)
+if err_tr > 1e-9
+  echo "ERROR: varactor transient C(V)dV/dt equation"
+  quit 1
+end
+
+echo "INFO: success"
+quit 0
+.endc
+
+.end

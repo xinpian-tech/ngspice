@@ -1,0 +1,37 @@
+* ICsprout 55LLULP varactor equations at 125 C
+
+.option temp=125
+
+v12 n12 0 dc 1.0 ac 1
+a12 n12 0 var12
+.model var12 icsvar (variant=12 l=5u w=3u nf=8 mr=3 mismod=1 dcgg=0.03 dtox=-4.8e-11 sigma_mis=0.75)
+
+v33 n33 0 dc 2.5 ac 1
+a33 n33 0 var33
+.model var33 icsvar (variant=33 l=5u w=3u nf=8 mr=3 mismod=1 dcgg=0.03 dtox=0 sigma_mis=0.75)
+
+.control
+op
+let err_i12 = abs((i(v12) + 9.6329322001892000e-8) / 9.6329322001892000e-8)
+if err_i12 > 1e-10
+  echo "ERROR: high-temperature gate-current equation"
+  quit 1
+end
+
+ac lin 1 1meg 1meg
+let err_c12 = abs((imag(i(v12)) + 2.4760635449329085e-5) / 2.4760635449329085e-5)
+let err_c33 = abs((imag(i(v33)) + 9.5362230030596660e-6) / 9.5362230030596660e-6)
+if err_c12 > 1e-10
+  echo "ERROR: high-temperature 1.2 V capacitance equation"
+  quit 1
+end
+if err_c33 > 1e-10
+  echo "ERROR: high-temperature 3.3 V capacitance equation"
+  quit 1
+end
+
+echo "INFO: success"
+quit 0
+.endc
+
+.end

@@ -1,0 +1,53 @@
+NAME_TABLE:
+
+C_Function_Name:       cm_icsvar
+Spice_Model_Name:      icsvar
+Description:           "ICsprout 55LLULP empirical MOS varactor"
+
+
+PORT_TABLE:
+
+Port_Name:             branch
+Description:           "varactor branch"
+Direction:             inout
+Default_Type:          gd
+Allowed_Types:         [gd]
+Vector:                no
+Vector_Bounds:          -
+Null_Allowed:          no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:        variant        l             w
+Description:           "12 or 33"     "length"      "width"
+Data_Type:             real           real          real
+Default_Value:         -              -             -
+Limits:                -              -             -
+Vector:                no             no            no
+Vector_Bounds:          -              -             -
+Null_Allowed:          no             no            no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:        nf             mr            mismod
+Description:           "fingers"      "multiplier"  "mismatch enable"
+Data_Type:             real           real          real
+Default_Value:         -              -             -
+Limits:                -              -             -
+Vector:                no             no            no
+Vector_Bounds:          -              -             -
+Null_Allowed:          no             no            no
+
+
+PARAMETER_TABLE:
+
+Parameter_Name:        dcgg           dtox          sigma_mis
+Description:           "C process"    "tox process" "mismatch sample"
+Data_Type:             real           real          real
+Default_Value:         -              -             -
+Limits:                -              -             -
+Vector:                no             no            no
+Vector_Bounds:          -              -             -
+Null_Allowed:          no             no            no
