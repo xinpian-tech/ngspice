@@ -1,0 +1,26 @@
+* BSIM4 legacy model cards use the BSIM4.8.3 equation core
+
+vg g 0 0
+vd_legacy d_legacy 0 1
+vd_reference d_reference 0 1
+
+m_legacy d_legacy g 0 0 legacy w=1u l=.1u mult_i=1.7 mult_q=.8
+m_reference d_reference g 0 0 reference w=1u l=.1u mult_i=1.7 mult_q=.8
+
+.model legacy nmos level=54 version=4.5 vth0=.35 toxe=2.5n u0=.05
+.model reference nmos level=54 version=4.8.3 vth0=.35 toxe=2.5n u0=.05
+
+.control
+set noinit
+dc vg 0 1.2 .05
+let scale = maximum(abs(i(vd_reference)))
+let dc_error = maximum(abs(i(vd_legacy) - i(vd_reference))) / scale
+
+if dc_error > 1e-14
+  echo "ERROR: legacy BSIM4 model did not use BSIM4.8.3 equations"
+  quit 1
+else
+  echo "INFO: success"
+  quit 0
+end
+.endc

@@ -203,6 +203,17 @@ BSIM4instance **InstArray;
         }
         if (!model->BSIM4versionGiven)
            model->BSIM4version = copy("4.8.3");
+        else if (!strncmp(model->BSIM4version, "4.0", 3) ||
+                 !strncmp(model->BSIM4version, "4.1", 3) ||
+                 !strncmp(model->BSIM4version, "4.2", 3) ||
+                 !strncmp(model->BSIM4version, "4.3", 3) ||
+                 !strncmp(model->BSIM4version, "4.4", 3) ||
+                 !strncmp(model->BSIM4version, "4.5", 3) ||
+                 !strncmp(model->BSIM4version, "4.6", 3) ||
+                 !strncmp(model->BSIM4version, "4.7", 3)) {
+            FREE(model->BSIM4version);
+            model->BSIM4version = copy("4.8.3");
+        }
         /* Speed up version checking via integer version number */
         if ((!strcmp(model->BSIM4version, "4.8.3"))||(!strncmp(model->BSIM4version, "4.83", 4))||(!strncmp(model->BSIM4version, "4.8", 3))) {
             model->BSIM4v48intVersion = BSIM4v48V483;
